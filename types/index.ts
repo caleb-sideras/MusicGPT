@@ -8,7 +8,7 @@ export interface Message {
   content: string;
 }
 
-export type Role = "assistant" | "user";
+export type Role = "assistant" | "user" | "data";
 
 export interface MusicBrainzApiResponse {
   created: string;

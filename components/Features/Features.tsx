@@ -1,5 +1,5 @@
 import React from 'react';
-import { CaretDownIcon } from '@radix-ui/react-icons';
+import Link from 'next/link';
 import Waveform from '../Icons/waveform';
 
 type ProProps = {
@@ -24,7 +24,7 @@ const General = () => {
                     <div
                         className="flex h-full w-full select-none flex-col justify-end rounded-[6px] bg-tertiary-container p-[25px] no-underline outline-none focus:shadow-[0_0_0_2px]"
                     >
-                        {/* <Waveform /> */}
+                        <Waveform />
                         <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-on-tertiary-container">
                             MusicGPT
                         </div>
@@ -52,18 +52,18 @@ const Lite = () => {
     return (
         <ul className="w-full h-full m-auto rounded-md bg-secondary grid list-none gap-x-[10px] p-[22px] sm:grid-cols-[0.75fr_1fr]">
             <li className="row-span-3 grid">
-                <a
+                <Link
                     className="flex h-full w-full select-none flex-col justify-end rounded-[6px] bg-secondary-container p-[25px] no-underline hover:-translate-x-1 hover:-translate-y-1 transition-transform duration-200 focus:shadow-[0_0_0_2px]"
                     href="/lite/search"
                 >
-                    {/* <Waveform /> */}
+                    <Waveform />
                     <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-on-secondary-container">
                         MusicGPT Lite
                     </div>
                     <p className="text-mauve4 text-[14px] leading-[1.3] text-on-secondary-container">
                         Musical, Lyrical & Cultural analysis.
                     </p>
-                </a>
+                </Link>
             </li>
 
             <ListItem title="Musical" section="lite">
@@ -83,18 +83,18 @@ const Pro = () => {
     return (
         <ul className="w-full h-full m-auto rounded-md bg-inverse-surface grid list-none gap-x-[10px] p-[22px] sm:grid-cols-[0.75fr_1fr]">
             <li className="row-span-4 grid">
-                <a
+                <Link
                     className="flex h-full w-full select-none flex-col justify-end rounded-[6px] bg-inverse-on-surface p-[25px] no-underline hover:-translate-x-1 hover:-translate-y-1 transition-transform duration-200 focus:shadow-[0_0_0_2px]"
                     href="/pro"
                 >
-                    {/* <Waveform /> */}
+                    <Waveform />
                     <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-inverse-surface">
                         MusicGPT Pro
                     </div>
                     <p className="text-mauve4 text-[14px] leading-[1.3] text-inverse-surface">
                         Real-time, dedicated machine-learning analysis.
                     </p>
-                </a>
+                </Link>
             </li>
             <ListItem title="Lite">
                 **All features from MusicGPT Lite.

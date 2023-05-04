@@ -4,6 +4,7 @@ import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { CaretDownIcon, InfoCircledIcon } from '@radix-ui/react-icons';
 import Waveform from "../Icons/waveform";
 import { useRouter } from 'next/router';
+import Link from "next/link";
 
 
 interface ListItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
@@ -58,7 +59,7 @@ export const Navbar: FC = () => {
             <ul className="one m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[500px] sm:grid-cols-[0.75fr_1fr]">
               <li className="row-span-3 grid">
                 <NavigationMenu.Link asChild>
-                  <a
+                  <Link
                     className="from-surface to-on-surface flex 
                     h-full w-full select-none flex-col justify-end rounded-[6px] bg-secondary-container p-[25px] no-underline outline-none focus:shadow-[0_0_0_2px]"
                     href="/lite/search"
@@ -70,7 +71,7 @@ export const Navbar: FC = () => {
                     <p className="text-mauve4 text-[14px] leading-[1.3] text-on-secondary-container">
                       Musical, Lyrical & Cultural analysis.
                     </p>
-                  </a>
+                  </Link>
                 </NavigationMenu.Link>
               </li>
 
@@ -103,7 +104,7 @@ export const Navbar: FC = () => {
             <ul className="one bg-inverse-surface m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[600px] sm:grid-cols-[0.75fr_1fr]">
               <li className="row-span-4 grid">
                 <NavigationMenu.Link asChild>
-                  <a
+                  <Link
                     className=" flex h-full w-full select-none flex-col justify-end rounded-[6px] bg-inverse-on-surface p-[25px] no-underline outline-none"
                     href="/pro"
                   >
@@ -114,7 +115,7 @@ export const Navbar: FC = () => {
                     <p className="text-mauve4 text-[14px] leading-[1.3] text-inverse-surface">
                       Real-time, dedicated machine-learning analysis.
                     </p>
-                  </a>
+                  </Link>
                 </NavigationMenu.Link>
               </li>
               <ListItem href="/pro" title="Lite">
@@ -159,12 +160,12 @@ export const Navbar: FC = () => {
 const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(({ className, children, title, section = 'pro', ...props }, forwardedRef) => (
   <li>
     <NavigationMenu.Link asChild>
-      <a
+      <div
         className={
           `focus:shadow-[0_0_0_2px] focus:shadow-violet7 hover:bg-mauve3 block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline outline-none transition-colors ${className}`
         }
-        {...props}
-        ref={forwardedRef}
+        // {...props}
+        // ref={forwardedRef}
       >
 
         {section === 'lite' ?
@@ -178,7 +179,7 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(({ className
             <p className="text-mauve11 leading-[1.4] text-inverse-on-surface">{children}</p>
           </>}
 
-      </a>
+      </div>
     </NavigationMenu.Link>
   </li>
 ));

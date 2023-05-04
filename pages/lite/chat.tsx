@@ -1,6 +1,6 @@
 import { ChatBox } from "@/components/Chat/ChatBox";
 import { Footer } from "@/components/Layout/Footer";
-import { Message, HighLevelData, LowLevelData, GeniusFormattedData, loadingState } from "@/types";
+import { Message, HighLevelData, LowLevelData, GeniusFormattedData, loadingState, Role } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/router';
 import { useHiddenData } from "@/utils/context/song_data_context";
@@ -200,15 +200,6 @@ export default function Chat() {
     try {
       const response = await axios.get(`/api/genius-song?id=${encodeURIComponent(genius_id)}`);
       genius_data = response.data as GeniusFormattedData
-      // genius_data = {
-      //   "artist_names": "Kendrick Lamar",
-      //   "apple_music_player_url": "https://genius.com/songs/3039923/apple_music_player",
-      //   "description": "On the ironically braggadocious track “HUMBLE.” Kendrick Lamar challenges his competition. It was released a week after the first promotional single, “The Heart Part 4,” with a music video directed by Dave Meyers and The Little Homies. It features religious imagery mixed with urban life, such as Kendrick in priest’s robes and a moving re-enactment of Leonardo Da Vinci’s painting The Last Supper—juxtaposing this with the concept of humility in the chorus.\n\nOn a religious note, the song could also...",
-      //   "embed_content": "<div id='rg_embed_link_3039923' class='rg_embed_link' data-song-id='3039923'>Read <a href='https://genius.com/Kendrick-lamar-humble-lyrics'>“HUMBLE.” by Kendrick Lamar</a> on Genius</div> <script crossorigin src='//genius.com/songs/3039923/embed.js'></script>",
-      //   "full_title": "HUMBLE. by Kendrick Lamar",
-      //   "header_image_thumbnail_url": "https://images.genius.com/ff22abdacf933fecfe39c9ad2a5fc441.300x153x1.jpg",
-      //   "lyrics": "[Intro]\nNobody pray for meIt been that day for meWay (Yeah, yeah)\n\n[Verse 1]\nAyy, I remember syrup sandwiches and crime allowancesFinesse a nigga with some counterfeits, but now I'm countin’ this\nParmesan where my accountant lives, in fact, I'm downin' thisD’USSÉ with my boo bae, tastes like Kool-Aid for the analysts\nGirl, I can buy your ass the world with my paystub\nOoh, that pussy good, won't you sit it on my taste bloods?\nI get way too petty once you let me do the extrasPull up on your block,..."
-      // }
       console.log(genius_data)
       setGeniusState(loadingState.finished)
     } catch (error) {
@@ -220,15 +211,12 @@ export default function Chat() {
 
   const handleSend = async (message: Message) => {
 
-
-
     if (isFirstMessage) {
-      let tempMessage: Message = { ...message }
-      tempMessage.content = `Data: ${JSON.stringify(modelData).replace(/\//g, '')} Prompt: ${tempMessage.content}`;
-      console.log(tempMessage);
-      var updatedMessages = [...messages, tempMessage]
+      let dataMessage: Message = {'role': 'data', 'content': `Data: ${JSON.stringify(modelData).replace(/\//g, '')}`}
+      // console.log(dataMessage);
+      var updatedMessages = [...messages, dataMessage, message]
       setIsFirstMessage(false);
-      console.log(updatedMessages)
+      // console.log(updatedMessages)
     }
     else {
       var updatedMessages = [...messages, message];
@@ -296,15 +284,15 @@ export default function Chat() {
     console.log("Set data called")
     if (geniusData) {
       setGeniusUserData({
-          full_title: geniusData.full_title,
-          embed_content: geniusData.embed_content,
-          apple_music_player_url: geniusData.apple_music_player_url,
-          header_image_thumbnail_url: geniusData.header_image_thumbnail_url,
-        }
+        full_title: geniusData.full_title,
+        embed_content: geniusData.embed_content,
+        apple_music_player_url: geniusData.apple_music_player_url,
+        header_image_thumbnail_url: geniusData.header_image_thumbnail_url,
+      }
       );
 
       setModelData({
-        genius:{
+        genius: {
           full_title: geniusData.full_title,
           lyrics: geniusData.lyrics,
           description: geniusData.description,
@@ -409,10 +397,12 @@ export default function Chat() {
   }, [messages]);
 
   useEffect(() => {
-    setMessages([defaultMessage, {
-      role: "user",
-      content: `My name is Caleb Sideras and today I want to ask you some questions!`
-    }]);
+    setMessages([defaultMessage,
+      // {
+      //   role: "user",
+      //   content: `My name is Caleb Sideras and today I want to ask you some questions!`
+      // }
+    ]);
   }, []);
 
   const handleReset = () => {
