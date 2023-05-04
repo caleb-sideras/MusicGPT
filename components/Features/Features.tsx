@@ -35,7 +35,7 @@ const General = () => {
                 </li>
 
                 <ListItem title="AI">
-                    Dicuss various aspects of a song in natural language.
+                    Discuss various aspects of a song in natural language.
                 </ListItem>
                 <ListItem title="ML/Data">
                     Accurate feature extraction and contexual audio clustering fed into the AI.
