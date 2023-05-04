@@ -30,6 +30,7 @@ export default function Chat() {
             artist: 'Kendrick Lamar',
             title: 'N95',
             duration: 1272623,
+            year: 2022,
             imageUrl: 'https://images.genius.com/2f8cae9b56ed9c643520ef2fd62cd378.300x300x1.png',
             musicBrainzID: '6476b30b-0c08-4305-9acb-9dfd8f3f36f8',
             highLevel: {
@@ -177,6 +178,7 @@ export default function Chat() {
             artist: 'Taylor Swift',
             title: 'Bad Blood',
             duration: 751048,
+            year: 2014,
             imageUrl: 'https://images.genius.com/f2bfbf2d1b827e9a99b47a9f287d6108.300x300x1.jpg',
             musicBrainzID: '914f6a27-fce4-4a75-9267-049b51a1b086',
             highLevel: {
@@ -324,6 +326,7 @@ export default function Chat() {
             artist: 'Daft Punk',
             title: 'Get Lucky',
             duration: 4079615,
+            year: 2013,
             imageUrl: 'https://images.genius.com/8a0047cdcf7b02c9dcb1185119a82adb.300x300x1.jpg',
             musicBrainzID: '0347d102-b653-4c6c-a0b2-cc9a58c5c585',
             highLevel: {
@@ -513,7 +516,7 @@ export default function Chat() {
                                 {exampleSongs.map((song, index) => (
                                     <>
                                         <div className="border-t border-tertiary w-full" />
-                                        <Artist key={index} onClick={() => gotoExampleSong(song.geniusID, song.musicBrainzID, song.highLevel, song.lowLevel, song.genius)} style={Style.home} artist={song.artist} title={song.title} duration={song.duration} imageUrl={song.imageUrl} />
+                                        <Artist key={index} onClick={() => gotoExampleSong(song.geniusID, song.musicBrainzID, song.highLevel, song.lowLevel, song.genius)} style={Style.home} artist={song.artist} title={song.title} duration={song.duration} year={song.year} imageUrl={song.imageUrl} />
                                     </>
                                 ))}
                             </div>

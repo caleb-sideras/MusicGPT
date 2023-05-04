@@ -40,7 +40,9 @@ const SearchComponent = () => {
       id: data.result.id,
       artist: data.result.primary_artist.name,
       title: data.result.title,
+      // wrong
       duration: data.result.stats.pageviews,
+      year: data.result.release_date_components.year,
       imageUrl: data.result.song_art_image_thumbnail_url,
     };
   };
@@ -161,6 +163,7 @@ const SearchComponent = () => {
                 title={songData.title}
                 duration={songData.duration}
                 imageUrl={songData.imageUrl}
+                year={songData.year}
                 onClick={
                   !shouldDisableClick
                     ? () => handleArtistClick(songData, songData.artist, songData.title)

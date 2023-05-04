@@ -7,6 +7,7 @@ interface SongData {
   title: string;
   duration: number;
   imageUrl: string;
+  year: number;
   [key: string]: any;
   onClick?: () => void;
   style?: Style
@@ -23,7 +24,7 @@ function formatMillisecondsToMinutes(milliseconds: number): string {
   return `${formattedMinutes}:${formattedSeconds}`;
 }
 
-export default function Artist({ artist, title, duration, imageUrl, onClick, style = Style.default, ...props }: SongData) {
+export default function Artist({ artist, title, duration, imageUrl, year, onClick, style = Style.default, ...props }: SongData) {
   return (
     <div
       className={`group flex items-center justify-between p-4 cursor-pointer duration-100
@@ -64,7 +65,8 @@ export default function Artist({ artist, title, duration, imageUrl, onClick, sty
               ''
         }`
       }>
-        {formatMillisecondsToMinutes(duration)} min
+        {/* {formatMillisecondsToMinutes(duration)} min */}
+        {year}
       </p>
     </div>
   );
