@@ -403,7 +403,7 @@ export default function Chat() {
       //   content: `My name is Caleb Sideras and today I want to ask you some questions!`
       // }
     ]);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [geniusUserData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleReset = () => {
     setMessages([defaultMessage]);
