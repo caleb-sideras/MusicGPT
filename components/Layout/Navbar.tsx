@@ -23,12 +23,6 @@ export const Navbar: FC = () => {
   return (
 
     <NavigationMenu.Root className="relative z-[1] flex w-full justify-center mt-4">
-      {/* <div className={`absolute left flex w-full text-xl items-center h-full pl-4 text-on-surface`}>
-        <div className={`h-full px-4 items-center text-center rounded-lg flex ${homeHighlighted ? 'text-on-tertiary-container bg-tertiary-container' : 'text-on-tertiary'}`}>
-        MusicGPT
-        </div>
-      </div> */}
-
       <NavigationMenu.List className={`center m-0 h-[63px] flex list-none rounded-full
       ${liteHighlighted ? 'bg-secondary text-on-secondary' : proHighlighted ? 'bg-inverse-surface text-inverse-on-surface' : 'bg-tertiary text-on-tertiary'}`} style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,.3),0px 1px 3px 1px rgba(0,0,0,.15)" }}>
 
@@ -82,7 +76,7 @@ export const Navbar: FC = () => {
                 Full lyrics separated by section.
               </ListItem>
               <ListItem href="/lite/search" title="Cultural" section="lite">
-                Context surrounding the music and it's relevance to various topics.
+                Context surrounding the music and it&apos;s relevance to various topics.
               </ListItem>
             </ul>
           </NavigationMenu.Content>
@@ -184,4 +178,4 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(({ className
   </li>
 ));
 
-
+ListItem.displayName = 'ListItem';
