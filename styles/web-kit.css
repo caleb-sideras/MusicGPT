@@ -1,0 +1,18 @@
+/* Remove the background color and text color of autofilled input elements */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: inherit; /* Set the text color to inherit from the element */
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset; /* Set the background color to transparent */
+  transition: background-color 5000s ease-in-out 0s; /* Use a long transition duration to prevent the autofill styles from reappearing */
+}
+
+/* Remove the highlight color of autofilled input elements */
+input:-webkit-autofill::selection,
+input:-webkit-autofill:hover::selection,
+input:-webkit-autofill:focus::selection,
+input:-webkit-autofill:active::selection {
+  background-color: transparent; /* Set the selection background color to transparent */
+  color: inherit; /* Set the selection text color to inherit from the element */
+}

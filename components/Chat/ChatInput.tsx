@@ -48,7 +48,7 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
     <div className="relative">
       <textarea
         ref={textareaRef}
-        className="min-h-[44px] rounded-lg pl-4 pr-12 py-2 w-full focus:outline-none focus:ring-1 focus:ring-neutral-300 border-2 border-neutral-200"
+        className="min-h-[44px] rounded-lg sm:rounded-t-none sm:border-t-0 pl-4 pr-12 py-2 w-full bg-surface focus:outline-none border border-outline text-on-surface"
         style={{ resize: "none" }}
         placeholder="Type a message..."
         value={content}
@@ -58,7 +58,7 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
       />
 
       <button onClick={() => handleSend()}>
-        <IconArrowUp className="absolute right-2 bottom-3 h-8 w-8 hover:cursor-pointer rounded-full p-1 bg-blue-500 text-white hover:opacity-80" />
+        <IconArrowUp className="absolute right-2 bottom-3 h-8 w-8 hover:cursor-pointer rounded-full p-1 bg-secondary text-on-secondary hover:opacity-80" />
       </button>
     </div>
   );

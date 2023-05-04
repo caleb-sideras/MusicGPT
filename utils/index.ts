@@ -8,7 +8,7 @@ export const OpenAIStream = async (messages: Message[]) => {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+      Authorization: `Bearer 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`
     },
     method: "POST",
     body: JSON.stringify({
@@ -16,7 +16,10 @@ export const OpenAIStream = async (messages: Message[]) => {
       messages: [
         {
           role: "system",
-          content: `You are a helpful, friendly, assistant.`
+          content: `You are musicGPT, a chatbot that deeply understands all aspects of music and helps users query information about a specific song. 
+          You are given a cluster of data, but you do not explicitly state these number values. 
+          Instead, you explain the implications and impact of these values on the song, in a way a person with a moderate musical background would understand. 
+          You do not answer questions unrelated to this song.`
         },
         ...messages
       ],

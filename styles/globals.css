@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@import url("./tokens.css");
+@import url("./colors.module.css");
+@import url("./typography.module.css");
+@import url("./theme.light.css");
+@import url("./theme.dark.css");
+
+@import './web-kit.css';
+
+@keyframes floatWave {
+    0% {
+        transform: translateY(25%);
+    }
+
+    50% {
+        transform: translateY(-25%);
+    }
+
+    100% {
+        transform: translateY(25%);
+    }
+}
+
+.wave {
+    animation: floatWave 1.2s ease-in-out infinite;
+    opacity: 0.7;
+}
