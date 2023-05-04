@@ -2,7 +2,7 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { LowLevelData, RateLimitInfo } from '@/types';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const lld = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { mbid } = req.query;
 
@@ -3669,47 +3669,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 };
 
-// ########### LOW LEVEL ################
-// # average_loudness
-// # dynamic_complexity
-// # mfcc -> mean
-
-
-// # RYTHM
-// # beats_count
-// # bpm
-// # danceability
-// # onset_rate
-
-
-// # TONAL
-// # chords_changes_rate
-// # chords_histogram
-// # chords_key
-// # chords_number_rate
-// # chords_scale
-// # chords_strength
-// # key_key
-// # key_scale
-// # key_strength
-// # thpcp
-// # tuning_diatonic_strength
-// # tuning_equal_tempered_deviation
-// # tuning_frequency
-// # tuning_nontempered_energy_ratio
-
-
-// # METADATA
-// # sample_rate
-// # replay_gain
-// # length
-// # bit_rate
-// # tags -> album
-// # tags -> albumartist
-// # tags -> composer
-// # tags -> date
-// # tags -> genre
-// # tags -> initialkey
-// # tags -> language
-// # tags -> title
-// # tags -> 
+export default lld;

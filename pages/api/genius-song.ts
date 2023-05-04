@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 const accessToken = 'JjTD_0JWGx__yo0cSQ8xbjkzZzi2NnxZYmGaeI9LHYxNqtl7kWEnKvCH4mH4tAl7';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const geniusSong = async (req: NextApiRequest, res: NextApiResponse) => {
     const { id } = req.query;
 
     try {
@@ -35,8 +35,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         if (trimmedData.startsWith('[') && trimmedData.endsWith(']')) { // Check for title lines
                             lyrics += trimmedData;
                         }
+                    // @ts-ignore
                     } else if (child.tagName === 'a') {
                         lyrics += $(child).find('.ReferentFragmentdesktop__Highlight-sc-110r0d9-1').text();
+                    // @ts-ignore
                     } else if (child.tagName === 'br') {
                         lyrics += '\n';
                     }
@@ -71,3 +73,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     }
 };
+
+export default geniusSong;

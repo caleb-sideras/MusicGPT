@@ -1,5 +1,6 @@
 import React from 'react';
 import { Style } from '@/types';
+import Image from 'next/image';
 
 interface SongData {
   artist: string;
@@ -34,7 +35,7 @@ export default function Artist({ artist, title, duration, imageUrl, onClick, sty
       }
       onClick={onClick}>
       <div className='items-center gap-4 flex flex-row max-w-[70%]'>
-        {imageUrl && <img src={imageUrl} alt={title} className="w-16 h-16 object-cover rounded-3xl" />}
+        {imageUrl && <Image src={imageUrl} alt={title} width={64} height={64} className="object-cover rounded-3xl" />}
         <div className='flex flex-col truncate'>
           <h2 className={`text-xl font-semibold overflow-hidden text-ellipsis
             ${style === Style.default ? 'text-on-background' :

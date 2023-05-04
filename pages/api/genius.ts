@@ -3,7 +3,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import searchGenius from '@/utils/api/search_genius';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const genius = async (req: NextApiRequest, res: NextApiResponse) => {
   const { artist, song } = req.query;
 
   if (typeof artist !== 'string' || typeof song !== 'string') {
@@ -13,3 +13,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const geniusResult = await searchGenius(`${artist} ${song}`);
   res.status(200).json(geniusResult);
 };
+
+export default genius;

@@ -2,7 +2,7 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { HighLevelData, HighLevel, RateLimitInfo, AudioProperties } from '@/types';
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const hld = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { mbid } = req.query;
 
@@ -55,3 +55,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     }
 };
+
+export default hld;

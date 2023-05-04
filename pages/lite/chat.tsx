@@ -336,7 +336,7 @@ export default function Chat() {
     }
 
     initData()
-  }, [router.isReady]);
+  }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Init low level data
   useEffect(() => {
@@ -359,7 +359,7 @@ export default function Chat() {
       setDataState(loadingState.failed)
     }
 
-  }, [geniusState])
+  }, [geniusState]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // init high level data
   useEffect(() => {
@@ -384,17 +384,17 @@ export default function Chat() {
       setData()
     }
 
-  }, [lowLevelState])
+  }, [lowLevelState]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (highLevelData) {
       setData()
     }
-  }, [highLevelData])
+  }, [highLevelData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setMessages([defaultMessage,
@@ -403,7 +403,7 @@ export default function Chat() {
       //   content: `My name is Caleb Sideras and today I want to ask you some questions!`
       // }
     ]);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleReset = () => {
     setMessages([defaultMessage]);

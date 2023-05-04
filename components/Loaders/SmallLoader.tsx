@@ -23,7 +23,7 @@ function SmallLoader({ height = 25, width = 50, waveformColor = '--md-sys-color-
 
     useEffect(() => {
         setWaveFormColor(getCssVarValue(waveformColor))
-    }, [])
+    }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
     const getStatusIcon = (status: loadingState) => {
         switch (status) {
@@ -50,7 +50,7 @@ function SmallLoader({ height = 25, width = 50, waveformColor = '--md-sys-color-
         <div className="flex flex-col">
             <div className={`card filled gap-4 rounded flex-col flex p-6 text-${textColor} bg-${bgColor}`}>
                 {contents.map((content, index) => (
-                    <div className=' flex-row flex items-center'>
+                    <div key={index} className=' flex-row flex items-center'>
                         <div>{getStatusIcon(content.loading_state)}</div>
                         <span className="ml-4">{content.text}</span>
                     </div>
