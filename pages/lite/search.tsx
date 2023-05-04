@@ -19,13 +19,20 @@ const SearchComponent = () => {
   const [loading, setLoading] = useState<loadingState>(loadingState.finished);
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [selectedArtistState, setSelectedArtistState] = useState<loadingState>(loadingState.finished);
+  const [error, setError] = useState(false);
   const { setHiddenData } = useHiddenData();
   const router = useRouter();
 
 
   const handleSearch = async (event: React.FormEvent) => {
-    setLoading(loadingState.loading);
     event.preventDefault();
+    
+    if (artist.trim().length === 0 || song.trim().length === 0) {
+      setError(true);
+      return;
+    }
+    setError(false);
+    setLoading(loadingState.loading);
     const geniusResponse = await Promise.resolve(
       axios.get<GeniusSearchApiResponse>(`/api/genius?artist=${encodeURIComponent(artist)}&song=${encodeURIComponent(song)}`)
     );
@@ -144,6 +151,8 @@ const SearchComponent = () => {
           />
         </div>
       </form>
+
+      {error && <div className=" bg-error text-on-error rounded-lg p-4 text-center">Please enter both an artist and a song</div>}
 
       {
         loading === loadingState.loading && <div className='mt-4'><SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
