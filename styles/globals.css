@@ -29,3 +29,116 @@
     animation: floatWave 1.2s ease-in-out infinite;
     opacity: 0.7;
 }
+
+
+
+.controls {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 300px;
+    padding: 8px;
+    background-color: #f2f5f6;
+    border-radius: 100px;
+    font-family: sans-serif;
+    font-size: 14px;
+    user-select: none;
+}
+
+.play {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.25s ease 0s;
+}
+
+.play:hover {
+    background-color: rgba(204, 204, 204, 0.3);
+}
+
+.play:active {
+    background-color: rgba(204, 204, 204, 0.6);
+}
+
+.icon {
+    display: none;
+}
+
+.controls.playing .play-icon,
+.controls.stopped .stop-icon,
+.controls.error .error-icon {
+    display: inline-block;
+}
+
+.seek-bar {
+    flex: 1;
+    margin: 0 16px;
+    cursor: pointer;
+}
+
+.seek-bar::-moz-range-track {
+    background-color: #555;
+}
+
+.controls.loading .seek-bar,
+.controls.error .seek-bar {
+    opacity: 0.5;
+}
+
+.visualizer {
+    display: block;
+}
+
+.visualizer .piano-roll-visualizer {
+    overflow-x: auto;
+}
+
+.seek-bar {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 3px;
+    background-color: #9b9c9d;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 10px;
+}
+
+.seek-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background-color: var(--md-sys-color-surface);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* .seek-bar:hover {
+    background-color: var(--md-sys-color-background);;
+} */
+
+/* .seek-bar:hover::-webkit-slider-thumb {
+    background-color: var(--md-sys-color-tertiary);
+} */
+
+.seek-bar::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background-color: #555;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.seek-bar:hover::-moz-range-thumb {
+    background-color: #444;
+}

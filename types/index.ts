@@ -42,9 +42,9 @@ export interface MusicBrainzApiResponse {
 
 export interface HiddenDataType {
   id: string | null;
-  high_level: HighLevelData| null;
-  low_level: LowLevelData| null;
-  genius: GeniusFormattedData| null;
+  high_level: HighLevelData | null;
+  low_level: LowLevelData | null;
+  genius: GeniusFormattedData | null;
 }
 
 export interface GeniusFormattedData {
@@ -169,4 +169,31 @@ export enum Style {
   'home',
   'lite',
   'pro'
+}
+
+
+
+
+
+/////////PRO///////////
+export interface MessagePart {
+  type: "text" | "data" | "!{midi}" | "!{audio}";
+  content: string;
+}
+
+export interface MessagePro {
+  role: Role;
+  parts: MessagePart[];
+}
+
+export interface MessageProData{
+  midi: JSON; // will be of type -> maybe possible to group based on type
+  audio: JSON; // will be of type
+  waveform: JSON;
+}
+
+export interface FullMessagePro {
+  messages: MessagePro[];
+  data: MessageProData;
+  
 }

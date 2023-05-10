@@ -1,12 +1,13 @@
-import { Message } from "@/types";
+import { Message, MessagePro } from "@/types";
 import { IconArrowUp } from "@tabler/icons-react";
 import { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
 
 interface Props {
-  onSend: (message: Message) => void;
+  onSend?: (message: Message) => void;
+  onSendPro?: (message: MessagePro) => void;
 }
 
-export const ChatInput: FC<Props> = ({ onSend }) => {
+export const ChatInput: FC<Props> = ({ onSend, onSendPro}) => {
   const [content, setContent] = useState<string>();
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -26,7 +27,11 @@ export const ChatInput: FC<Props> = ({ onSend }) => {
       alert("Please enter a message");
       return;
     }
-    onSend({ role: "user", content });
+    if (onSend) {
+      onSend({ role: "user", content });
+    } else if(onSendPro) {
+      onSendPro({ role: "user", parts: [{type:"text", content: content}] });
+    }
     setContent("");
   };
 

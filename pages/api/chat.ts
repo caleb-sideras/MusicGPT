@@ -7,8 +7,9 @@ export const config = {
 
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { messages } = (await req.json()) as {
+    const { messages, chatMode } = (await req.json()) as {
       messages: Message[];
+      chatMode: string
     };
 
     const charLimit = 12000;
@@ -27,7 +28,7 @@ const handler = async (req: Request): Promise<Response> => {
       messagesToSend.push(message);
     }
 
-    const stream = await OpenAIStream(messagesToSend);
+    const stream = await OpenAIStream(messagesToSend, chatMode);
 
     return new Response(stream);
     
