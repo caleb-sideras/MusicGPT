@@ -1,5 +1,6 @@
 import { Lite, Pro, General } from '@/components/Features/Features';
 import React from 'react';
+import Head from 'next/head'
 import Artist from '@/components/Songs/Artist';
 import { GeniusFormattedData, HighLevelData, LowLevelData, Style } from '@/types';
 import { useHiddenData } from "@/utils/context/song_data_context";
@@ -488,21 +489,14 @@ export default function Chat() {
 
     return (
         <>
-            {/* <Head>
-                <title>Chatbot UI</title>
-                <meta
-                    name="description"
-                    content="A simple chatbot starter kit for OpenAI's chat model using Next.js, TypeScript, and Tailwind CSS."
-                />
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                />
-                <link
-                    rel="icon"
-                    href="/favicon.ico"
-                />
-            </Head> */}
+            <Head>
+                <title>MusicGPT</title>
+                <meta name="description" content="Discuss various aspects of a song in natural language with MusicGPT Lite & Pro." />
+                <meta name="keywords" content="musicgpt, gpt, ai, music, songs" />
+                <meta property="og:title" content="MusicGPT" />
+                <meta property="og:description" content="Discuss various aspects of a song in natural language with MusicGPT Lite & Pro." />
+                <meta property="og:image" content="https://www.music-gpt.vercel.app/musicgpt.png" />
+            </Head>
             <div className="container mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 grid- lg:gap-4 gap-y-4">
                     <div style={introStyles} className="flex md:flex-row flex-col col-span-1 md:col-span-2 lg:col-span-10 rounded-lg justify-space-between gap-4 p-4 text-on-surface w-full h-fill">
