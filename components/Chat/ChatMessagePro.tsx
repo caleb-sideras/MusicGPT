@@ -1,7 +1,13 @@
 import { MessagePart, MessagePro } from "@/types";
 import React from "react";
 import { FC } from "react";
-import PlayerElement from "../MusicPlayer/ReactPlayer";
+import dynamic from 'next/dynamic';
+import AudioPlayer from "../MusicPlayer/AudioPlayer";
+
+const PlayerElement = dynamic(() => import('../MusicPlayer/ReactPlayer'), { ssr: false });
+
+// rest of your code
+
 
 interface Props {
     message: MessagePro;
@@ -12,14 +18,17 @@ export const ChatMessagePro: FC<Props> = ({ message }: { message: MessagePro }) 
         if (part.type === "text") {
             return part.content;
         } else if (part.type === "!{midi}") {
-            console.log("midi visualization")
-            // return <PlayerElement
-            //     buffer={fileData}
-            //     soundFont=""
-            //     loop={true}
-            // />
-        } else if (part.type === "!{audio}") {
-            console.log("audio visualization")
+            return <PlayerElement
+                buffer={part.content as Buffer}
+                soundFont=""
+                loop={true}
+            />
+        } else if (part.type === "!{audi}") {
+            return <AudioPlayer
+                file={part.content.file as File}
+                startTime={part.content.start as number}
+                finishTime={part.content.end as number}
+            />
         }
         return null;
     };
@@ -33,8 +42,8 @@ export const ChatMessagePro: FC<Props> = ({ message }: { message: MessagePro }) 
                 }`}
         >
             <div
-                className={`flex items-center ${message.role === "assistant"
-                    ? "bg-secondary text-on-secondary"
+                className={`flex flex-col items-center ${message.role === "assistant"
+                    ? "bg-on-surface text-surface"
                     : "bg-tertiary text-on-tertiary"
                     } rounded-2xl px-3 py-2 max-w-[67%] whitespace-pre-wrap`}
                 style={{ overflowWrap: "anywhere" }}

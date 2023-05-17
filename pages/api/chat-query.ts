@@ -19,10 +19,11 @@ interface Segment {
 }
 
 interface MusicGPTResponse {
-    completion: Completion;
-    analysis?: boolean;
+    completion: boolean;
+    notes?: boolean;
+    cqt?: boolean;
     download?: boolean;
-    segment?: Segment;
+    segments?: Segment[];
 }
 
 // Serialization functions
@@ -35,36 +36,22 @@ const parseGPTResponse = (response: any): MusicGPTResponse | Error => {
         return new Error("Invalid response object");
     }
 
-    const { completion, analysis, download, segment } = response;
-    console.log(completion)
-    console.log(analysis)
-    console.log(download)
-    console.log(segment)
+    const { completion, notes, cqt, download, segments } = response;
 
-    if (!completion || (completion !== "good" && completion !== "pass")) {
+    if (typeof completion !== "boolean") {
         return new Error("Invalid or missing completion");
     }
 
-    if (completion === "pass") {
-        console.log(completion, completion, completion, completion, completion, completion, completion)
-        return {completion};
+    if (!Array.isArray(segments) || segments.some(segment => typeof segment.start !== "number" || typeof segment.end !== "number")) {
+        return new Error("Invalid or missing segments");
     }
 
-    if (!segment || typeof segment.start !== "number" || typeof segment.end !== "number") {
-        return new Error("Invalid or missing segment");
-    }
-
-    console.log({
-        completion,
-        analysis: setDefaultBoolean(analysis),
-        download: setDefaultBoolean(download),
-        segment,
-    })
     return {
         completion,
-        analysis: setDefaultBoolean(analysis),
+        notes: setDefaultBoolean(notes),
+        cqt: setDefaultBoolean(cqt),
         download: setDefaultBoolean(download),
-        segment,
+        segments,
     };
 }
 
@@ -79,7 +66,7 @@ const processGPTResponse = (gptResponse: any): MusicGPTResponse | Error => {
     ) {
         return new Error("Invalid GPT response format");
     }
-    console.log(gptResponse)
+
     const content = gptResponse.choices[0].message.content;
     let jsonResponse: any;
 
@@ -91,6 +78,12 @@ const processGPTResponse = (gptResponse: any): MusicGPTResponse | Error => {
 
     return parseGPTResponse(jsonResponse);
 }
+
+
+const yamlPro = `musicgpt: 1.0.1; info: title: MusicGPT Helper, description: As a MusicGPT helper, fill relevant fields based on user prompts. Respond ONLY in JSON per the schema; schema: type: object, required: [notes, cqt, download, segments], properties: completion: type: boolean, description: Are fields filled?, required: true, notes: type: boolean, description: We need MIDI notes for all musical/song explanations, required: true, cqt: type: boolean, description: Need Constant-Q Transformation for frequency/spectral analysis?, required: true, download: type: boolean, description: Need a downloadable audio file?, required: true, segments: type: list, description: List of requested music sections with start/end times, required: true, properties: type: object, properties: start: type: integer, description: Segment start time in seconds, end: type: integer, description: Segment end time in seconds; User prompt: tell me about the song`
+
+const promptProV1 = `Instructions: Determine if the user prompt requires segmentation for a piece of music for any reason. If true, then determine if the user wants to download or an explanation/analysis. If any of these actions are requested generate a JSON of schema {"completion": "good","analysis": boolean,"download": boolean,"segment": {"start": int,"end": int}}. If none of these actions are needed or you are unsure, return a JSON of schema {"completion": "pass"}. You return times in seconds. You ONLY respond in the JSON format following the full schemas. You are not allowed to respond in natural language.
+User prompt:`
 
 const handler = async (req: NextRequest): Promise<Response> => {
 
@@ -129,8 +122,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
                     },
                     {
                         role: "user",
-                        content: `Instructions: Determine if the user prompt requires segmentation for a piece of music for any reason. If true, then determine if the user wants to download or perform analysis. If any of these actions are requested generate a JSON of schema {"completion": "good","analysis": boolean,"download": boolean,"segment": {"start": int,"end": int}}. If none of these actions are needed or you are unsure, return a JSON of schema {"completion": "pass"}. You return times in seconds. You ONLY respond in the JSON format following the full schemas. You are not allowed to respond in natural language.
-                        User prompt: ${message}`
+                        content: `${yamlPro} ${message}`
                     }
                 ],
                 max_tokens: 400,
@@ -138,8 +130,9 @@ const handler = async (req: NextRequest): Promise<Response> => {
             })
         });
         const data = await response.json()
+        console.log(data)
         const result = processGPTResponse(data);
-
+        console.log(result)
         if (result instanceof Error) {
             console.error(result.message);
             return new Response("Error", { status: 500 });

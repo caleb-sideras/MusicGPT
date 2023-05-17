@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { loadingState } from "@/types";
+import { LoadingState, LoaderType } from "@/types";
 import Waveform from "@/components/Icons/waveform"
 import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
+import ProgressLoader from './ProgressLoader';
 
 type SmallLoaderProps = {
     height: number
@@ -14,10 +15,12 @@ type SmallLoaderProps = {
 
 type ContentsProps = {
     text: string;
-    loading_state: loadingState;
+    loadingState: LoadingState;
+    loaderType: LoaderType
+    progress?: number
 }
 
-function SmallLoader({ height = 25, width = 50, waveformColor = '--md-sys-color-tertiary-container', textColor ='on-tertiary-container',  bgColor='tertiary-container', contents }: SmallLoaderProps) {
+function SmallLoader({ height = 25, width = 50, waveformColor = '--md-sys-color-tertiary-container', textColor = 'on-tertiary-container', bgColor = 'tertiary-container', contents }: SmallLoaderProps) {
 
     const [waveFormColor, setWaveFormColor] = useState<string>('')
 
@@ -25,14 +28,18 @@ function SmallLoader({ height = 25, width = 50, waveformColor = '--md-sys-color-
         setWaveFormColor(getCssVarValue(waveformColor))
     }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    const getStatusIcon = (status: loadingState) => {
-        switch (status) {
-            case loadingState.loading:
-                return <Waveform width={width} height={height} color={waveFormColor} />
-            case loadingState.finished:
-                return <CheckCircledIcon className='textColor'/>;
-            case loadingState.failed:
-                return <CrossCircledIcon className='textColor'/>;
+    const getStatusIcon = (content: ContentsProps) => {
+        switch (content.loadingState) {
+            case LoadingState.loading:
+                if (content.loaderType === LoaderType.waveform)
+                    return <Waveform width={width} height={height} color={waveFormColor} />
+                else {
+                    return <ProgressLoader progress={content.progress as number} loaderColor={textColor} bgColor={bgColor} />
+                }
+            case LoadingState.finished:
+                return <CheckCircledIcon className='textColor' />;
+            case LoadingState.failed:
+                return <CrossCircledIcon className='textColor' />;
             default:
                 return "";
         }
@@ -50,8 +57,8 @@ function SmallLoader({ height = 25, width = 50, waveformColor = '--md-sys-color-
         <div className="flex flex-col">
             <div className={`card filled gap-4 rounded flex-col flex p-6 text-${textColor} bg-${bgColor}`}>
                 {contents.map((content, index) => (
-                    <div key={index} className=' flex-row flex items-center'>
-                        <div>{getStatusIcon(content.loading_state)}</div>
+                    <div key={index} className=' flex-row flex items-center justify-center'>
+                        <div>{getStatusIcon(content)}</div>
                         <span className="ml-4">{content.text}</span>
                     </div>
                 ))}

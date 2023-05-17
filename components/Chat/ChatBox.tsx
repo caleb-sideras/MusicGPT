@@ -25,7 +25,7 @@ export const ChatBox: FC<Props> = ({ messages, messagesPro, loading, onSend, onS
         <ResetChat onReset={onReset} />
       </div> */}
 
-      <div className="flex flex-col rounded-lg px-2 sm:p-4 sm:border rounded-b-none border-outline max-h-full overflow-auto">
+      <div className="flex flex-col bg-surface rounded-lg px-2 sm:p-4 sm:border rounded-b-none border-outline max-h-full overflow-auto">
         {
           messages ? messages.map((message, index) => (
             <div

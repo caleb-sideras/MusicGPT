@@ -15,6 +15,7 @@ const handler = async (req: Request): Promise<Response> => {
     const charLimit = 12000;
     let charCount = 0;
     let messagesToSend = [];
+    console.log(messages)
 
     for (let i = 0; i < messages.length; i++) {
       const message = messages[i];
@@ -27,8 +28,9 @@ const handler = async (req: Request): Promise<Response> => {
       charCount += message.content.length;
       messagesToSend.push(message);
     }
+    console.log(messagesToSend)
 
-    const stream = await OpenAIStream(messagesToSend, chatMode);
+    const stream = await OpenAIStream(messagesToSend, chatMode as 'pro' | 'lite');
 
     return new Response(stream);
     

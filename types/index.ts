@@ -1,3 +1,6 @@
+import { NoteEventTime } from "@/utils/basic-pitch-ts/src";
+
+
 export enum OpenAIModel {
   DAVINCI_TURBO = "gpt-3.5-turbo",
   GPT_4 = "gpt-4"
@@ -158,7 +161,7 @@ export type LowLevelData = {
   }
 }
 
-export enum loadingState {
+export enum LoadingState {
   loading = 0,
   finished = 1,
   failed = 2
@@ -171,14 +174,18 @@ export enum Style {
   'pro'
 }
 
+export enum LoaderType {
+  waveform = 1,
+  progress = 2
+}
 
 
 
 
 /////////PRO///////////
 export interface MessagePart {
-  type: "text" | "data" | "!{midi}" | "!{audio}";
-  content: string;
+  type: "text" | "data" | "!{midi}" | "!{audi}" | "!{wave}";
+  content: Buffer | any;
 }
 
 export interface MessagePro {
@@ -186,14 +193,51 @@ export interface MessagePro {
   parts: MessagePart[];
 }
 
-export interface MessageProData{
-  midi: JSON; // will be of type -> maybe possible to group based on type
-  audio: JSON; // will be of type
-  waveform: JSON;
+export interface MessageProData {
+  midi: any; // will be of type -> maybe possible to group based on type
+  audio: any; // will be of type
+  waveform: any;
 }
 
 export interface FullMessagePro {
   messages: MessagePro[];
   data: MessageProData;
-  
+
+}
+
+export enum ProState {
+  menu = 0,
+  upload = 1,
+  convert = 2,
+  loading = 3,
+  instructions = 4,
+  chat = 5
+}
+
+export type ProdTypes = {
+  panningScore: number;
+  dynamicComplexity: number;
+  dynamicComplexityLoudness: number
+  loudness: number;
+}
+
+
+
+/////////AUDIO PLAYBACK///////////
+export interface Audio {
+  id: number;
+  name: string;
+  pitch: number;
+  reverb: number;
+  distortion: number;
+  feedback: number;
+  delay: number;
+  audio: File;
+}
+
+export interface FileProps {
+  // audioBuffer: AudioBuffer;
+  arrayBuffer?: ArrayBuffer;
+  name: string;
+  file: File
 }

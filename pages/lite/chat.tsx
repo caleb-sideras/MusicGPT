@@ -1,6 +1,6 @@
 import { ChatBox } from "@/components/Chat/ChatBox";
 import { Footer } from "@/components/Layout/Footer";
-import { Message, HighLevelData, LowLevelData, GeniusFormattedData, loadingState, Role } from "@/types";
+import { Message, HighLevelData, LowLevelData, GeniusFormattedData, LoadingState, Role, LoaderType } from "@/types";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/router';
 import { useHiddenData } from "@/utils/context/song_data_context";
@@ -60,12 +60,12 @@ export default function Chat() {
   //data loading states
   // global 
   const [pageInit, setPageInit] = useState<Boolean>(false)
-  const [dataState, setDataState] = useState<loadingState>(loadingState.loading)
+  const [dataState, setDataState] = useState<LoadingState>(LoadingState.loading)
   const [isFirstMessage, setIsFirstMessage] = useState<Boolean>(true) // true -> is first message, false -> is not first message
   // local
-  const [lowLevelState, setLowLevelState] = useState<loadingState>(loadingState.loading);
-  const [highLevelState, setHighLevelState] = useState<loadingState>(loadingState.loading);
-  const [geniusState, setGeniusState] = useState<loadingState>(loadingState.loading);
+  const [lowLevelState, setLowLevelState] = useState<LoadingState>(LoadingState.loading);
+  const [highLevelState, setHighLevelState] = useState<LoadingState>(LoadingState.loading);
+  const [geniusState, setGeniusState] = useState<LoadingState>(LoadingState.loading);
 
   // messages
   const [messages, setMessages] = useState<Message[]>([]);
@@ -91,9 +91,9 @@ export default function Chat() {
       const response = await axios.get(`/api/lld?mbid=${encodeURIComponent(music_brainz_id)}`);
       music_brainz_low = response.data as LowLevelData
       console.log(music_brainz_low)
-      setLowLevelState(loadingState.finished)
+      setLowLevelState(LoadingState.finished)
     } catch (error) {
-      setLowLevelState(loadingState.failed)
+      setLowLevelState(LoadingState.failed)
       console.log(error)
     }
     return music_brainz_low
@@ -187,9 +187,9 @@ export default function Chat() {
       //   }
       // }
       console.log(music_brainz_high)
-      setHighLevelState(loadingState.finished)
+      setHighLevelState(LoadingState.finished)
     } catch (error) {
-      setHighLevelState(loadingState.failed)
+      setHighLevelState(LoadingState.failed)
       console.log(error);
     }
     return music_brainz_high
@@ -201,9 +201,9 @@ export default function Chat() {
       const response = await axios.get(`/api/genius-song?id=${encodeURIComponent(genius_id)}`);
       genius_data = response.data as GeniusFormattedData
       console.log(genius_data)
-      setGeniusState(loadingState.finished)
+      setGeniusState(LoadingState.finished)
     } catch (error) {
-      setGeniusState(loadingState.failed)
+      setGeniusState(LoadingState.failed)
       console.log(error);
     }
     return genius_data
@@ -303,10 +303,10 @@ export default function Chat() {
           highLevel: highLevelData
         }
       });
-      setDataState(loadingState.finished)
+      setDataState(LoadingState.finished)
     }
     else {
-      setDataState(loadingState.failed)
+      setDataState(LoadingState.failed)
     }
   }
 
@@ -327,7 +327,7 @@ export default function Chat() {
         console.log("-----------------------------HIDDEN DATA TRUE-----------------------------")
         console.log(hiddenData)
         setGeniusData(hiddenData.genius)
-        setGeniusState(loadingState.finished)
+        setGeniusState(LoadingState.finished)
         console.log("Set genius from hidden")
       } else {
         setGeniusData(await getGeniusData(genius));
@@ -343,7 +343,7 @@ export default function Chat() {
     const initLow = async () => {
       if (hiddenData && hiddenData.id == musicBrainzId && hiddenData.low_level) {
         setLowLevelData(hiddenData.low_level)
-        setLowLevelState(loadingState.finished)
+        setLowLevelState(LoadingState.finished)
         console.log("Set low-level from hidden")
       }
       else {
@@ -352,11 +352,11 @@ export default function Chat() {
       }
     }
 
-    if (geniusState === loadingState.finished) {
+    if (geniusState === LoadingState.finished) {
       initLow()
     }
-    else if (geniusState === loadingState.failed) {
-      setDataState(loadingState.failed)
+    else if (geniusState === LoadingState.failed) {
+      setDataState(LoadingState.failed)
     }
 
   }, [geniusState]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -369,7 +369,7 @@ export default function Chat() {
 
       if (hiddenData && hiddenData.id == musicBrainzId && hiddenData.high_level) {
         setHighLevelData(hiddenData.high_level)
-        setHighLevelState(loadingState.finished)
+        setHighLevelState(LoadingState.finished)
         console.log("Set high-level from hidden")
       } else {
         setHighLevelData(await getHighLevelData(musicBrainzId))
@@ -377,10 +377,10 @@ export default function Chat() {
       }
     }
 
-    if (lowLevelState === loadingState.finished) {
+    if (lowLevelState === LoadingState.finished) {
       initHigh()
     }
-    else if (lowLevelState === loadingState.failed) {
+    else if (lowLevelState === LoadingState.failed) {
       setData()
     }
 
@@ -416,18 +416,18 @@ export default function Chat() {
       ) : (
         <>
           {
-            dataState === loadingState.loading ? (
+            dataState === LoadingState.loading ? (
               <div className="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 backdrop-blur-sm">
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-lg p-4">
                   <SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
                     contents={[
-                      { text: 'Obtaining cultural goodness', loading_state: geniusState },
-                      { text: 'Retrieving complex musical data', loading_state: lowLevelState },
-                      { text: 'Looking for general information', loading_state: highLevelState }
+                      { text: 'Obtaining cultural goodness', loadingState: geniusState, loaderType: LoaderType.waveform },
+                      { text: 'Retrieving complex musical data', loadingState: lowLevelState, loaderType: LoaderType.waveform  },
+                      { text: 'Looking for general information', loadingState: highLevelState, loaderType: LoaderType.waveform  }
                     ]} />
                 </div>
               </div>
-            ) : dataState === loadingState.failed ? (
+            ) : dataState === LoadingState.failed ? (
               <div className="text-error bg-error-container p-4 text-center rounded-lg">Error</div>
             ) : (
               <div className="flex flex-col sm:px-10 pb-4 sm:pb-10 max-w-[800px] mx-auto sm:mt-4">
@@ -454,9 +454,9 @@ export default function Chat() {
                         >
                           <SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
                             contents={[
-                              { text: 'Cultural data', loading_state: geniusState },
-                              { text: 'Musical data', loading_state: lowLevelState },
-                              { text: 'General information', loading_state: highLevelState }
+                              { text: 'Cultural data', loadingState: geniusState, loaderType: LoaderType.waveform  },
+                              { text: 'Musical data', loadingState: lowLevelState, loaderType: LoaderType.waveform  },
+                              { text: 'General information', loadingState: highLevelState, loaderType: LoaderType.waveform  }
                             ]} />
                           <DropdownMenu.Arrow className="fill-white" />
                         </DropdownMenu.Content>

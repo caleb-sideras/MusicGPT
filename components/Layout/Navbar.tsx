@@ -49,7 +49,7 @@ export const Navbar: FC = () => {
             />
           </NavigationMenu.Trigger>
 
-          <NavigationMenu.Content className="bg-secondary data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight absolute top-0 left-0 w-full sm:w-auto">
+          <NavigationMenu.Content className="bg-secondary z-10 data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight absolute top-0 left-0 w-full sm:w-auto">
             <ul className="one m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[500px] sm:grid-cols-[0.75fr_1fr]">
               <li className="row-span-3 grid">
                 <NavigationMenu.Link asChild>
@@ -70,13 +70,13 @@ export const Navbar: FC = () => {
               </li>
 
               <ListItem href="/lite/search" title="Musical" section="lite">
-                High & Low level features capturing the general structure of the music.
+                Discuss high & low level features capturing the general structure of the music.
               </ListItem>
               <ListItem href="/lite/search" title="Lyrics" section="lite">
-                Full lyrics separated by section.
+                Understand the meaning behind lyrics.
               </ListItem>
               <ListItem href="/lite/search" title="Cultural" section="lite">
-                Context surrounding the music and it&apos;s relevance to various topics.
+                Be informed about the context surrounding the music and its relevance to various topics.
               </ListItem>
             </ul>
           </NavigationMenu.Content>
@@ -94,7 +94,7 @@ export const Navbar: FC = () => {
             />
           </NavigationMenu.Trigger>
 
-          <NavigationMenu.Content className="absolute top-0 left-0 w-full sm:w-auto">
+          <NavigationMenu.Content className="absolute z-10 top-0 left-0 w-full sm:w-auto">
             <ul className="one bg-inverse-surface m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[600px] sm:grid-cols-[0.75fr_1fr]">
               <li className="row-span-4 grid">
                 <NavigationMenu.Link asChild>
@@ -107,19 +107,19 @@ export const Navbar: FC = () => {
                       MusicGPT Pro
                     </div>
                     <p className="text-mauve4 text-[14px] leading-[1.3] text-inverse-surface">
-                      Real-time, dedicated machine-learning analysis.
+                      Real-time, dedicated, technical analysis.
                     </p>
                   </Link>
                 </NavigationMenu.Link>
               </li>
               <ListItem href="/pro" title="Lite">
-                **All features from MusicGPT Lite.
+                Discuss technical aspects of songs such as stero image, compression and more.
               </ListItem>
               <ListItem href="/pro" title="Clustering">
-                Clustering of relavent sections to identify patterns.
+                MusicGPT gathers all relevant information about a song from the Internet.
               </ListItem>
               <ListItem href="/pro" title="MIDI">
-                Extracting main melodies in MIDI.
+                Discuss a songs MIDI with MusicGPT&apos;s Polyphonic MIDI extraction.
               </ListItem>
               <ListItem href="/pro" title="Upload">
                 Upload your own music for analysis.
@@ -158,8 +158,8 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(({ className
         className={
           `focus:shadow-[0_0_0_2px] focus:shadow-violet7 hover:bg-mauve3 block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline outline-none transition-colors ${className}`
         }
-        // {...props}
-        // ref={forwardedRef}
+      // {...props}
+      // ref={forwardedRef}
       >
 
         {section === 'lite' ?

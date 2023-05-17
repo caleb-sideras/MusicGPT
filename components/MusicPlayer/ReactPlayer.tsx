@@ -3,6 +3,8 @@ import * as mm from '@magenta/music';
 import { NoteSequence, INoteSequence } from '@magenta/music';
 import Visualizer from './ReactVisualizer';
 import { PlayIcon, PauseIcon } from '@radix-ui/react-icons'
+import Waveform from '../Icons/waveform';
+import { FormatTimePlayer } from '@/utils/utils';
 
 const DEFAULT_SOUNDFONT = 'https://storage.googleapis.com/magentadata/js/soundfonts/sgm_plus';
 
@@ -48,6 +50,7 @@ const PlayerElement: React.FC<PlayerProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [nSequence, setNSequence] = useState<INoteSequence | null>(null);
+  const [timerID, setTimerID] = useState<NodeJS.Timeout | null>(null);
 
   const playButtonRef = useRef<HTMLButtonElement>(null);
   const seekBarRef = useRef<HTMLInputElement>(null);
@@ -55,29 +58,24 @@ const PlayerElement: React.FC<PlayerProps> = ({
   const totalTimeLabelRef = useRef<HTMLSpanElement>(null);
   const visualizerRef = useRef<VisualizerHandle>(null);
 
+
   useEffect(() => {
     if (src) {
       initPlayer();
     }
-  }, [src]);
+  }, [src]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (buffer) {
       initPlayer();
     }
-  }, [buffer]);
+  }, [buffer]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (noteSequence) {
       initPlayer();
     }
-  }, [noteSequence]);
-
-  const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
+  }, [noteSequence]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const setLoadingState = () => {
     setLoading(true);
@@ -117,7 +115,7 @@ const PlayerElement: React.FC<PlayerProps> = ({
       }
 
       setCurrentTime(0);
-      setDuration(ns.totalTime as number);
+      setDuration(Math.round(ns.totalTime as number));
 
       let newPlayer: mm.BasePlayer;
       const callbackObject = {
@@ -145,6 +143,28 @@ const PlayerElement: React.FC<PlayerProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (playing) {
+      const timer = setInterval(() => {
+        setCurrentTime(oldTime => {
+          if (oldTime + 1 >= duration) { // or some other condition
+            clearInterval(timer);
+            console.log(oldTime, Math.round(duration))
+            setCurrentTime(0)
+            return oldTime;
+          }
+          return oldTime + 1;
+        });
+      }, 1000);
+      setTimerID(timer);
+    }
+    return () => {
+      if (timerID) {
+        clearInterval(timerID);
+      }
+    }
+  }, [playing, duration]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const start = async () => {
     if (!player) return;
     setPlaying(true);
@@ -156,7 +176,18 @@ const PlayerElement: React.FC<PlayerProps> = ({
     if (!player) return;
     player.stop();
     setPlaying(false);
+    if (timerID) {
+      clearInterval(timerID);
+      setTimerID(null);
+    }
   };
+
+  useEffect(() => {
+    if (!playing && timerID) {
+      clearInterval(timerID);
+      setTimerID(null);
+    }
+  }, [playing, timerID]);
 
   const handleSeekBarInput = () => {
     setSeeking(true);
@@ -167,18 +198,22 @@ const PlayerElement: React.FC<PlayerProps> = ({
 
   const handleSeekBarChange = () => {
     if (!player) return;
-    const time = parseFloat(seekBarRef.current.value);
-    setCurrentTime(time);
+    if (seekBarRef.current) {
+      const time = parseFloat(seekBarRef.current.value);
+      setCurrentTime(time);
+      if (player.isPlaying()) {
+        player.seekTo(time);
+        if (player.getPlayState() === 'paused') {
+          player.resume();
+        }
+      }
+      setSeeking(false);
+    }
+
     // More efficient way to do this
     // currentTimeLabelRef.current.textContent = formatTime(time);
     // seekBarRef.current.value = time; 
-    if (player.isPlaying()) {
-      player.seekTo(time);
-      if (player.getPlayState() === 'paused') {
-        player.resume();
-      }
-    }
-    setSeeking(false);
+
   };
 
   const handlePlayButtonClick = () => {
@@ -192,50 +227,57 @@ const PlayerElement: React.FC<PlayerProps> = ({
 
   return (
     <div className='flex flex-col bg-surface rounded-lg p-4 overflow-x-hidden w-full'>
-      <div className={`inline-flex items-center justify-between w-full p-2 bg-inverse-surface rounded-full text-sm font-sans select-none ${playing ? 'playing' : 'stopped'} ${loading ? 'loading' : ''} ${error ? 'error' : ''}`}>
-        <button
-          className="play"
-          disabled={loading || error !== null}
-          onClick={handlePlayButtonClick}
-          ref={playButtonRef}
-        >
-          {
-            playing ? (<span className="stop-icon text-surface"><PauseIcon height={'1rem'} width={'1rem'} /></span>) :
-              (<span className="play-icon text-surface"><PlayIcon height={'1rem'} width={'1rem'} /></span>)
-          }
-        </button>
-        <div>
-          <span className="current-time" ref={currentTimeLabelRef}>
-            {formatTime(currentTime)}
-          </span>{' '}
-          /{' '}
-          <span className="total-time" ref={totalTimeLabelRef}>
-            {formatTime(duration)}
-          </span>
-        </div>
-        <input
-          type="range"
-          min="0"
-          max={duration}
-          value={currentTime}
-          step="any"
-          className="seek-bar"
-          disabled={loading || error !== null}
-          onInput={handleSeekBarInput}
-          onChange={handleSeekBarChange}
-          ref={seekBarRef}
+      {!nSequence ?
+        <div className='w-full justify-center flex'>
+          <Waveform height={40} width={75} />
+        </div> :
+        <>
+          <div className={`inline-flex items-center justify-between w-full p-2 bg-inverse-surface rounded-lg text-sm font-sans select-none ${playing ? 'playing' : 'stopped'} ${loading ? 'loading' : ''} ${error ? 'error' : ''}`}>
+            <button
+              className="play"
+              disabled={loading || error !== null}
+              onClick={handlePlayButtonClick}
+              ref={playButtonRef}
+            >
+              {
+                playing ? (<span className="stop-icon text-surface"><PauseIcon height={'1rem'} width={'1rem'} /></span>) :
+                  (<span className="play-icon text-surface"><PlayIcon height={'1rem'} width={'1rem'} /></span>)
+              }
+            </button>
+            <div>
+              <span className="current-time" ref={currentTimeLabelRef}>
+                {FormatTimePlayer(currentTime)}
+              </span>{' '}
+              /{' '}
+              <span className="total-time" ref={totalTimeLabelRef}>
+                {FormatTimePlayer(duration)}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max={duration}
+              value={currentTime}
+              step="any"
+              className="seek-bar"
+              disabled={loading || error !== null}
+              onInput={handleSeekBarInput}
+              onChange={handleSeekBarChange}
+              ref={seekBarRef}
 
-        />
-      </div>
-      {nSequence && visualizer &&
-        <Visualizer
-          // src="https://cdn.jsdelivr.net/gh/cifkao/html-midi-player@2b12128/jazz.mid"
-          noteSequence={nSequence as INoteSequence}
-          type="piano-roll"
-          ref={visualizerRef}
-          config={visualizerConfig}
-        />
+            />
+          </div>
+          {nSequence && visualizer &&
+            <Visualizer
+              noteSequence={nSequence as INoteSequence}
+              type="piano-roll"
+              ref={visualizerRef}
+              config={visualizerConfig}
+            />
+          }
+        </>
       }
+
 
     </div>
   );

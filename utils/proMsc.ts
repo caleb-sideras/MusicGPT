@@ -443,3 +443,39 @@ const formatAndStringifyNotesForModel = (
 //     const midi = new Midi(arrayBuffer);
 //     setCurrentMidi(midi);
 // }
+
+
+// BETA
+const extractChords = (essentiaInstance: any, monoSignal: any, sampleRate: number): any => {
+    // const monoSignal = essentiaInstance.vectorToArray(monoAudio)
+
+    let vectorVectorFloat = new essentiaInstance.module.VectorVectorFloat()
+
+    let frames = essentiaInstance.FrameGenerator(monoSignal, 22050, 11025)
+    let numFrames = frames.size();
+    for (let i = 0; i < 10; i++) {
+        let frame = frames.get(i);
+        let frame_spectrum = essentiaInstance.Spectrum(frame).spectrum;
+        let { frequencies, magnitudes } = essentiaInstance.SpectralPeaks(frame_spectrum);
+        let hpcp_output = essentiaInstance.HPCP(frequencies, magnitudes).hpcp;
+
+        vectorVectorFloat.push_back(hpcp_output)
+    }
+
+    const chordsDetection = essentiaInstance.ChordsDetection(vectorVectorFloat, 22050, sampleRate, 2)
+
+    return { chords: essentiaInstance.vectorToArray(chordsDetection.chords), strength: essentiaInstance.vectorToArray(chordsDetection.strength) }
+
+
+    // NOT WORKING //
+    // const multiPitchmelody = await essentiaInstance.MultiPitchMelodia(monoAudio, 10, 3, 8192, false, 0.8, 4096, 1, 40, 20000, 100, 40, 20, 0.9, 0.9, 27.5625, 55, 44100, 100);
+    // console.log(multiPitchmelody)
+    // console.log(essentiaInstance.vectorToArray(multiPitchmelody.pitch))
+
+    // A typed array of 32-bit float values. The contents are initialized to 0. If the requested number of bytes could not be allocated an exception is raised.
+    // const tonal = essentiaInstance.TonalExtractor(monoAudio.audio)
+    // const multiPitchmelody = await essentiaInstance.MultiPitchMelodia(monoAudio.audio)
+
+    // const loudness = essentiaInstance.LoudnessEBUR128(left, right, 0.1, originalBuffer.sampleRate)
+    // const predominantPitchmelody = await essentiaInstance.PredominantPitchMelodia(monoAudio.audio)
+}

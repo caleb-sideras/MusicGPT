@@ -29,7 +29,7 @@ const General = () => {
                             MusicGPT
                         </div>
                         <p className="text-mauve4 text-[14px] leading-[1.3] text-on-tertiary-container">
-                            GPT-4 powered music analysis.
+                            AI powered music analysis.
                         </p>
                     </div>
                 </li>
@@ -37,11 +37,11 @@ const General = () => {
                 <ListItem title="AI">
                     Discuss various aspects of a song in natural language.
                 </ListItem>
-                <ListItem title="ML/Data">
-                    Accurate feature extraction and contexual audio clustering fed into the AI.
+                <ListItem title="Multi-model">
+                MusicGPT employs a multi-model architecture, enhancing the capacity of AI to grasp and interpret musical nuances effectively.
                 </ListItem>
                 <ListItem title="Search">
-                    On-demand search for any song w/ audio uploads coming soon
+                    On-demand search for any song or upload your own files
                 </ListItem>
             </ul>
         </div>
@@ -67,13 +67,13 @@ const Lite = () => {
             </li>
 
             <ListItem title="Musical" section="lite">
-                High & Low level features capturing the general structure of the music.
+                Discuss high & low level features capturing the general structure of the music.
             </ListItem>
             <ListItem title="Lyrics" section="lite">
-                Full lyrics separated by section.
+                Understand the meaning behind lyrics.
             </ListItem>
             <ListItem title="Cultural" section="lite">
-                Context surrounding the music and its relevance to various topics.
+                Be informed about the context surrounding the music and its relevance to various topics.
             </ListItem>
         </ul>
     );
@@ -92,18 +92,18 @@ const Pro = () => {
                         MusicGPT Pro
                     </div>
                     <p className="text-mauve4 text-[14px] leading-[1.3] text-inverse-surface">
-                        Real-time, dedicated machine-learning analysis.
+                        Real-time, dedicated, technical analysis.
                     </p>
                 </Link>
             </li>
-            <ListItem title="Lite">
-                **All features from MusicGPT Lite.
+            <ListItem title="Production and Engineering">
+                Discuss technical aspects of songs such as stero image, compression and more.
             </ListItem>
-            <ListItem title="Clustering">
-                Clustering of relevant sections to identify patterns.
+            <ListItem title="Web Search">
+                MusicGPT gathers all relevant information about a song from the Internet.
             </ListItem>
             <ListItem title="MIDI">
-                Extracting main melodies in MIDI.
+                Discuss a songs MIDI with MusicGPT&apos;s Polyphonic MIDI extraction.
             </ListItem>
             <ListItem title="Upload">
                 Upload your own music for analysis.

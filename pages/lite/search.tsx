@@ -3,11 +3,11 @@ import getRecordingByArtistAndTitle from '@/utils/api/artist_song';
 import Artist from '@/components/Songs/Artist';
 import axios, { AxiosResponse } from 'axios';
 import SongDetails from '@/components/Songs/Artist';
-import { ArtistData, GeniusSearchApiResponse, HighLevelData } from "@/types";
+import { ArtistData, GeniusSearchApiResponse, HighLevelData, LoaderType } from "@/types";
 import { useRouter } from 'next/router';
 import { useHiddenData } from "@/utils/context/song_data_context";
 import SmallLoader from '@/components/Loaders/SmallLoader';
-import { loadingState } from '@/types';
+import { LoadingState } from '@/types';
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Style } from '@/types';
 
@@ -16,9 +16,9 @@ const SearchComponent = () => {
   const [artist, setArtist] = useState('');
   const [song, setSong] = useState('');
   const [data, setData] = useState<GeniusSearchApiResponse | null>(null);
-  const [loading, setLoading] = useState<loadingState>(loadingState.finished);
+  const [loading, setLoading] = useState<LoadingState>(LoadingState.finished);
   const [selectedArtist, setSelectedArtist] = useState(null);
-  const [selectedArtistState, setSelectedArtistState] = useState<loadingState>(loadingState.finished);
+  const [selectedArtistState, setSelectedArtistState] = useState<LoadingState>(LoadingState.finished);
   const [error, setError] = useState(false);
   const { setHiddenData } = useHiddenData();
   const router = useRouter();
@@ -32,14 +32,13 @@ const SearchComponent = () => {
       return;
     }
     setError(false);
-    setLoading(loadingState.loading);
+    setLoading(LoadingState.loading);
     const geniusResponse = await Promise.resolve(
       axios.get<GeniusSearchApiResponse>(`/api/genius?artist=${encodeURIComponent(artist)}&song=${encodeURIComponent(song)}`)
     );
-    console.log(geniusResponse)
 
     setData(geniusResponse.data);
-    setLoading(loadingState.finished);
+    setLoading(LoadingState.finished);
   };
 
   const extractSongData = (data: any) => {
@@ -48,27 +47,23 @@ const SearchComponent = () => {
       artist: data.result.primary_artist.name,
       title: data.result.title,
       // wrong
-      duration: data.result.stats.pageviews,
-      year: data.result.release_date_components.year,
-      imageUrl: data.result.song_art_image_thumbnail_url,
+      duration: data.result.stats?.pageviews,
+      year: data.result.release_date_components?.year,
+      imageUrl: data.result?.song_art_image_thumbnail_url,
     };
   };
 
   const handleArtistClick = async (songData: any, artist: string, song:string) => {
     setSelectedArtist(songData.id);
-    setSelectedArtistState(loadingState.loading);
+    setSelectedArtistState(LoadingState.loading);
 
-    console.log(artist,song)
     const response = await getRecordingByArtistAndTitle(artist, song);
-    console.log(response)
 
     const musicBrainz = response ? response : null;
-    console.log(musicBrainz)
 
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     if (musicBrainz && musicBrainz.recordings) {
-      console.log(musicBrainz.recordings);
       const recordings: any = Object.values(musicBrainz.recordings).slice(0, 3);
 
       for (const release of recordings) {
@@ -110,7 +105,7 @@ const SearchComponent = () => {
         await new Promise((resolve) => setTimeout(resolve, 5000));
       }
     }
-    setSelectedArtistState(loadingState.failed);
+    setSelectedArtistState(LoadingState.failed);
     // push just with genius id
     router.push({
       pathname: '/lite/chat',
@@ -123,7 +118,7 @@ const SearchComponent = () => {
       <form onSubmit={handleSearch} className="space-y-4 mb-4">
         <div className='flex flex-row rounded-l-full rounded-r-full border-outline bg-secondary-container text-on-secondary-container items-center px-4 py-1'>
           <div className='flex items-center justify-center h-[50%]'>
-            {loading === loadingState.loading ? (
+            {loading === LoadingState.loading ? (
               <button type="submit" disabled className="bg-transparent focus:outline-none focus:ring-transparent">
                 <MagnifyingGlassIcon className="w-5 h-5 text-on-tertiary-container" />
               </button>
@@ -155,15 +150,15 @@ const SearchComponent = () => {
       {error && <div className=" bg-error text-on-error rounded-lg p-4 text-center">Please enter both an artist and a song</div>}
 
       {
-        loading === loadingState.loading && <div className='mt-4'><SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
-          contents={[{ text: 'Searching the inter-webs for this banger', loading_state: loadingState.loading }]} /></div>}
+        loading === LoadingState.loading && <div className='mt-4'><SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
+          contents={[{ text: 'Searching the inter-webs for this banger', loadingState: LoadingState.loading, loaderType: LoaderType.waveform  }]} /></div>}
       {
         data &&
         data.response.hits.map((hit) => {
           const songData = extractSongData(hit);
           const isCurrentArtistSelected = selectedArtist === songData.id;
           const isAnotherArtistSelected = selectedArtist !== null && !isCurrentArtistSelected;
-          const shouldDisableClick = isAnotherArtistSelected && selectedArtistState !== loadingState.failed;
+          const shouldDisableClick = isAnotherArtistSelected && selectedArtistState !== LoadingState.failed;
           return (
             <>
               <Artist
@@ -184,7 +179,7 @@ const SearchComponent = () => {
               {selectedArtist === songData.id && (
                 <div className="mt-4">
                   <SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
-                    contents={[{ text: 'Finding that data source...', loading_state: selectedArtistState }]} />
+                    contents={[{ text: 'Finding that data source...', loadingState: selectedArtistState, loaderType: LoaderType.waveform }]} />
                 </div>
               )}
               <div className="border-t border-secondary w-full my-4"></div>

@@ -50,7 +50,7 @@ const Visualizer = forwardRef<VisualizerHandle, VisualizerProps>(
             wrapper.innerHTML = '';
 
             if (type === 'piano-roll') {
-                wrapper.classList.add('piano-roll-visualizer', 'w-full', 'overflow-x-scroll');
+                wrapper.classList.add('piano-roll-visualizer', 'w-full', 'overflow-x-auto');
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 wrapper.appendChild(svg);
                 setVisualizer(new mm.PianoRollSVGVisualizer(ns, svg, config));
@@ -85,4 +85,5 @@ const Visualizer = forwardRef<VisualizerHandle, VisualizerProps>(
     },
 );
 
+Visualizer.displayName = 'Visualizer';
 export default Visualizer;
