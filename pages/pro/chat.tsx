@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, SetStateAction, Dispatch } from "react";
 import {
   NoteEventTime,
   generateFileData,
-} from "@/utils/basic_pitch/src";
+} from "@/utils/basic-pitch-ts/src";
 import { ChatBox } from "@/components/Chat/ChatBox";
 import { Message, MessagePart, MessagePro, MessageProData, FileProps, ProState, ProdTypes } from "@/types";
 import CommandParser from "@/utils/commandParser";

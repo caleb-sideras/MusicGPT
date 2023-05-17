@@ -1,5 +1,5 @@
 import { MessagePart } from "@/types";
-import { NoteEventTime } from "@/utils/basic_pitch/src";
+import { NoteEventTime } from "@/utils/basic-pitch-ts/src";
 
 export default class CommandParser {
     private buffer: string;
