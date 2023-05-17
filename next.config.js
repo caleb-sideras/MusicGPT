@@ -4,6 +4,7 @@ const nextConfig = {
   images: {
     domains: ['images.genius.com', 'storage.googleapis.com'],
   },
+  swcMinify: false
 }
 
 module.exports = nextConfig
