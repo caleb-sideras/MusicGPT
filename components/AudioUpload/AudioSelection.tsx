@@ -7,7 +7,7 @@ import {
     outputToNotesPoly,
     generateFileData,
     NoteEventTime,
-} from "@/utils/basic_pitch/src";
+} from "@/utils/basic-pitch-ts/src";
 import * as tf from '@tensorflow/tfjs';
 import { FileProps, LoadingState, LoaderType, ProState, ProdTypes } from "@/types";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
