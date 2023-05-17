@@ -1,0 +1,122 @@
+:host {
+  display: inline-block;
+  width: 300px;
+  margin: 3px;
+  vertical-align: bottom;
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+:focus:not(.focus-visible) {
+  outline: none;
+}
+
+.controls {
+  width: inherit;
+  height: inherit;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  overflow: hidden;
+
+  align-items: center;
+  border-radius: 100px;
+  background: #f2f5f6;
+  padding: 0 0.25em;
+  user-select: none;
+
+  &> * {
+    margin: 0.8em 0.45em;
+  }
+
+  input, button {
+    cursor: pointer;
+
+    &:disabled {
+      cursor: inherit;
+    }
+  }
+
+  button {
+    text-align: center;
+    background: rgba(#ccc, 0);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 100%;
+    transition: background-color 0.25s ease 0s;
+    padding: 0;
+
+    &:not(:disabled):hover {
+      background: rgba(#ccc, 0.3);
+    }
+
+    &:not(:disabled):active {
+      background: rgba(#ccc, 0.6);
+    }
+
+    .icon {
+      display: none;
+
+      &, svg {
+        vertical-align: middle;
+      }
+
+      svg {
+        fill: currentColor;
+      }
+    }
+  }
+
+  .seek-bar {
+    flex: 1;
+    min-width: 0;
+    margin-right: 1.1em;
+
+    background: transparent;
+
+    &::-moz-range-track {
+      // For some reason, the track is invisible in Firefox by default
+      background-color: #555;
+    }
+  }
+
+  &.stopped .play-icon, &.playing .stop-icon, &.error .error-icon {
+    display: inherit;
+  }
+
+  &.frozen > div, &> button:disabled .icon {
+    opacity: 0.5;
+  }
+
+  .overlay {
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    box-sizing: border-box;
+    display: none;
+    opacity: 1;
+  }
+
+  &.loading .loading-overlay {
+    display: block;
+    background: linear-gradient(110deg, #92929200 5%, #92929288 25%, #92929200 45%);
+    background-size: 250% 100%;
+    background-repeat: repeat-y;
+    animation: shimmer 1.5s linear infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 125% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

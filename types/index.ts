@@ -1,4 +1,4 @@
-import { NoteEventTime } from "@/utils/basic-pitch-ts/src";
+import { NoteEventTime } from "@/utils/basic_pitch/src";
 
 
 export enum OpenAIModel {

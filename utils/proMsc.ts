@@ -1,6 +1,6 @@
 import {
     NoteEventTime
-} from "@/utils/basic-pitch-ts/src";
+} from "@/utils/basic_pitch/src";
 import { Midi, Track } from "@tonejs/midi";
 import { NoteJSON, Note } from "@tonejs/midi/dist/Note";
 

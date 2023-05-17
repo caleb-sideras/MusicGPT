@@ -19,5 +19,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "tailwind.config.js"],
-  "exclude": ["node_modules","utils/basic-pitch-ts","utils/html-midi-player"]
+  "exclude": ["node_modules","utils/basic_pitch","utils/html_midi_player"]
 }
