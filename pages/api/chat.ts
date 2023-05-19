@@ -11,6 +11,7 @@ const handler = async (req: Request): Promise<Response> => {
       messages: Message[];
       chatMode: string
     };
+    console.log(messages)
 
     const charLimit = 12000;
     let charCount = 0;

@@ -35,15 +35,15 @@ export const ChatBox: FC<Props> = ({ messages, messagesPro, loading, onSend, onS
               <ChatMessage message={message} />
             </div>
           )) :
-          messagesPro ? messagesPro.map((message, index) => (
-            <div
-              key={index}
-              className="my-1 sm:my-1.5"
-            >
-              <ChatMessagePro message={message} />
-            </div>
-          )) :
-          <></>
+            messagesPro ? messagesPro.map((message, index) => (
+              <div
+                key={index}
+                className="my-1 sm:my-1.5"
+              >
+                <ChatMessagePro message={message} />
+              </div>
+            )) :
+              <></>
         }
 
         {loading && (
@@ -54,7 +54,12 @@ export const ChatBox: FC<Props> = ({ messages, messagesPro, loading, onSend, onS
         <div ref={messagesEndRef}></div>
       </div>
       <div className="bottom-[56px] left-0 w-full">
-        <ChatInput onSendPro={onSendPro} />
+        {messagesPro ?
+          <ChatInput onSendPro={onSendPro} />
+          :
+          <ChatInput onSend={onSend}/>
+
+        }
       </div>
     </>
   );
