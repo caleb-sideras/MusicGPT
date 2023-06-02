@@ -184,7 +184,7 @@ export enum LoaderType {
 
 /////////PRO///////////
 export interface MessagePart {
-  type: "text" | "data" | "!{midi}" | "!{audi}" | "!{wave}";
+  type: "text" | "data" | "!{midi}" | "!{audi}" | "!{wave}" | "!{hpcp}" | "!{mels}";
   content: Buffer | any;
 }
 
@@ -214,13 +214,38 @@ export enum ProState {
   chat = 5
 }
 
-export type ProdTypes = {
+export type SelectionState = {
+  midi: boolean
+  prod: boolean
+
+}
+
+export type ChatData = {
+  midi: NoteEventTime[]
+  prod: ProdProps
+  graph: GraphProps
+  file: FileProps
+}
+
+export type ProdProps = {
   panningScore: number;
   dynamicComplexity: number;
   dynamicComplexityLoudness: number
   loudness: number;
 }
 
+export type GraphProps = {
+  frame: Float32Array
+  length: number
+  sampleRate: number
+  duration: number
+}
+
+export interface FileProps {
+  arrayBuffer?: ArrayBuffer;
+  name: string;
+  file: File
+}
 
 
 /////////AUDIO PLAYBACK///////////
@@ -235,9 +260,3 @@ export interface Audio {
   audio: File;
 }
 
-export interface FileProps {
-  // audioBuffer: AudioBuffer;
-  arrayBuffer?: ArrayBuffer;
-  name: string;
-  file: File
-}

@@ -17,6 +17,8 @@ const chatType = {
     midi - midi visualization and playback
     audi - audio playback
     wave - graph visualization of the waveform
+    hpcp - hpcp radial plot displaying the intensity of 12 musical notes
+    mels - mel spectrum melody contour
 
     ID:
     Integers stated in relative message headers

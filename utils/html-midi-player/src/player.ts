@@ -158,7 +158,7 @@ export class PlayerElement extends HTMLElement {
     }
 
     try {
-      let ns: INoteSequence = null;
+      let tns: INoteSequence = null;
       if (initNs) {
         if (this.src) {
           this.ns = null;
@@ -169,11 +169,11 @@ export class PlayerElement extends HTMLElement {
           this.setError('No content loaded');
         }
       }
-      ns = this.ns;
+      tns = this.ns;
 
-      if (ns) {
-        this.seekBar.max = String(ns.totalTime);
-        this.totalTimeLabel.textContent = utils.formatTime(ns.totalTime);
+      if (tns) {
+        this.seekBar.max = String(tns.totalTime);
+        this.totalTimeLabel.textContent = utils.formatTime(tns.totalTime);
       } else {
         this.seekBar.max = '0';
         this.totalTimeLabel.textContent = utils.formatTime(0);
@@ -183,7 +183,7 @@ export class PlayerElement extends HTMLElement {
       let soundFont = this.soundFont;
       const callbackObject = {
         // Call callbacks only if we are still playing the same note sequence.
-        run: (n: NoteSequence.INote) => (this.ns === ns) && this.noteCallback(n),
+        run: (n: NoteSequence.INote) => (this.ns === tns) && this.noteCallback(n),
         stop: () => {}
       };
       if (soundFont === null) {
@@ -194,10 +194,10 @@ export class PlayerElement extends HTMLElement {
         }
         this.player = new mm.SoundFontPlayer(soundFont, undefined, undefined, undefined,
                                             callbackObject);
-        await (this.player as mm.SoundFontPlayer).loadSamples(ns);
+        await (this.player as mm.SoundFontPlayer).loadSamples(tns);
       }
 
-      if (this.ns !== ns) {
+      if (this.ns !== tns) {
         // If we started loading a different sequence in the meantime...
         return;
       }

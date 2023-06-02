@@ -1,17 +1,36 @@
-import { useEffect, useState, useRef, SetStateAction, Dispatch } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  SetStateAction,
+  Dispatch
+} from "react";
 import {
   NoteEventTime,
   generateFileData,
 } from "@/utils/basic-pitch-ts/src";
+import {
+  Message,
+  MessagePart,
+  MessagePro,
+  MessageProData,
+  FileProps,
+  ProState,
+  ProdProps,
+  GraphProps,
+  ChatData
+} from "@/types";
 import { ChatBox } from "@/components/Chat/ChatBox";
-import { Message, MessagePart, MessagePro, MessageProData, FileProps, ProState, ProdTypes } from "@/types";
 import CommandParser from "@/utils/commandParser";
 import Upload from "@/components/AudioUpload/Upload";
 import AudioSelection from "@/components/AudioUpload/AudioSelection";
 import Waveform from "@/components/Icons/waveform";
 import * as Form from '@radix-ui/react-form';
-import { ChatMessagePro } from "@/components/Chat/ChatMessagePro";
 import Instructions from "@/components/AudioUpload/Instructions";
+import EssentiaExtractor from "@/utils/essentia/extractor/extractor";
+import EssentiaWASM from '@/utils/essentia/dist/essentia-wasm.web'
+import Essentia from "@/utils/essentia/core_api";
+import { Pro } from "@/components/Features/Features";
 
 export interface VisualizerConfig {
   noteHeight?: number;
@@ -22,21 +41,16 @@ export interface VisualizerConfig {
   minPitch?: number;
   maxPitch?: number;
 }
-const UploadMidiConverter: React.FC = () => {
+
+const ProChat: React.FC = () => {
+
   const [currentState, setCurrentState] = useState<ProState>(ProState.menu)
   const [loading, setLoading] = useState<boolean>(false);
 
   const [messages, setMessages] = useState<MessagePro[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [isFirstMessage, setIsFirstMessage] = useState<boolean>(true)
 
-  // AudioSelection.tsx
-  const [songMidi, setSongMidi] = useState<NoteEventTime[]>()
-  const [fileData, setFileData] = useState<Buffer>()
-  const [prod, setProd] = useState<ProdTypes>()
-
-  // Upload.tsx
-  const [fileProps, setFileProps] = useState<FileProps>();
+  const [chatData, setChatData] = useState<ChatData>()
 
   const removeFileExtension = (filename: string): string => {
     if (typeof (filename) !== 'string') return ''
@@ -45,17 +59,15 @@ const UploadMidiConverter: React.FC = () => {
   }
 
   useEffect(() => {
-    if (fileProps) {
+    if (currentState === ProState.convert) {
       setMessages([
         {
           role: "assistant",
-          parts: [{ type: 'text', content: `Hello! I'm MusicGPT Pro, your AI music assistant. I am currenly in Beta, so I might produce innacurate information. Let's talk about ${removeFileExtension(fileProps?.name as string)}. What would you like to know?` }]
+          parts: [{ type: 'text', content: `Hello! I'm MusicGPT Pro, your AI music assistant. I am currently in Beta, so I might produce inacurate information. Let's talk about ${removeFileExtension(chatData?.file?.name as string)}. What would you like to know?` }]
         }
       ]);
-      setCurrentState(ProState.convert)
     }
-  }, [fileProps])
-
+  }, [currentState, chatData])
 
   const filterAndAdjustNotesByTime = (notes: NoteEventTime[], startTime: number, endTime: number): NoteEventTime[] => {
     return notes
@@ -124,37 +136,6 @@ const UploadMidiConverter: React.FC = () => {
   }
 
   const handleSend = async (updatedMessages: MessagePro[], dataForVisualizations: Record<string, any>, parse: boolean) => {
-    if (isFirstMessage) {
-      const initData: string[] = []
-
-      if (prod) {
-        initData.push(
-          `COMPRESSION
-          Dynamic Complexity: ${prod.dynamicComplexity}, Dynamic Complexity Loudness: ${prod.dynamicComplexityLoudness}
-          Dynamic Complexity is the average absolute deviation from the global loudness level estimate on the dB scale. It measures the amount of fluctuation in loudness in a recording
-           
-          Loudness: ${prod.loudness}
-          Computes loudness based on Steven's power law, which calculates loudness as the energy of the signal raised to the power of 0.67
-          
-          STEREO IMAGE
-          Panning Score: ${prod.panningScore} 
-          The panning score is the panning coefficient for stereo audio, reflecting the relative energy balance between the left and right channels. The coefficient (-1 to 1) indicates the stereo image's direction: -1 for full left, 1 for full right, and 0 for centered`
-        )
-      }
-
-      const initialData = {
-        role: 'data',
-        parts: [
-          {
-            type: 'data',
-            content: initData.join(' ')
-          }
-        ]
-      } as MessagePro
-      updatedMessages = [initialData, ...updatedMessages]
-      setIsFirstMessage(false)
-    }
-
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
@@ -253,18 +234,20 @@ const UploadMidiConverter: React.FC = () => {
     })
   }
 
-  const handleQueryResponse = (response: any, updatedMessages: MessagePro[]) => {
+  const handleQueryResponse = async (response: any, updatedMessages: MessagePro[]) => {
 
-    // Final data sent to model (strings): ID [TYPE->DATA]
+    // Data sent to model (strings): ID [TYPE->DATA]
     let dataForModel: MessagePro[] = []
-
     // Data sent to messages for visualizations (objects): TYPE->DATA
     let dataForVisualizations: Record<string, any> = {}
+    // Duration counter
     let timeDuration = 0
-
+    console.log(response)
     if (response.completion && response.segments.length > 0) {
+      console.log(response)
       //@ts-ignore
-      response.segments.forEach((s, index: number) => {
+      // await response.segments.forEach(async (s, index: number) => {
+      for (const [index, s] of response.segments.entries()) {
         timeDuration += (s.end - s.start)
         let stringDataForModel: Record<string, string> = {}
         let objectDataForVisualizations: Record<string, any> = {}
@@ -274,22 +257,63 @@ const UploadMidiConverter: React.FC = () => {
           stringDataForModel[`ID:${index}`] = `Segment from ${s.start}-${s.end} seconds:`;
 
           // File 
-          objectDataForVisualizations['audi'] = { file: fileProps?.file, start: s.start, end: s.end }
+          objectDataForVisualizations['audi'] = { file: chatData?.file?.file, start: s.start, end: s.end }
+
           // MIDI
-          if (response.notes) {
-            const filteredMidi: NoteEventTime[] = filterAndAdjustNotesByTime(songMidi as NoteEventTime[], s.start, s.end)
+          if (response.notes && chatData?.midi) {
+            const filteredMidi: NoteEventTime[] = filterAndAdjustNotesByTime(chatData?.midi as NoteEventTime[], s.start, s.end)
             objectDataForVisualizations['midi'] = generateFileData(filteredMidi)
 
             const modelMidi: string = formatCategorizeStringifyNotesForModel(filteredMidi)
             stringDataForModel['midi'] = modelMidi
           }
+
+          // Prod
+          if (response.prodFeatures && chatData?.prod) {
+            // have global and local extraction, in conjunction with CAAS
+            stringDataForModel['prod'] =
+              `COMPRESSION
+                Dynamic Complexity: ${chatData?.prod.dynamicComplexity}, Dynamic Complexity Loudness: ${chatData?.prod.dynamicComplexityLoudness}
+                Dynamic Complexity is the average absolute deviation from the global loudness level estimate on the dB scale. It measures the amount of fluctuation in loudness in a recording
+                
+                Loudness: ${chatData?.prod.loudness}
+                Computes loudness based on Steven's power law, which calculates loudness as the energy of the signal raised to the power of 0.67
+                
+              STEREO IMAGE
+                Panning Score: ${chatData?.prod.panningScore} 
+                The panning score is the panning coefficient for stereo audio, reflecting the relative energy balance between the left and right channels. The coefficient (-1 to 1) indicates the stereo image's direction: -1 for full left, 1 for full right, and 0 for centered`
+          }
+
+          // Spectral
+          if (response.spectralFeatures && chatData?.graph) {
+          }
+
+          // change it to types of data which can aid model AND provide visualizations (same as midi) ??
+          if (response.spectralFeatures && chatData?.graph) {
+            const audioFrame = chatData.graph.frame.slice(s.start * chatData.graph.sampleRate, s.end * chatData.graph.sampleRate)
+            const essentiaInstance = await Essentia.init(EssentiaWASM, true);
+            const essentiaExtractor = new EssentiaExtractor(essentiaInstance, true);
+            const hpcp = essentiaExtractor.hpcpExtractor(audioFrame);
+            const melSpectrum = essentiaExtractor.melSpectrumExtractor(audioFrame);
+
+            objectDataForVisualizations['hpcp'] = hpcp
+            objectDataForVisualizations['mels'] = melSpectrum
+
+            const labels = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            stringDataForModel['hpcp'] = Array.from(hpcp).map((value, index) => `${value}${labels[index]}`).join(' ');
+            stringDataForModel['mels'] = Array.from(melSpectrum).map(value => Math.round(value as number * 1000) / 1000).join(' ');
+
+            console.log('objectDataForVisualizations', objectDataForVisualizations)
+            console.log('stringDataForModel', stringDataForModel)
+          }
+
           // Download
           if (response.download) { }
+          // 2 types of data retreival
           // CQT
           if (response.cqt) { }
 
           dataForVisualizations[`${index}`] = objectDataForVisualizations
-
           dataForModel.push({
             role: 'user',
             parts: [
@@ -310,16 +334,71 @@ const UploadMidiConverter: React.FC = () => {
               }
             ]
           } as MessagePro)
-          //break
+          //break - change loop
         }
-
-      });
+      };
+      console.log(updatedMessages)
       var updatedMessages = [...updatedMessages, ...dataForModel];
     }
 
     handleSend(updatedMessages, dataForVisualizations, response.completion)
   }
 
+  const handleGlobalData = () => {
+    // if (isFirstMessage) {
+    //   const initData: string[] = []
+
+    //   initData.push()
+
+    //   const initialData = {
+    //     role: 'data',
+    //     parts: [
+    //       {
+    //         type: 'data',
+    //         content: initData.join(' ')
+    //       }
+    //     ]
+    //   } as MessagePro
+    //   updatedMessages = [initialData, ...updatedMessages]
+    //   setIsFirstMessage(false)
+    // }
+  }
+
+  async function temp() {
+    // function convert1Dto2DArray(float32Array: Float32Array, sliceSize: number) {
+    //   let slices = [];
+    //   for (let i = 0; i < float32Array.length; i += sliceSize) {
+    //     slices.push(Array.from(float32Array.slice(i, i + sliceSize)));
+    //   }
+    //   return slices;
+    // }
+    // const essentiaInstance = await Essentia.init(EssentiaWASM, true);
+    // console.log("WASM essentiaInstance")
+    // const essentiaExtractor = new EssentiaExtractor(essentiaInstance, true);
+    // console.log("essentiaExtractor")
+
+    // const audioData = await fileProps.file.arrayBuffer();
+    // const audioContext = new AudioContext();
+    // const originalBuffer = await audioContext.decodeAudioData(audioData);
+    // console.log("Buffer")
+
+    // const audioFrame = essentiaInstance.audioBufferToMonoSignal(originalBuffer) // fill this with data from your .wav file
+    // console.log("audioFrame", audioFrame)
+    // const hpcp = essentiaExtractor.hpcpExtractor(audioFrame);
+    // console.log("hpcp", hpcp)
+    // setHpcp(hpcp)
+    // const melSpectrum = essentiaExtractor.melSpectrumExtractor(audioFrame);
+    // console.log("melSpectrum", melSpectrum)
+    // setMel(melSpectrum)
+
+    // // const something = essentiaInstance.FrameGenerator(audioFrame)
+    // // console.log('something', essentiaInstance.vectorToArray(something))
+
+    // const audioFrames = convert1Dto2DArray(audioFrame, 1024);
+    // setFrames(audioFrames)
+
+
+  }
 
   return (
     <>
@@ -343,10 +422,10 @@ const UploadMidiConverter: React.FC = () => {
                     : currentState == ProState.loading ?
                       <>Listening to the Song...</>
                       : currentState == ProState.instructions ?
-                      <>How to interact with me</>
-                      : currentState == ProState.chat ?
-                        <div className="text-3xl mb-2"> {removeFileExtension(fileProps?.name as string)}</div>
-                        : <></>
+                        <>How to interact with me</>
+                        : currentState == ProState.chat ?
+                          <div className="text-3xl mb-2"> {removeFileExtension(chatData?.file?.name as string)}</div>
+                          : <></>
             }
           </div>
         </div>
@@ -358,8 +437,8 @@ const UploadMidiConverter: React.FC = () => {
                   <Form.Root className="w-[260px]"
                     onSubmit={(event) => {
                       const data = Object.fromEntries(new FormData(event.currentTarget));
-                      const validKeys = ['458-225-928', '567-823-233', '901-200-221'];
-                      if (validKeys.includes(data.key as string)){
+                      const validKeys = ['1234', '458-225-928', '567-823-233', '901-200-221'];
+                      if (validKeys.includes(data.key as string)) {
                         setCurrentState(ProState.upload)
                       }
                       event.preventDefault();
@@ -389,23 +468,25 @@ const UploadMidiConverter: React.FC = () => {
                     </Form.Submit>
                   </Form.Root>
                   : currentState == ProState.upload ?
-                    <Upload setFileProps={setFileProps as Dispatch<SetStateAction<FileProps>>} />
+                    <Upload
+                      setChatData={setChatData as Dispatch<SetStateAction<ChatData>>}
+                      chatData={chatData as ChatData}
+                      setParentState={setCurrentState as Dispatch<SetStateAction<ProState>>}
+                    />
                     : currentState == ProState.convert || currentState == ProState.loading ?
                       <AudioSelection
-                        fileProps={fileProps as FileProps}
-                        setSongMidi={setSongMidi as Dispatch<SetStateAction<NoteEventTime[]>>}
-                        setFileData={setFileData as Dispatch<SetStateAction<Buffer>>}
+                        setChatData={setChatData as Dispatch<SetStateAction<ChatData>>}
+                        chatData={chatData as ChatData}
                         setParentState={setCurrentState as Dispatch<SetStateAction<ProState>>}
-                        setProdData={setProd as Dispatch<SetStateAction<ProdTypes>>}
                       />
                       : currentState == ProState.instructions ?
-                      <div className="sm:p-4 flex w-full flex-col">
-                          <Instructions/>
-                          <div onClick={()=>{setCurrentState(ProState.chat)}} className="w-full mt-2 text-tertiary-container text-center bg-tertiary rounded-lg p-4">
+                        <div className="sm:p-4 flex w-full flex-col">
+                          <Instructions />
+                          <div onClick={() => { setCurrentState(ProState.chat) }} className="w-full mt-2 text-tertiary-container text-center bg-tertiary rounded-lg p-4">
                             Continue
                           </div>
-                      </div>
-                      :<></>
+                        </div>
+                        : <></>
               }
             </div> : <></>
         }
@@ -422,7 +503,6 @@ const UploadMidiConverter: React.FC = () => {
               : <></>
           }
         </div>
-
       </div>
 
     </>
@@ -430,4 +510,4 @@ const UploadMidiConverter: React.FC = () => {
 };
 
 
-export default UploadMidiConverter;
+export default ProChat;

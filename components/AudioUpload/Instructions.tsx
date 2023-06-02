@@ -16,6 +16,7 @@ const AccordionDemo: React.FC = () => {
 
     useEffect(() => {
         getAudioFile()
+        console.log("no, this can run many times")
     }, [])
 
 

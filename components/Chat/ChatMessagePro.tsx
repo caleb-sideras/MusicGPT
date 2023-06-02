@@ -3,6 +3,8 @@ import React from "react";
 import { FC } from "react";
 import dynamic from 'next/dynamic';
 import AudioPlayer from "../MusicPlayer/AudioPlayer";
+import HPCPPlot from "../Visualizations/Radial";
+import { PlotMelodyContourComponent } from "../Visualizations/Essentia";
 
 const PlayerElement = dynamic(() => import('../MusicPlayer/ReactPlayer'), { ssr: false });
 
@@ -29,7 +31,21 @@ export const ChatMessagePro: FC<Props> = ({ message }: { message: MessagePro }) 
                 startTime={part.content.start as number}
                 finishTime={part.content.end as number}
             />
+        } else if (part.type === "!{hpcp}") {
+            return <HPCPPlot hpcpValues={part.content as Float32Array} />
+
+        } else if (part.type === "!{mels}") {
+            return <PlotMelodyContourComponent
+                featureArray={part.content}
+                audioFrameSize={960000}
+                audioSampleRate={44100}
+                plotTitle="Harmonic Pitch Class Profile mel"
+            />
         }
+        //  else if (part.type === "!{audi}") {
+        //     return <PlotHeatmapComponent featureArray={frames} audioFrameSize={960000} audioSampleRate={44100} />
+        // }
+
         return null;
     };
     return (

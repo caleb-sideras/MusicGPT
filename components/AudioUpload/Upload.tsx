@@ -1,21 +1,24 @@
 import React, { useCallback, useState } from 'react'
-import { FileProps, LoadingState, LoaderType } from '@/types';
+import { FileProps, LoadingState, LoaderType, ChatData, ProState } from '@/types';
 import SmallLoader from '../Loaders/SmallLoader';
 
-type Props = {
-    setFileProps: React.Dispatch<React.SetStateAction<FileProps>>;
+type UploadProps = {
+    setChatData: React.Dispatch<React.SetStateAction<ChatData>>;
+    chatData: ChatData
+    setParentState: React.Dispatch<React.SetStateAction<ProState>>;
 }
 
-function Upload({ setFileProps }: Props) {
+function Upload({ setChatData, chatData, setParentState}: UploadProps) {
     const [isDragging, setIsDragging] = useState(false);
     const [fileLoad, setFileLoad] = useState<LoadingState>(LoadingState.finished)
 
     const handleFileUpload = async (file: File) => {
-
         if (!file) {
             return;
+            // perform some checks
         }
-        setFileProps({ name: file.name, file: file });
+        setChatData({...chatData, file: { name: file.name, file: file }});
+        setParentState(ProState.convert)
     };
 
     const handleDragEnter = useCallback((e: React.DragEvent<HTMLDivElement>) => {

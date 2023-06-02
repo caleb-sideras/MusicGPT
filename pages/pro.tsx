@@ -2,6 +2,8 @@ import React from 'react'
 import { Pro } from '@/components/Features/Features'
 import AccordionDemo from '@/components/AudioUpload/Instructions'
 import Link from 'next/link'
+import HighlightCode from '@/components/Chat/HighlightCode';
+import CodeFormatter from '@/components/Chat/CodeFormatter';
 
 function ProHome() {
   const inlineStyles = {
@@ -23,6 +25,25 @@ function ProHome() {
           Let&apos;s go
         </div>
       </Link>
+      <HighlightCode text={`Here is some code:
+        \`\`\`javascript
+        const x = 10;
+        console.log(x);
+        \`\`\`
+
+        And here is some more code:
+
+        \`\`\`python
+        x = 10
+        print(x)
+        \`\`\`
+        `}
+      />
+      <CodeFormatter text={`
+        const x = 10;
+        console.log(x);
+        `} language={'javascript'} />
+
     </div>
   )
 }

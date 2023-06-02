@@ -4,6 +4,14 @@ const nextConfig = {
   images: {
     domains: ['images.genius.com', 'storage.googleapis.com'],
   },
+  swcMinify: false,
+  // webpack(config) {
+  //   config.optimization.minimize = false;
+  //   return config;
+  // },
+  // experimental: {
+  //   swcMinify: false,
+  // },
 }
 
 module.exports = nextConfig
