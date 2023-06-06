@@ -69,8 +69,7 @@ const AccordionDemo: React.FC = () => {
                                     {
                                         type: 'text',
                                         content: "During this specific segment, the harmony evolves through a chord progression from C to G to Am to F. This change, popular in many songs, moves from major to minor tones, influencing the emotional mood of the piece. The shift to the F chord can provide a sense of resolution or comfort. These harmonic changes, paired with corresponding melodic variations, create a dynamic, nuanced sonic landscape."
-                                    }
-
+                                    },
                                 ]
                             }
                         } />
@@ -109,7 +108,7 @@ const AccordionDemo: React.FC = () => {
 
                                             },
                                             {
-                                                type: '!{audi}',
+                                                type: 'audi',
                                                 content: { file: audioFile, start: 35, end: 55 }
                                             },
                                             {
@@ -118,7 +117,7 @@ const AccordionDemo: React.FC = () => {
 
                                             },
                                             {
-                                                type: '!{midi}',
+                                                type: 'midi',
                                                 content: midiData
                                             }
                                         ]

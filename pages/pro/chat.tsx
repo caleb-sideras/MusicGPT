@@ -18,7 +18,8 @@ import {
   ProState,
   ProdProps,
   GraphProps,
-  ChatData
+  ChatData,
+  ParserState
 } from "@/types";
 import { ChatBox } from "@/components/Chat/ChatBox";
 import CommandParser from "@/utils/commandParser";
@@ -30,7 +31,7 @@ import Instructions from "@/components/AudioUpload/Instructions";
 import EssentiaExtractor from "@/utils/essentia/extractor/extractor";
 import EssentiaWASM from '@/utils/essentia/dist/essentia-wasm.web'
 import Essentia from "@/utils/essentia/core_api";
-import { Pro } from "@/components/Features/Features";
+import { convertMessageProToMessage, filterAndAdjustNotesByTime, formatCategorizeStringifyNotesForModel, removeFileExtension } from "@/utils/utils";
 
 export interface VisualizerConfig {
   noteHeight?: number;
@@ -52,12 +53,6 @@ const ProChat: React.FC = () => {
 
   const [chatData, setChatData] = useState<ChatData>()
 
-  const removeFileExtension = (filename: string): string => {
-    if (typeof (filename) !== 'string') return ''
-    const lastIndex = filename.lastIndexOf(".");
-    return lastIndex !== -1 ? filename.slice(0, lastIndex) : filename;
-  }
-
   useEffect(() => {
     if (currentState === ProState.convert) {
       setMessages([
@@ -69,71 +64,6 @@ const ProChat: React.FC = () => {
     }
   }, [currentState, chatData])
 
-  const filterAndAdjustNotesByTime = (notes: NoteEventTime[], startTime: number, endTime: number): NoteEventTime[] => {
-    return notes
-      .filter(note => note.startTimeSeconds >= startTime && note.startTimeSeconds <= endTime)
-      .map(note => ({
-        ...note,
-        startTimeSeconds: note.startTimeSeconds - startTime,
-      }));
-  };
-
-  const formatCategorizeStringifyNotesForModel = (
-    notes: NoteEventTime[],
-    decimalPlaces: number = 3
-  ): string => {
-    // Initialize the categorizedNotes object
-    const categorizedNotes: { [key: string]: any[] } = {
-      "Bass": [],
-      "Mid-range": [],
-      "High-range": [],
-      "Uncategorized": [],
-    };
-
-    // Map notes to the new format, categorize, and add them to the categorizedNotes object
-    notes.forEach((note) => {
-      const { pitchBends, ...filteredNote } = note; // Removes pitchBends property
-      const formattedNote = {
-        s: parseFloat(note.startTimeSeconds.toFixed(1)),
-        d: parseFloat(note.durationSeconds.toFixed(decimalPlaces)),
-        p: note.pitchMidi,
-        a: parseFloat(note.amplitude.toFixed(decimalPlaces)),
-      };
-
-      let category: string;
-
-      if (formattedNote.p >= 24 && formattedNote.p <= 48) {
-        category = "Bass";
-      } else if (formattedNote.p >= 49 && formattedNote.p <= 72) {
-        category = "Mid-range";
-      } else if (formattedNote.p >= 73 && formattedNote.p <= 96) {
-        category = "High-range";
-      } else {
-        category = "Uncategorized";
-      }
-      // Stringify the resulting array
-      const jsonString = JSON.stringify(formattedNote);
-      const reducedString = jsonString
-        .replace(/[{}",]/g, "")
-      categorizedNotes[category].push(reducedString);
-    });
-
-    return JSON.stringify(categorizedNotes).replace(/["]/g, "");
-  };
-
-  function convertMessageProToMessage(messagesPro: MessagePro[]): Message[] {
-    return messagesPro.map((messagePro) => {
-      const content = messagePro.parts
-        .filter((part) => part.type === 'text' || part.type === 'data')
-        .map((part) => part.content)
-        .join(' ');
-
-      return {
-        role: messagePro.role,
-        content,
-      };
-    });
-  }
 
   const handleSend = async (updatedMessages: MessagePro[], dataForVisualizations: Record<string, any>, parse: boolean) => {
     const response = await fetch("/api/chat", {
@@ -165,40 +95,65 @@ const ProChat: React.FC = () => {
     let done = false;
     let isFirst = true;
 
-
-    const commandParser = new CommandParser(dataForVisualizations)
+    const essentiaInstance = await Essentia.init(EssentiaWASM, true);
+    const essentiaExtractor = new EssentiaExtractor(essentiaInstance, true);
+    const commandParser = new CommandParser(chatData as ChatData, essentiaExtractor, dataForVisualizations)
     let parts: MessagePart[] | null = null;
+    let parserState: ParserState;
+    let index = 0
 
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
       const chunkValue = decoder.decode(value);
-      // const parts = parseTextStream(chunkValue);
+      let parsed = commandParser.receiveAndProcessText(chunkValue)
 
-      if (parts = commandParser.receiveAndProcessText(chunkValue)) {
-        // console.log("parts:", parts);
+      if (parsed) {
+        [parts, parserState] = parsed
+        switch (parserState) {
 
-        if (isFirst) {
-          isFirst = false;
-          setMessages((messages) => [
-            ...messages,
-            {
-              role: "assistant",
-              parts: parts as MessagePart[],
-            },
-          ]);
-        } else {
-          setMessages((messages) => {
-            const lastMessage = messages[messages.length - 1];
-            const updatedMessage = {
-              ...lastMessage,
-              parts: [...lastMessage.parts, ...parts as MessagePart[]],
-            };
-            return [...messages.slice(0, -1), updatedMessage];
-          });
+          case ParserState.COMMAND:
+
+            if (isFirst) {
+              isFirst = false;
+              setMessages((messages) => {
+                return [
+                  ...messages,
+                  {
+                    role: "assistant",
+                    parts: parts as MessagePart[],
+                  }]
+              });
+            } else {
+              setMessages((messages) => {
+                const lastMessage = messages[messages.length - 1];
+                const updatedMessage = {
+                  ...lastMessage,
+                  parts: [...lastMessage.parts, ...parts as MessagePart[]],
+                };
+                return [...messages.slice(0, -1), updatedMessage];
+              });
+            }
+            break;
+
+          case ParserState.CODE_END:
+            setMessages((messages) => {
+              const lastMessage = messages[messages.length - 1];
+              const updatedMessage = {
+                ...lastMessage,
+                parts: [...lastMessage.parts.slice(0, -1), ...parts as MessagePart[]],
+              };
+              return [...messages.slice(0, -1), updatedMessage];
+            });
+            break;
+
+          default:
+            break;
         }
+
       }
     }
+
     setMessages((messages) => {
       const lastMessage = messages[messages.length - 1];
       const updatedMessage = {
@@ -251,21 +206,24 @@ const ProChat: React.FC = () => {
         timeDuration += (s.end - s.start)
         let stringDataForModel: Record<string, string> = {}
         let objectDataForVisualizations: Record<string, any> = {}
-
         if (timeDuration <= 20) {
           // Header
-          stringDataForModel[`ID:${index}`] = `Segment from ${s.start}-${s.end} seconds:`;
+          stringDataForModel[`ID:${s.start}${s.end}`] = `Segment from ${s.start}-${s.end} seconds:`;
 
           // File 
           objectDataForVisualizations['audi'] = { file: chatData?.file?.file, start: s.start, end: s.end }
 
+
           // MIDI
           if (response.notes && chatData?.midi) {
+            console.log("MIDI")
             const filteredMidi: NoteEventTime[] = filterAndAdjustNotesByTime(chatData?.midi as NoteEventTime[], s.start, s.end)
             objectDataForVisualizations['midi'] = generateFileData(filteredMidi)
 
             const modelMidi: string = formatCategorizeStringifyNotesForModel(filteredMidi)
             stringDataForModel['midi'] = modelMidi
+            console.log(modelMidi)
+
           }
 
           // Prod
@@ -313,7 +271,7 @@ const ProChat: React.FC = () => {
           // CQT
           if (response.cqt) { }
 
-          dataForVisualizations[`${index}`] = objectDataForVisualizations
+          dataForVisualizations[`${s.start}${s.end}`] = objectDataForVisualizations
           dataForModel.push({
             role: 'user',
             parts: [
@@ -402,7 +360,7 @@ const ProChat: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col sm:px-10 pb-4 sm:pb-10 max-w-[800px] mx-auto sm:mt-4">
+      <div className="flex flex-col sm:px-10 pb-4 sm:pb-10 max-w-[1600px] mx-auto sm:mt-4">
 
         <div className="justify-center bg-on-surface p-4 flex flex-row items-center gap-4 rounded-t-lg mb-2">
 

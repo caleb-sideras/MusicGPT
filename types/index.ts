@@ -184,7 +184,7 @@ export enum LoaderType {
 
 /////////PRO///////////
 export interface MessagePart {
-  type: "text" | "data" | "!{midi}" | "!{audi}" | "!{wave}" | "!{hpcp}" | "!{mels}";
+  type: "text" | "data" | "midi" | "audi" | "wave" | "hpcp" | "mels" | "code"| "exec";
   content: Buffer | any;
 }
 
@@ -260,3 +260,10 @@ export interface Audio {
   audio: File;
 }
 
+
+/////////MESSAGE PARSER///////////
+export enum ParserState {
+  COMMAND = 0,
+  CODE_START = 1,
+  CODE_END = 2
+}

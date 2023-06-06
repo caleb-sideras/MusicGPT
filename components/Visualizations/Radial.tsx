@@ -39,7 +39,7 @@ const HPCPPlot: React.FC<HPCPPlotProps> = ({ hpcpValues }) => {
             title: 'HPCP Radial Plot',
             plot_bgcolor: "transparent",
             paper_bgcolor: "#e1e3e3",
-            autosize: true, // Re-render ALL graphs when screen goes below certain size, or remove them entirely.
+            autosize: true,
             polar: {
                 radialaxis: {
                     ticksuffix: '%',
