@@ -66,7 +66,7 @@ export const ChatMessagePro: FC<Props> = ({ message }: { message: MessagePro }) 
                 className={`flex flex-col items-center ${message.role === "assistant"
                     ? "bg-on-surface text-surface"
                     : "bg-tertiary text-on-tertiary"
-                    } rounded-2xl px-3 py-2 max-w-[67%] whitespace-pre-wrap`}
+                    } rounded-2xl px-3 py-2 sm:max-w-[67%] max-w-[90%] whitespace-pre-wrap`}
                 style={{ overflowWrap: "anywhere" }}
             >
                 {message.parts.map((part, index) => (

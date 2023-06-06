@@ -9,6 +9,7 @@ const CodeExec = (props: codeExecProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (!containerRef.current) return;
+        console.log(props)
 
         while (containerRef.current.firstChild) {
             containerRef.current.removeChild(containerRef.current.firstChild);
