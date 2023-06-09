@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-// import Plotly from 'plotly.js-dist'; 
 import { v4 as uuidv4 } from 'uuid';
 import { Data, Layout } from 'plotly.js-basic-dist';
 
@@ -22,7 +21,7 @@ const HPCPPlot: React.FC<HPCPPlotProps> = ({ hpcpValues }) => {
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 
 

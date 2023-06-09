@@ -47,7 +47,7 @@ export const ChatInput: FC<Props> = ({ onSend, onSendPro}) => {
       textareaRef.current.style.height = "inherit";
       textareaRef.current.style.height = `${textareaRef.current?.scrollHeight}px`;
     }
-  }, [content]);
+  }, [content]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="relative">

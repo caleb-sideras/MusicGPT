@@ -1,7 +1,8 @@
-import React from 'react';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { CopyIcon } from '@radix-ui/react-icons'
+import dynamic from 'next/dynamic';
+
+const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
 interface CodeFormatterProps {
     text: string;
@@ -9,9 +10,21 @@ interface CodeFormatterProps {
 }
 
 const CodeFormatter: React.FC<CodeFormatterProps> = ({ text, language }) => {
+    const [dynamicStyle, setDynamicStyle] = useState<{ [key: string]: CSSProperties } | undefined>();
+
     const copyToClipboard = () => {
         navigator.clipboard.writeText(text);
     };
+
+    useEffect(() => {
+        const loadStyle = async () => {
+            const { a11yDark } = await import('react-syntax-highlighter/dist/esm/styles/hljs');
+            setDynamicStyle(a11yDark);
+        };
+
+        loadStyle();
+    }, []);// eslint-disable-line react-hooks/exhaustive-deps
+
 
     return (
         <div className='w-full mx-2 md:mx-4 lg:mx-8'>
@@ -21,7 +34,7 @@ const CodeFormatter: React.FC<CodeFormatterProps> = ({ text, language }) => {
                     <CopyIcon className='w-4 h-4' />
                 </button>
             </div>
-            <SyntaxHighlighter language={language} style={a11yDark} className="py-4 rounded-b-lg" customStyle={{ background: '#37393b', padding: '16px' }}>
+            <SyntaxHighlighter language={language} style={dynamicStyle} className="py-4 rounded-b-lg" customStyle={{ background: '#37393b', padding: '16px' }}>
                 {text}
             </SyntaxHighlighter>
         </div>

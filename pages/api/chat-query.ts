@@ -35,14 +35,15 @@ const parseGPTResponse = (response: any): MusicGPTResponse | Error => {
         return new Error("Invalid response object");
     }
 
-    const { completion, notes, download, segments, spectralFeatures, prodFeatures } = response;
+    let { completion, notes, download, segments, spectralFeatures, prodFeatures } = response;
 
     if (typeof completion !== "boolean") {
         return new Error("Invalid or missing completion");
     }
 
     if (!Array.isArray(segments) || segments.some(segment => typeof segment.start !== "number" || typeof segment.end !== "number")) {
-        return new Error("Invalid or missing segments");
+        // return new Error("Invalid or missing segments");
+        segments = []
     }
 
     return {

@@ -27,7 +27,7 @@ const PlotMelodyContourComponent: React.FC<Props> = ({ featureArray, audioFrameS
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         const plotMelody = async () => {
@@ -60,7 +60,7 @@ const PlotHeatmapComponent: React.FC<Props> = ({ featureArray, audioFrameSize, a
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         const plotHeatmap = async () => {

@@ -1,4 +1,4 @@
-import { Message } from "@/types";
+import { ChatConf, Message } from "@/types";
 import { OpenAIStream } from "@/utils";
 
 export const config = {
@@ -7,9 +7,9 @@ export const config = {
 
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { messages, chatMode } = (await req.json()) as {
+    const { messages, chatConf } = (await req.json()) as {
       messages: Message[];
-      chatMode: string
+      chatConf: ChatConf
     };
 
     const charLimit = 12000;
@@ -29,7 +29,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
     console.log(messagesToSend)
 
-    const stream = await OpenAIStream(messagesToSend, chatMode as 'pro' | 'lite');
+    const stream = await OpenAIStream(messagesToSend, chatConf);
 
     return new Response(stream);
     

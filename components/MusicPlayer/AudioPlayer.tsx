@@ -6,9 +6,10 @@ type AudioPlayerProps = {
     file: File | ArrayBuffer;
     startTime: number;
     finishTime: number;
+    background?: boolean;
 };
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ file, startTime, finishTime }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({ file, startTime, finishTime, background=true }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(startTime);
 
@@ -102,7 +103,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ file, startTime, finishTime }
 
 
     return (
-        <div className='inline-flex items-center justify-between w-full p-2 bg-surface rounded-lg text-sm font-sans select-none'>
+        <div className={`inline-flex items-center justify-between w-full p-4 rounded-lg text-sm font-sans select-none ${background ? 'bg-surface' : ''}`}>
 
             <div className='bg-inverse-surface rounded-full w-full inline-flex items-center pl-4 py-4'>
                 <button onClick={isPlaying ? pauseAudio : playAudio} className='pr-2' >
@@ -111,7 +112,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ file, startTime, finishTime }
                             (<span className="play-icon text-surface"><PlayIcon height={'1rem'} width={'1rem'} /></span>)
                     }
                 </button>
-                <div>
+                <div className='text-surface'>
                     <span className="current-time">
                         {FormatTimePlayer(currentTime)}
                     </span>{' '}

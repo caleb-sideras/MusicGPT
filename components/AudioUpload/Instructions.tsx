@@ -9,7 +9,7 @@ interface AccordionItemProps {
     value: string;
 }
 
-const AccordionDemo: React.FC = () => {
+const Instructions: React.FC = () => {
 
     const [audioFile, setAudioFile] = useState<any>()
     const [midiData, setMidiData] = useState<any>()
@@ -17,7 +17,7 @@ const AccordionDemo: React.FC = () => {
     useEffect(() => {
         getAudioFile()
         console.log("no, this can run many times")
-    }, [])
+    }, [])// eslint-disable-line react-hooks/exhaustive-deps
 
 
     const getAudioFile = async () => {
@@ -109,7 +109,7 @@ const AccordionDemo: React.FC = () => {
                                             },
                                             {
                                                 type: 'audi',
-                                                content: { file: audioFile, start: 35, end: 55 }
+                                                content: { file: audioFile, start: 0, end: 20 }
                                             },
                                             {
                                                 type: 'text',
@@ -122,7 +122,8 @@ const AccordionDemo: React.FC = () => {
                                             }
                                         ]
                                     }
-                                } /></>
+                                } />
+                            </>
                             : <></>
                         }
                     </div>
@@ -154,12 +155,12 @@ const AccordionDemo: React.FC = () => {
                                 parts: [
                                     {
                                         type: 'code',
-                                        content: "function createHPCPBarChart(hpcp, container) {\n  const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];\n  const data = Array.from(hpcp);\n  const maxValue = Math.max(...data);\n\n  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\n  svg.setAttribute('width', '100%');\n  svg.setAttribute('height', '100%');\n  svg.setAttribute('viewBox', '0 0 120 100');\n  container.appendChild(svg);\n\n  const barWidth = 8;\n  const barSpacing = 2;\n  const chartHeight = 8..."
+                                        content: "function(hpcpData, divRef, Plotly, d3) {\n  const noteLabels = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];\n  const trace = {\n    x: noteLabels,\n    y: Array.from(hpcpData),\n    type: 'bar',\n    marker: {\n      color: 'rgb(186, 198, 234)',\n   }\n };\n\n  const layout = {\n    title: 'Intensity of Notes (0-5 seconds)',\n    xaxis: {\n      title: 'Notes'\n    },\n    yaxis: {\n      title: 'Intensity'\n    },\n    plot_bgcolor: 'rgba(0, 0, 0, 0)',\n    paper_bgcolor: 'rgba(0, 0, 0, 0)',\n    font: {\n      color: 'rgb(225, 227, 227)'\n    }\n  };\n\n  Plotly.newPlot(divRef, [trace], layout);\n}"
                                     },
                                     {
                                         type: 'exec',
                                         content: {
-                                            code: `function createHPCPBarChart(hpcp, container) {\n  const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];\n  const data = Array.from(hpcp);\n  const maxValue = Math.max(...data);\n\n  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');\n  svg.setAttribute('width', '100%');\n  svg.setAttribute('height', '100%');\n  svg.setAttribute('viewBox', '0 0 120 100');\n  container.appendChild(svg);\n\n  const barWidth = 8;\n  const barSpacing = 2;\n  const chartHeight = 80; // assumed chartHeight value\n\n  data.forEach((value, index) => {\n    const barHeight = (value / maxValue) * chartHeight;\n    const x = index * (barWidth + barSpacing) + barSpacing;\n    const y = chartHeight - barHeight;\n\n    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');\n    rect.setAttribute("x", String(x));\n    rect.setAttribute("y", String(y));\n    rect.setAttribute('width', String(barWidth));\n    rect.setAttribute("height", String(barHeight));\n    rect.setAttribute('fill', 'white');\n    svg.appendChild(rect);\n\n    const text = document.createElementNS("http://www.w3.org/2000/svg", 'text');\n    text.setAttribute('x', String(x + barWidth / 2));\n    text.setAttribute('y', String(chartHeight + 15));\n    text.setAttribute("text-anchor", 'middle');\n    text.setAttribute('font-size', '5');\n    text.setAttribute('fill', 'white');\n    text.textContent = notes[index];\n    svg.appendChild(text);\n  });\n}\n`,
+                                            code: `function(hpcpData, divRef, Plotly, d3) {\n  const noteLabels = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];\n  const trace = {\n    x: noteLabels,\n    y: Array.from(hpcpData),\n    type: 'bar',\n    marker: {\n      color: 'rgb(186, 198, 234)',\n  }\n  };\n\n  const layout = {\n    title: 'Intensity of Notes (0-5 seconds)',\n    xaxis: {\n      title: 'Notes'\n    },\n    yaxis: {\n      title: 'Intensity'\n    },\n    plot_bgcolor: 'rgba(0, 0, 0, 0)',\n    paper_bgcolor: 'rgba(0, 0, 0, 0)',\n    font: {\n      color: 'rgb(225, 227, 227)'\n    }\n  };\n\n  Plotly.newPlot(divRef, [trace], layout);\n}`,
                                             parameters: new Float32Array([
                                                 0.06718692928552628,
                                                 0.09429235756397247,
@@ -309,4 +310,4 @@ const AccordionContent = React.forwardRef<HTMLElement, AccordionContentProps>(({
 
 AccordionContent.displayName = 'AccordionContent'
 
-export default AccordionDemo;
+export default Instructions;

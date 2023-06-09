@@ -144,6 +144,7 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
             }
         }
 
+        // console.log(chatDataUpdates)
         setChatData({ ...chatData, ...chatDataUpdates });
         setParentState(ProState.instructions)
     }
@@ -180,10 +181,9 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
                 originalBuffer = await offlineCtx.startRendering();
             }
 
-            const basicPitch = new BasicPitch(
-                tf.loadGraphModel('/model.json'),
-            );
-
+            // const model = await tf.loadGraphModel('/model.json')
+            const basicPitch = new BasicPitch('/model.json');
+            
             let frames: number[][] = []
             let onsets: number[][] = []
             let contours: number[][] = []
@@ -202,7 +202,6 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
             return { status: 'success', frames: frames, onsets: onsets, contours: contours }
 
         } catch (error) {
-            // console.log(error)
             return { status: 'error' }
         }
     };
@@ -236,11 +235,9 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
             const dynamicComplexity = await essentiaInstance.DynamicComplexity(monoAudio, 0.2, originalBuffer.sampleRate)
             const loudness = await essentiaInstance.Loudness(monoAudio)
 
-            console.log("Finished Prods")
             return { status: 'success', panningScore: roundTo(panningScore, 3), dynamicComplexity: roundTo(dynamicComplexity.dynamicComplexity, 3), dynamicComplexityLoudness: roundTo(dynamicComplexity.loudness, 3), loudness: roundTo(loudness.loudness, 3) }
 
         } catch (error) {
-            // console.log(error)
             return { status: 'error', panningScore: 0, dynamicComplexity: 0, dynamicComplexityLoudness: 0, loudness: 0 }
 
         }
@@ -250,6 +247,7 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
         try {
             const essentiaInstance = await Essentia.init(EssentiaWASM, true)
             const audioFrame = essentiaInstance.audioBufferToMonoSignal(originalBuffer)
+
             return { status: 'success', audioFrame }
         } catch (error) {
             return { status: 'error' }
@@ -276,7 +274,6 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
                 outputToNotesPoly(frames, onsets, 0.6, 0.3, 11),
             ),
         );
-        // console.log("Model finished")
 
         return { midiData: midi, fileData: generateFileData(midi) }
     }

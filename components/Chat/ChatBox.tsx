@@ -48,13 +48,13 @@ export const ChatBox: FC<Props> = ({ messages, messagesPro, loading, onSend, onS
 
         {loading && (
           <div className="my-1 sm:my-1.5">
-            <ChatLoader />
+            <ChatLoader messageType={messagesPro ? true: false} />
           </div>
         )}
         <div ref={messagesEndRef}></div>
       </div>
       <div className="bottom-[56px] left-0 w-full">
-        <ChatInput onSendPro={onSendPro} />
+        <ChatInput onSendPro={onSendPro} onSend={onSend} />
       </div>
     </>
   );

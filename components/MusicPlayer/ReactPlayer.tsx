@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-// import * as mm from '@magenta/music';
 import { NoteSequence, INoteSequence, BasePlayer, VisualizerConfig, blobToNoteSequence, urlToNoteSequence, Player, SoundFontPlayer } from '@magenta/music';
 import Visualizer from './ReactVisualizer';
 import { PlayIcon, PauseIcon } from '@radix-ui/react-icons'
@@ -15,7 +14,8 @@ type PlayerProps = {
   noteSequence?: INoteSequence;
   loop?: boolean;
   visualizerRef?: React.RefObject<VisualizerHandle>;
-  visualizer?: boolean
+  visualizer?: boolean;
+  background?: boolean;
 };
 
 export interface VisualizerHandle {
@@ -39,7 +39,8 @@ const PlayerElement: React.FC<PlayerProps> = ({
   soundFont,
   noteSequence,
   loop = false,
-  visualizer = true
+  visualizer = true,
+  background= true
   // visualizerRef,
 }) => {
   const [player, setPlayer] = useState<BasePlayer | null>(null);
@@ -226,7 +227,7 @@ const PlayerElement: React.FC<PlayerProps> = ({
   };
 
   return (
-    <div className='flex flex-col bg-surface rounded-lg p-4 overflow-x-hidden w-full'>
+    <div className={`flex flex-col rounded-lg p-4 overflow-x-hidden w-full ${background ? 'bg-surface' : ''}`}>
       {!nSequence ?
         <div className='w-full justify-center flex'>
           <Waveform height={40} width={75} />
@@ -244,7 +245,7 @@ const PlayerElement: React.FC<PlayerProps> = ({
                   (<span className="play-icon text-surface"><PlayIcon height={'1rem'} width={'1rem'} /></span>)
               }
             </button>
-            <div>
+            <div className='text-surface'>
               <span className="current-time" ref={currentTimeLabelRef}>
                 {FormatTimePlayer(currentTime)}
               </span>{' '}

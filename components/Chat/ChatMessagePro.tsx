@@ -6,13 +6,8 @@ import AudioPlayer from "../MusicPlayer/AudioPlayer";
 import HPCPPlot from "../Visualizations/Radial";
 import { PlotMelodyContourComponent } from "../Visualizations/Essentia";
 import CodeFormatter from "./CodeFormatter";
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import CodeExec from "../Visualizations/CodeExec";
 const PlayerElement = dynamic(() => import('../MusicPlayer/ReactPlayer'), { ssr: false });
-
-// rest of your code
-
 
 interface Props {
     message: MessagePro;
@@ -63,7 +58,7 @@ export const ChatMessagePro: FC<Props> = ({ message }: { message: MessagePro }) 
                 }`}
         >
             <div
-                className={`flex flex-col items-center ${message.role === "assistant"
+                className={`flex flex-col items-center gap-4 ${message.role === "assistant"
                     ? "bg-on-surface text-surface"
                     : "bg-tertiary text-on-tertiary"
                     } rounded-2xl px-3 py-2 sm:max-w-[67%] max-w-[90%] whitespace-pre-wrap`}

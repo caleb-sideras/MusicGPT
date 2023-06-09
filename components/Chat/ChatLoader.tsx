@@ -1,18 +1,18 @@
-import { IconDots } from "@tabler/icons-react";
 import { FC } from "react";
 import Waveform from "../Icons/waveform";
 
-interface Props {}
+interface ChatLoaderProps {
+  messageType: boolean
+}
 
-export const ChatLoader: FC<Props> = () => {
+export const ChatLoader: FC<ChatLoaderProps> = ({messageType}) => {
   return (
     <div className="flex flex-col flex-start">
       <div
-        className={`flex items-center bg-secondary text-on-secondary rounded-2xl px-4 py-2 w-fit`}
+        className={`flex items-center rounded-2xl px-4 py-2 w-fit ${messageType ? "bg-on-surface text-surface" : "bg-secondary text-on-secondary"}`}
         style={{ overflowWrap: "anywhere" }}
       >
-        {/* <IconDots className="animate-pulse" /> */}
-        <Waveform width={30} height={15} />
+        <Waveform width={30} height={15} color="darkgrey" />
       </div>
     </div>
   );

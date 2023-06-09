@@ -32,6 +32,8 @@ import EssentiaExtractor from "@/utils/essentia/extractor/extractor";
 import EssentiaWASM from '@/utils/essentia/dist/essentia-wasm.web'
 import Essentia from "@/utils/essentia/core_api";
 import { convertMessageProToMessage, filterAndAdjustNotesByTime, formatCategorizeStringifyNotesForModel, removeFileExtension } from "@/utils/utils";
+import ApiKey from "@/components/AudioUpload/ApiKey";
+import { Role } from "@/types";
 
 export interface VisualizerConfig {
   noteHeight?: number;
@@ -46,6 +48,7 @@ export interface VisualizerConfig {
 const ProChat: React.FC = () => {
 
   const [currentState, setCurrentState] = useState<ProState>(ProState.menu)
+  const [apiKey, setAPIKey] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false);
 
   const [messages, setMessages] = useState<MessagePro[]>([]);
@@ -54,8 +57,9 @@ const ProChat: React.FC = () => {
   const [chatData, setChatData] = useState<ChatData>()
 
   useEffect(() => {
-    if (currentState === ProState.convert) {
+    if (currentState === ProState.instructions) {
       setMessages([
+        handleInitialData(),
         {
           role: "assistant",
           parts: [{ type: 'text', content: `Hello! I'm MusicGPT Pro, your AI music assistant. I am currently in Beta, so I might produce inacurate information. Let's talk about ${removeFileExtension(chatData?.file?.name as string)}. What would you like to know?` }]
@@ -73,7 +77,10 @@ const ProChat: React.FC = () => {
       },
       body: JSON.stringify({
         messages: convertMessageProToMessage(updatedMessages),
-        chatMode: "pro",
+        chatConf: {
+          chatMode: "pro",
+          apiKey: apiKey ? apiKey : ""
+        },
       })
     });
 
@@ -100,7 +107,7 @@ const ProChat: React.FC = () => {
     const commandParser = new CommandParser(chatData as ChatData, essentiaExtractor, dataForVisualizations)
     let parts: MessagePart[] | null = null;
     let parserState: ParserState;
-    let index = 0
+    let currentMessage: MessagePart[] = []
 
     while (!done) {
       const { value, done: doneReading } = await reader.read();
@@ -114,6 +121,8 @@ const ProChat: React.FC = () => {
 
           case ParserState.COMMAND:
 
+            currentMessage.push(...parts as MessagePart[]);
+
             if (isFirst) {
               isFirst = false;
               setMessages((messages) => {
@@ -126,10 +135,9 @@ const ProChat: React.FC = () => {
               });
             } else {
               setMessages((messages) => {
-                const lastMessage = messages[messages.length - 1];
                 const updatedMessage = {
-                  ...lastMessage,
-                  parts: [...lastMessage.parts, ...parts as MessagePart[]],
+                  role: "assistant" as Role,
+                  parts: currentMessage,
                 };
                 return [...messages.slice(0, -1), updatedMessage];
               });
@@ -137,11 +145,12 @@ const ProChat: React.FC = () => {
             break;
 
           case ParserState.CODE_END:
+            currentMessage.pop()
+            currentMessage.push(...parts as MessagePart[]);
             setMessages((messages) => {
-              const lastMessage = messages[messages.length - 1];
               const updatedMessage = {
-                ...lastMessage,
-                parts: [...lastMessage.parts.slice(0, -1), ...parts as MessagePart[]],
+                role: "assistant" as Role,
+                parts: currentMessage,
               };
               return [...messages.slice(0, -1), updatedMessage];
             });
@@ -154,16 +163,15 @@ const ProChat: React.FC = () => {
       }
     }
 
-    setMessages((messages) => {
-      const lastMessage = messages[messages.length - 1];
-      const updatedMessage = {
-        ...lastMessage,
-        parts: [...lastMessage.parts, ...commandParser.getBuffer()],
-      };
-      return [...messages.slice(0, -1), updatedMessage];
-    });
-
-
+    if (commandParser.getBuffer()) {
+      setMessages((messages) => {
+        const updatedMessage = {
+          role: "assistant" as Role,
+          parts: [...currentMessage, ...commandParser.getBuffer()],
+        };
+        return [...messages.slice(0, -1), updatedMessage];
+      });
+    }
   };
 
   const handleQuery = async (message: MessagePro) => {
@@ -198,10 +206,11 @@ const ProChat: React.FC = () => {
     // Duration counter
     let timeDuration = 0
     console.log(response)
+    // Dedicated analysis
     if (response.completion && response.segments.length > 0) {
-      console.log(response)
+      console.log("response:\n", response)
+      console.log("chatData:\n", chatData)
       //@ts-ignore
-      // await response.segments.forEach(async (s, index: number) => {
       for (const [index, s] of response.segments.entries()) {
         timeDuration += (s.end - s.start)
         let stringDataForModel: Record<string, string> = {}
@@ -288,79 +297,67 @@ const ProChat: React.FC = () => {
             parts: [
               {
                 type: 'data',
-                content: `Apologise to the user as their "${s.start}-${s.end} seconds" segment request has exceeded their maximum of 20 seconds data analysis per message`
+                content: `Since the users requested segment: "${s.start}-${s.end} seconds" exceeds 20 seconds, you will not receive data for analysis; but you can still provide visualizations for segments longer than 20 seconds.`
               }
             ]
           } as MessagePro)
           //break - change loop
         }
       };
-      console.log(updatedMessages)
+      var updatedMessages = [...updatedMessages, ...dataForModel];
+    }
+    // General analysis
+    else {
+
+      let stringDataForModel: Record<string, string> = {}
+
+      if (response.prodFeatures && chatData?.prod) {
+        // have global and local extraction, in conjunction with CAAS
+        stringDataForModel['prod'] =
+          `COMPRESSION
+            Dynamic Complexity: ${chatData?.prod.dynamicComplexity}, Dynamic Complexity Loudness: ${chatData?.prod.dynamicComplexityLoudness}
+            Dynamic Complexity is the average absolute deviation from the global loudness level estimate on the dB scale. It measures the amount of fluctuation in loudness in a recording
+            
+            Loudness: ${chatData?.prod.loudness}
+            Computes loudness based on Steven's power law, which calculates loudness as the energy of the signal raised to the power of 0.67
+            
+          STEREO IMAGE
+            Panning Score: ${chatData?.prod.panningScore} 
+            The panning score is the panning coefficient for stereo audio, reflecting the relative energy balance between the left and right channels. The coefficient (-1 to 1) indicates the stereo image's direction: -1 for full left, 1 for full right, and 0 for centered`
+      }
+
+      dataForModel.push({
+        role: 'user',
+        parts: [
+          {
+            type: 'data',
+            content: Object.entries(stringDataForModel).map(([key, value]) => `${key} ${value}`).join(' ')
+          }
+        ]
+      } as MessagePro)
+
       var updatedMessages = [...updatedMessages, ...dataForModel];
     }
 
     handleSend(updatedMessages, dataForVisualizations, response.completion)
   }
 
-  const handleGlobalData = () => {
-    // if (isFirstMessage) {
-    //   const initData: string[] = []
-
-    //   initData.push()
-
-    //   const initialData = {
-    //     role: 'data',
-    //     parts: [
-    //       {
-    //         type: 'data',
-    //         content: initData.join(' ')
-    //       }
-    //     ]
-    //   } as MessagePro
-    //   updatedMessages = [initialData, ...updatedMessages]
-    //   setIsFirstMessage(false)
-    // }
-  }
-
-  async function temp() {
-    // function convert1Dto2DArray(float32Array: Float32Array, sliceSize: number) {
-    //   let slices = [];
-    //   for (let i = 0; i < float32Array.length; i += sliceSize) {
-    //     slices.push(Array.from(float32Array.slice(i, i + sliceSize)));
-    //   }
-    //   return slices;
-    // }
-    // const essentiaInstance = await Essentia.init(EssentiaWASM, true);
-    // console.log("WASM essentiaInstance")
-    // const essentiaExtractor = new EssentiaExtractor(essentiaInstance, true);
-    // console.log("essentiaExtractor")
-
-    // const audioData = await fileProps.file.arrayBuffer();
-    // const audioContext = new AudioContext();
-    // const originalBuffer = await audioContext.decodeAudioData(audioData);
-    // console.log("Buffer")
-
-    // const audioFrame = essentiaInstance.audioBufferToMonoSignal(originalBuffer) // fill this with data from your .wav file
-    // console.log("audioFrame", audioFrame)
-    // const hpcp = essentiaExtractor.hpcpExtractor(audioFrame);
-    // console.log("hpcp", hpcp)
-    // setHpcp(hpcp)
-    // const melSpectrum = essentiaExtractor.melSpectrumExtractor(audioFrame);
-    // console.log("melSpectrum", melSpectrum)
-    // setMel(melSpectrum)
-
-    // // const something = essentiaInstance.FrameGenerator(audioFrame)
-    // // console.log('something', essentiaInstance.vectorToArray(something))
-
-    // const audioFrames = convert1Dto2DArray(audioFrame, 1024);
-    // setFrames(audioFrames)
-
-
+  const handleInitialData = () => {
+    const initialData = {
+      role: 'data',
+      parts: [
+        {
+          type: 'data',
+          content: `Initial data. File name: ${chatData?.file.name}, Duration: ${chatData?.graph.duration} seconds, Sample rate: ${chatData?.graph.sampleRate}`
+        }
+      ]
+    } as MessagePro
+    return initialData;
   }
 
   return (
     <>
-      <div className="flex flex-col sm:px-10 pb-4 sm:pb-10 max-w-[1600px] mx-auto sm:mt-4">
+      <div className={`flex flex-col sm:px-10 pb-4 sm:pb-10 mx-auto sm:mt-4 ${currentState === ProState.chat ? 'max-w-[1600px]' : 'max-w-[800px]'}`}>
 
         <div className="justify-center bg-on-surface p-4 flex flex-row items-center gap-4 rounded-t-lg mb-2">
 
@@ -372,7 +369,7 @@ const ProChat: React.FC = () => {
           <div className="text-lg font-bold text-surface">
             {
               currentState == ProState.menu ?
-                <>Please enter your product key</>
+                <>Please enter your OpenAI API key</>
                 : currentState == ProState.upload ?
                   <>Please upload your audio file...</>
                   : currentState == ProState.convert ?
@@ -392,39 +389,7 @@ const ProChat: React.FC = () => {
             <div className='-mt-4 bg-surface flex flex-col justify-center mb-4 items-center w-full min-h-[200px] border-outline sm:border-x sm:border-b rounded-lg text-on-surface cursor-pointer transition-all duration-200'>
               {
                 currentState == ProState.menu ?
-                  <Form.Root className="w-[260px]"
-                    onSubmit={(event) => {
-                      const data = Object.fromEntries(new FormData(event.currentTarget));
-                      const validKeys = ['1234', '458-225-928', '567-823-233', '901-200-221'];
-                      if (validKeys.includes(data.key as string)) {
-                        setCurrentState(ProState.upload)
-                      }
-                      event.preventDefault();
-                    }}>
-                    <Form.Field className="grid mb-[10px]" name="key">
-                      <div className="flex items-baseline justify-between">
-                        <Form.Label className="text-[15px] font-medium leading-[35px] text-on-surface">Key</Form.Label>
-                        <Form.Message className="text-[13px] text-on-surface opacity-[0.8]" match="valueMissing">
-                          Please enter your product key
-                        </Form.Message>
-                        <Form.Message className="text-[13px] text-on-surface opacity-[0.8]" match="typeMismatch">
-                          Please provide a key
-                        </Form.Message>
-                      </div>
-                      <Form.Control asChild>
-                        <input
-                          className="box-border w-full border border-outline bg-surface inline-flex h-[35px] appearance-none items-center justify-center rounded-[4px] px-[10px] text-[15px] leading-none text-on-surface outline-none selection:color-white selection:bg-outline"
-                          type="password"
-                          required
-                        />
-                      </Form.Control>
-                    </Form.Field>
-                    <Form.Submit asChild>
-                      <button className="box-border w-full text-surface inline-flex h-[35px] items-center justify-center rounded-md bg-on-surface px-[15px] font-medium leading-non focus:outline-none mt-[10px]">
-                        Submit
-                      </button>
-                    </Form.Submit>
-                  </Form.Root>
+                  <ApiKey setCurrentState={setCurrentState} setAPIKey={setAPIKey} />
                   : currentState == ProState.upload ?
                     <Upload
                       setChatData={setChatData as Dispatch<SetStateAction<ChatData>>}

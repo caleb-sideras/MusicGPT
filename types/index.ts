@@ -183,8 +183,13 @@ export enum LoaderType {
 
 
 /////////PRO///////////
+export type ChatConf = {
+  chatMode: 'pro' | 'lite'
+  apiKey: string
+}
+
 export interface MessagePart {
-  type: "text" | "data" | "midi" | "audi" | "wave" | "hpcp" | "mels" | "code"| "exec";
+  type: "text" | "data" | "midi" | "audi" | "wave" | "hpcp" | "mels" | "code" | "exec";
   content: Buffer | any;
 }
 
