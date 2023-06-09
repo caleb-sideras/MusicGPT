@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Waveform from '../Icons/waveform';
+import Showcase from './Showcase';
+import AudioPlayer from '../MusicPlayer/AudioPlayer';
+import dynamic from 'next/dynamic';
+import Image from 'next/image'
 
-type ProProps = {
-    proHighlighted: boolean
-}
+const PlayerElement = dynamic(() => import('../MusicPlayer/ReactPlayer'), { ssr: false });
+
 
 type ListProps = {
     title: string;
@@ -12,39 +15,132 @@ type ListProps = {
     section?: string;
 }
 const General = () => {
+    const [audioFile, setAudioFile] = useState<any>()
+    const [midiData, setMidiData] = useState<any>()
+
+    useEffect(() => {
+        getAudioFile()
+        console.log("no, this can run many times")
+    }, [])// eslint-disable-line react-hooks/exhaustive-deps
+
+
+    const getAudioFile = async () => {
+        try {
+            const responseWav = await fetch('/JoshuaSideras.wav');
+            const responseJSON = await fetch('/JoshuaSideras.json');
+
+
+            if (!responseWav.ok || !responseJSON.ok) {
+                throw new Error(`HTTP error!`);
+            }
+            const jsonBuffer = await responseJSON.json()
+            setAudioFile(await responseWav.arrayBuffer())
+            setMidiData(new Uint8Array(jsonBuffer.data))
+        } catch (error) {
+            console.error('Fetch error: ', error);
+        }
+    }
+
     return (
-        <div className="w-full sm:w-auto rounded-md bg-tertiary p-[22px]">
-            <div className='flex sm:flex-row flex-col justify-center text-3xl font-semibold text-center text-on-tertiary sm:mb-6 mb-4'>
+        // <div className="w-full sm:w-auto rounded-md bg-tertiary p-[22px]">
+        //     <div className='flex sm:flex-row flex-col justify-center text-3xl font-semibold text-center text-on-tertiary sm:mb-6 mb-4'>
+        //         <span>Discover</span>
+        //         <span className='text-on-tertiary font-extrabold pl-4'>MusicGPT</span>
+        //     </div>
+        //     <ul className="m-auto grid list-none gap-x-[10px] w-full sm:grid-cols-[0.75fr_1fr]">
+
+        //         <li className="row-span-3 grid">
+        //             <div
+        //                 className="flex h-full w-full select-none flex-col justify-end rounded-[6px] bg-tertiary-container p-[25px] no-underline outline-none focus:shadow-[0_0_0_2px]"
+        //             >
+        //                 <Waveform />
+        //                 <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-on-tertiary-container">
+        //                     MusicGPT
+        //                 </div>
+        //                 <p className="text-mauve4 text-[14px] leading-[1.3] text-on-tertiary-container">
+        //                     AI powered music analysis.
+        //                 </p>
+        //             </div>
+        //         </li>
+
+        //         <ListItem title="AI">
+        //             Discuss various aspects of a song in natural language.
+        //         </ListItem>
+        //         <ListItem title="Multi-model">
+        //         MusicGPT employs a multi-model architecture, enhancing the capacity of AI to grasp and interpret musical nuances effectively.
+        //         </ListItem>
+        //         <ListItem title="Search">
+        //             On-demand search for any song or upload your own files
+        //         </ListItem>
+        //     </ul>
+        // </div>
+        <div className="w-full rounded-md bg-tertiary p-[22px]">
+            <div className='flex sm:flex-row flex-col justify-center text-5xl font-semibold text-center text-on-tertiary sm:mb-5 mb-4'>
                 <span>Discover</span>
-                <span className='text-on-tertiary font-extrabold pl-4'>MusicGPT</span>
+                <span className='font-extrabold pl-4'>MusicGPT</span>
             </div>
-            <ul className="m-auto grid list-none gap-x-[10px] w-full sm:grid-cols-[0.75fr_1fr]">
+            <p className="text-xl leading-[1.3] text-center text-on-tertiary">
+                Explore, understand, and discuss music like never before with our mutimodal AI
+            </p>
+            <ul className="m-auto grid list-none gap-[10px] w-full 2xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 mt-8">
 
-                <li className="row-span-3 grid">
-                    <div
-                        className="flex h-full w-full select-none flex-col justify-end rounded-[6px] bg-tertiary-container p-[25px] no-underline outline-none focus:shadow-[0_0_0_2px]"
-                    >
-                        <Waveform />
-                        <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-on-tertiary-container">
-                            MusicGPT
-                        </div>
-                        <p className="text-mauve4 text-[14px] leading-[1.3] text-on-tertiary-container">
-                            AI powered music analysis.
-                        </p>
+                <Showcase title='Visualizations' description='MusicGPT can create any visualization you want' >
+
+                    <div className='flex justify-center h-full sm:mt-auto mt-2'>
+                        <Image
+                            src='/example_plot.png'
+                            width={499}
+                            height={427}
+                            alt='Example Visualization'
+                            className='m-auto'
+                        />
                     </div>
-                </li>
+                </Showcase>
 
-                <ListItem title="AI">
-                    Discuss various aspects of a song in natural language.
-                </ListItem>
-                <ListItem title="Multi-model">
-                MusicGPT employs a multi-model architecture, enhancing the capacity of AI to grasp and interpret musical nuances effectively.
-                </ListItem>
-                <ListItem title="Search">
-                    On-demand search for any song or upload your own files
-                </ListItem>
-            </ul>
-        </div>
+                <Showcase title='Playback' description='Listen to a song in various formats'>
+                    <div className='flex flex-col justify-center h-full p-2'>
+
+                        {
+                            audioFile && <AudioPlayer
+                                file={audioFile}
+                                startTime={0}
+                                finishTime={20}
+                                background={false}
+                            />
+                        }
+
+                        {
+                            midiData && <PlayerElement
+                                buffer={midiData as Buffer}
+                                soundFont=""
+                                loop={true}
+                                background={false}
+                            />
+                        }
+                    </div>
+                </Showcase>
+                <Showcase title='Dedicated Analaysis' description='Query any section of a song for dedicated analysis'>
+                    <div className='flex flex-col gap-4 p-4 pb-6'>
+
+                        <div className={`flex flex-col items-end`}>
+                            <div
+                                className={`flex flex-col items-center gap-4 bg-on-surface text-surface rounded-2xl px-3 py-2 max-w-[90%] whitespace-pre-wrap`}
+                                style={{ overflowWrap: "anywhere" }}
+                            >
+                                From 20-40 seconds, how do harmonies play a role in shaping the mood and enhancing the overall sonic texture of the composition?
+                            </div>
+                        </div>
+                        <div className={`flex flex-col items-start`}>
+                            <div
+                                className={`flex flex-col items-center gap-4 bg-tertiary text-on-tertiary rounded-2xl px-3 py-2 max-w-[90%] whitespace-pre-wrap`}
+                                style={{ overflowWrap: "anywhere" }}
+                            >
+                                During this specific segment, the harmony evolves through a chord progression from C to G to Am to F. This change, popular in many songs, moves from major to minor tones, influencing the emotional mood of the piece. The shift to the F chord can provide a sense of resolution or comfort. These harmonic changes, paired with corresponding melodic variations, create a dynamic, nuanced sonic landscape.                        </div>
+                        </div>
+                    </div>
+                </Showcase>
+            </ul >
+        </div >
     );
 };
 
@@ -54,7 +150,7 @@ const Lite = () => {
             <li className="row-span-3 grid">
                 <Link
                     className="flex h-full w-full select-none flex-col justify-end rounded-[6px] bg-secondary-container p-[25px] no-underline hover:-translate-x-1 hover:-translate-y-1 transition-transform duration-200 focus:shadow-[0_0_0_2px]"
-                    href="/lite/search"
+                    href="/lite"
                 >
                     <Waveform />
                     <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-on-secondary-container">
@@ -99,11 +195,14 @@ const Pro = () => {
             <ListItem title="Production and Engineering">
                 Discuss technical aspects of songs such as stero image, compression and more.
             </ListItem>
-            <ListItem title="Web Search">
+            {/* <ListItem title="Web Search">
                 MusicGPT gathers all relevant information about a song from the Internet.
-            </ListItem>
+            </ListItem> */}
             <ListItem title="MIDI">
                 Discuss a songs MIDI with MusicGPT&apos;s Polyphonic MIDI extraction.
+            </ListItem>
+            <ListItem title="Visualizations">
+                Describe a visualization and MusicGPT will create it.
             </ListItem>
             <ListItem title="Upload">
                 Upload your own music for analysis.

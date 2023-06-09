@@ -28,10 +28,10 @@ let PlotConfig = {
 let LayoutMelodyContourPlot = {
   title: "Melody Contour",
   plot_bgcolor: "transparent",
-  paper_bgcolor:"#FCF7F7",
-  autosize: false,
-  width: 670,
-  height: 300,
+  paper_bgcolor:"#e1e3e3",
+  autosize: true,
+  // width: 670,
+  // height: 300,
   xaxis: {
     type: "time",
     title: "Time"
@@ -49,7 +49,7 @@ let LayoutMelodyContourPlot = {
 let LayoutChromaPlot = {
   title: "",
   plot_bgcolor: "transparent",
-  paper_bgcolor:"#FCF7F7",
+  paper_bgcolor:"#e1e3e3",
   autosize: false,
   width: 670,
   height: 300,
@@ -69,10 +69,10 @@ let LayoutChromaPlot = {
 let LayoutSpectrogramPlot = {
   title: "",
   plot_bgcolor: "transparent",
-  paper_bgcolor:"#FCF7F7",
-  autosize: false,
-  width: 670,
-  height: 300,
+  paper_bgcolor:"#e1e3e3",
+  autosize: true,
+  // width: 670,
+  // height: 300,
   xaxis: {
       title: 'Time',
       autorange: true,

@@ -9,14 +9,15 @@ interface AccordionItemProps {
     value: string;
 }
 
-const AccordionDemo: React.FC = () => {
+const Instructions: React.FC = () => {
 
     const [audioFile, setAudioFile] = useState<any>()
     const [midiData, setMidiData] = useState<any>()
 
     useEffect(() => {
         getAudioFile()
-    }, [])
+        console.log("no, this can run many times")
+    }, [])// eslint-disable-line react-hooks/exhaustive-deps
 
 
     const getAudioFile = async () => {
@@ -68,8 +69,7 @@ const AccordionDemo: React.FC = () => {
                                     {
                                         type: 'text',
                                         content: "During this specific segment, the harmony evolves through a chord progression from C to G to Am to F. This change, popular in many songs, moves from major to minor tones, influencing the emotional mood of the piece. The shift to the F chord can provide a sense of resolution or comfort. These harmonic changes, paired with corresponding melodic variations, create a dynamic, nuanced sonic landscape."
-                                    }
-
+                                    },
                                 ]
                             }
                         } />
@@ -78,10 +78,10 @@ const AccordionDemo: React.FC = () => {
             </AccordionItem>
 
             <AccordionItem value="item-2">
-                <AccordionTrigger>Playback and Visualizations</AccordionTrigger>
+                <AccordionTrigger>Playback</AccordionTrigger>
                 <AccordionContent>
                     <div>
-                        I currently support Audio/MIDI playback and visualizations with dedicated analysis. Specify a section with timestamps and ask for these features.
+                        I currently support Audio/MIDI playback with dedicated analysis. Specify a section with timestamps and ask for these features.
                     </div>
                     <div className='flex flex-col gap-4 mt-4 p-6 bg-[#edf2fa] rounded-lg'>
                         {audioFile && midiData ?
@@ -108,8 +108,8 @@ const AccordionDemo: React.FC = () => {
 
                                             },
                                             {
-                                                type: '!{audi}',
-                                                content: { file: audioFile, start: 35, end: 55 }
+                                                type: 'audi',
+                                                content: { file: audioFile, start: 0, end: 20 }
                                             },
                                             {
                                                 type: 'text',
@@ -117,12 +117,13 @@ const AccordionDemo: React.FC = () => {
 
                                             },
                                             {
-                                                type: '!{midi}',
+                                                type: 'midi',
                                                 content: midiData
                                             }
                                         ]
                                     }
-                                } /></>
+                                } />
+                            </>
                             : <></>
                         }
                     </div>
@@ -130,6 +131,61 @@ const AccordionDemo: React.FC = () => {
             </AccordionItem>
 
             <AccordionItem value="item-3">
+                <AccordionTrigger>Visualizations</AccordionTrigger>
+                <AccordionContent>
+                    <div>
+                        I support custom visualizations. Describe what you would like to see and I will create the code and run it for you.
+                    </div>
+                    <div className='flex flex-col gap-4 mt-4 p-6 bg-[#edf2fa] rounded-lg'>
+                        <ChatMessagePro message={
+                            {
+                                role: 'user',
+                                parts: [
+                                    {
+                                        type: 'text',
+                                        content: "Create a custom visualization to show the intensity of the notes in the first 5 seconds."
+                                    }
+
+                                ]
+                            }
+                        } />
+                        <ChatMessagePro message={
+                            {
+                                role: 'assistant',
+                                parts: [
+                                    {
+                                        type: 'code',
+                                        content: "function(hpcpData, divRef, Plotly, d3) {\n  const noteLabels = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];\n  const trace = {\n    x: noteLabels,\n    y: Array.from(hpcpData),\n    type: 'bar',\n    marker: {\n      color: 'rgb(186, 198, 234)',\n   }\n };\n\n  const layout = {\n    title: 'Intensity of Notes (0-5 seconds)',\n    xaxis: {\n      title: 'Notes'\n    },\n    yaxis: {\n      title: 'Intensity'\n    },\n    plot_bgcolor: 'rgba(0, 0, 0, 0)',\n    paper_bgcolor: 'rgba(0, 0, 0, 0)',\n    font: {\n      color: 'rgb(225, 227, 227)'\n    }\n  };\n\n  Plotly.newPlot(divRef, [trace], layout);\n}"
+                                    },
+                                    {
+                                        type: 'exec',
+                                        content: {
+                                            code: `function(hpcpData, divRef, Plotly, d3) {\n  const noteLabels = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];\n  const trace = {\n    x: noteLabels,\n    y: Array.from(hpcpData),\n    type: 'bar',\n    marker: {\n      color: 'rgb(186, 198, 234)',\n  }\n  };\n\n  const layout = {\n    title: 'Intensity of Notes (0-5 seconds)',\n    xaxis: {\n      title: 'Notes'\n    },\n    yaxis: {\n      title: 'Intensity'\n    },\n    plot_bgcolor: 'rgba(0, 0, 0, 0)',\n    paper_bgcolor: 'rgba(0, 0, 0, 0)',\n    font: {\n      color: 'rgb(225, 227, 227)'\n    }\n  };\n\n  Plotly.newPlot(divRef, [trace], layout);\n}`,
+                                            parameters: new Float32Array([
+                                                0.06718692928552628,
+                                                0.09429235756397247,
+                                                0.22089536488056183,
+                                                0.2754737436771393,
+                                                0.00002110790774167981,
+                                                0,
+                                                0,
+                                                1,
+                                                0.777940034866333,
+                                                0.3950446546077728,
+                                                0.3153027296066284,
+                                                0.033138956874608994
+                                            ])
+                                        }
+                                    }
+
+                                ]
+                            }
+                        } />
+                    </div>
+                </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-4">
                 <AccordionTrigger>Data Persistence</AccordionTrigger>
                 <AccordionContent>
                     <div>
@@ -187,6 +243,8 @@ const AccordionDemo: React.FC = () => {
                     </div>
                 </AccordionContent>
             </AccordionItem>
+
+
         </Accordion.Root>
     );
 };
@@ -252,4 +310,4 @@ const AccordionContent = React.forwardRef<HTMLElement, AccordionContentProps>(({
 
 AccordionContent.displayName = 'AccordionContent'
 
-export default AccordionDemo;
+export default Instructions;

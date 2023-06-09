@@ -213,7 +213,7 @@ export default function Chat() {
     console.log(message)
 
     if (isFirstMessage) {
-      let dataMessage: Message = {'role': 'data', 'content': `Data: ${JSON.stringify(modelData).replace(/\//g, '')}`}
+      let dataMessage: Message = { 'role': 'data', 'content': `Data: ${JSON.stringify(modelData).replace(/\//g, '')}` }
       // console.log(dataMessage);
       var updatedMessages = [...messages, dataMessage, message]
       setIsFirstMessage(false);
@@ -233,7 +233,10 @@ export default function Chat() {
       },
       body: JSON.stringify({
         messages: updatedMessages,
-        chatMode: "lite",
+        chatConf: {
+          chatMode: "lite",
+          apiKey: ""
+        },
       })
     });
 
@@ -424,8 +427,8 @@ export default function Chat() {
                   <SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
                     contents={[
                       { text: 'Obtaining cultural goodness', loadingState: geniusState, loaderType: LoaderType.waveform },
-                      { text: 'Retrieving complex musical data', loadingState: lowLevelState, loaderType: LoaderType.waveform  },
-                      { text: 'Looking for general information', loadingState: highLevelState, loaderType: LoaderType.waveform  }
+                      { text: 'Retrieving complex musical data', loadingState: lowLevelState, loaderType: LoaderType.waveform },
+                      { text: 'Looking for general information', loadingState: highLevelState, loaderType: LoaderType.waveform }
                     ]} />
                 </div>
               </div>
@@ -456,9 +459,9 @@ export default function Chat() {
                         >
                           <SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
                             contents={[
-                              { text: 'Cultural data', loadingState: geniusState, loaderType: LoaderType.waveform  },
-                              { text: 'Musical data', loadingState: lowLevelState, loaderType: LoaderType.waveform  },
-                              { text: 'General information', loadingState: highLevelState, loaderType: LoaderType.waveform  }
+                              { text: 'Cultural data', loadingState: geniusState, loaderType: LoaderType.waveform },
+                              { text: 'Musical data', loadingState: lowLevelState, loaderType: LoaderType.waveform },
+                              { text: 'General information', loadingState: highLevelState, loaderType: LoaderType.waveform }
                             ]} />
                           <DropdownMenu.Arrow className="fill-white" />
                         </DropdownMenu.Content>

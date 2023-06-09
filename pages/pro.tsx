@@ -1,8 +1,9 @@
 import React from 'react'
 import { Pro } from '@/components/Features/Features'
-import AccordionDemo from '@/components/AudioUpload/Instructions'
+import Instructions from '@/components/AudioUpload/Instructions'
 import Link from 'next/link'
-import Head from 'next/head'
+import Head from 'next/head';
+
 
 function ProHome() {
   const inlineStyles = {
@@ -27,7 +28,7 @@ function ProHome() {
         <div style={proStyles} className="col-span-1 md:col-span-2 lg:col-span-6 rounded-lg p-4 w-full h-fill">
           <Pro />
         </div>
-        <AccordionDemo />
+        <Instructions />
         <Link href='/pro/chat'>
           <div className='w-full p-4 text-center text-on-surface hover:text-surface rounded-full bg-surface hover:bg-on-surface border-on-surface hover:border-surface border-2 transition cursor-pointer'>
             Let&apos;s go

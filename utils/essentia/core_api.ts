@@ -46,6 +46,16 @@ class Essentia {
     instance.version = instance.algorithms.version;
     instance.algorithmNames = instance.algorithms.algorithmNames;
     return instance;
+    
+    // const wasm = await WebAssembly.instantiate(EssentiaWASM);
+    // const value = wasm.instance.exports;
+
+    // const instance = new Essentia(value, isDebug);
+    // instance.algorithms = new value.EssentiaJS(isDebug);
+    // instance.module = value;
+    // instance.version = instance.algorithms.version;
+    // instance.algorithmNames = instance.algorithms.algorithmNames;
+    // return instance;
   }
 
   /**

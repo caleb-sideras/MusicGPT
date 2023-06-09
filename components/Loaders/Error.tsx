@@ -13,7 +13,7 @@ const ErrorComponent: React.FC<ErrorComponentProps> = ({ message }) => {
         }, 5000);
 
         return () => clearTimeout(timer);
-    }, []);
+    }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
     if (!visible) {
         return null;

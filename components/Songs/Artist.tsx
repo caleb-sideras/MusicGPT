@@ -29,7 +29,7 @@ export default function Artist({ artist, title, duration, imageUrl, year, onClic
     <div
       className={`group flex items-center justify-between p-4 cursor-pointer duration-100
         ${style === Style.default ? 'bg-transparent hover:bg-surface-variant rounded-lg' :
-          style === Style.lite ? 'group-hover:bg-surface-variant rounded-lg' :
+          style === Style.lite ? 'hover:bg-secondary' :
             style === Style.home ? 'hover:bg-tertiary' :
               'text-on-surface'
         }`
@@ -40,7 +40,7 @@ export default function Artist({ artist, title, duration, imageUrl, year, onClic
         <div className='flex flex-col truncate'>
           <h2 className={`text-xl font-semibold overflow-hidden text-ellipsis
             ${style === Style.default ? 'text-on-background' :
-              style === Style.lite ? 'text-on-surface-variant' :
+              style === Style.lite ? 'text-on-secondary-container group-hover:text-on-secondary' :
                 style === Style.home ? 'text-on-tertiary-container group-hover:text-on-tertiary' :
                   'text-on-surface'
             }
@@ -49,7 +49,7 @@ export default function Artist({ artist, title, duration, imageUrl, year, onClic
           </h2>
           <p className={`text-on-surface-variant overflow-hidden text-ellipsis
             ${style === Style.default ? '' :
-              style === Style.lite ? '' :
+              style === Style.lite ? 'group-hover:text-on-secondary' :
                 style === Style.home ? 'group-hover:text-tertiary-container' :
                   ''
             } 
@@ -60,7 +60,7 @@ export default function Artist({ artist, title, duration, imageUrl, year, onClic
       </div>
       <p className={`text-on-surface-variant
         ${style === Style.default ? '' :
-          style === Style.lite ? '' :
+          style === Style.lite ? 'group-hover:text-on-secondary' :
             style === Style.home ? 'group-hover:text-tertiary-container' :
               ''
         }`

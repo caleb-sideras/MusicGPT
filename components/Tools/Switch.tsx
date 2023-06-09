@@ -2,14 +2,13 @@ import React from 'react';
 import * as Switch from '@radix-ui/react-switch';
 
 type SwitchDemoProps = {
-    isChecked: boolean;
     setIsChecked: React.Dispatch<React.SetStateAction<boolean>>;
     defaultChecked: boolean;
     disabled: boolean;
     onClick?: ()=>any
 };
 
-const SwitchDemo: React.FC<SwitchDemoProps> = ({ isChecked, setIsChecked, defaultChecked, disabled, onClick }) => (
+const SwitchDemo: React.FC<SwitchDemoProps> = ({ setIsChecked, defaultChecked, disabled, onClick }) => (
     <form>
         <div className="flex items-center" style={{ display: 'flex', alignItems: 'center' }}>
             <Switch.Root

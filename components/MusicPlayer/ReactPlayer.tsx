@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import * as mm from '@magenta/music';
-import { NoteSequence, INoteSequence } from '@magenta/music';
+import { NoteSequence, INoteSequence, BasePlayer, VisualizerConfig, blobToNoteSequence, urlToNoteSequence, Player, SoundFontPlayer } from '@magenta/music';
 import Visualizer from './ReactVisualizer';
 import { PlayIcon, PauseIcon } from '@radix-ui/react-icons'
 import Waveform from '../Icons/waveform';
@@ -15,7 +14,8 @@ type PlayerProps = {
   noteSequence?: INoteSequence;
   loop?: boolean;
   visualizerRef?: React.RefObject<VisualizerHandle>;
-  visualizer?: boolean
+  visualizer?: boolean;
+  background?: boolean;
 };
 
 export interface VisualizerHandle {
@@ -30,7 +30,7 @@ const visualizerConfig = {
   pixelsPerTimeStep: 20,
   noteRGB: '225, 227, 227',
   // activeNoteRGB: '177, 203, 208',
-} as mm.VisualizerConfig;
+} as VisualizerConfig;
 
 
 const PlayerElement: React.FC<PlayerProps> = ({
@@ -39,10 +39,11 @@ const PlayerElement: React.FC<PlayerProps> = ({
   soundFont,
   noteSequence,
   loop = false,
-  visualizer = true
+  visualizer = true,
+  background= true
   // visualizerRef,
 }) => {
-  const [player, setPlayer] = useState<mm.BasePlayer | null>(null);
+  const [player, setPlayer] = useState<BasePlayer | null>(null);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -94,7 +95,7 @@ const PlayerElement: React.FC<PlayerProps> = ({
 
   const bufferToNoteSequenceUsingBlob = async (buffer: Buffer): Promise<NoteSequence> => {
     const blob = new Blob([buffer], { type: 'audio/midi' });
-    return mm.blobToNoteSequence(blob);
+    return blobToNoteSequence(blob);
   };
 
   const initPlayer = async () => {
@@ -102,22 +103,22 @@ const PlayerElement: React.FC<PlayerProps> = ({
     try {
       let ns: INoteSequence | null = noteSequence || null;
       if (src) {
-        ns = await mm.urlToNoteSequence(src);
+        ns = await urlToNoteSequence(src);
       }
       if (buffer) {
         ns = await bufferToNoteSequenceUsingBlob(buffer);
       }
-      setNSequence(ns);
 
       if (!ns) {
         setErrorState('No content loaded');
         return;
       }
-
+      
+      setNSequence(ns)
       setCurrentTime(0);
       setDuration(Math.round(ns.totalTime as number));
 
-      let newPlayer: mm.BasePlayer;
+      let newPlayer: BasePlayer;
       const callbackObject = {
         run: (note: NoteSequence.INote) => {
           if (visualizerRef?.current) {
@@ -127,13 +128,13 @@ const PlayerElement: React.FC<PlayerProps> = ({
         stop: () => { },
       };
       if (soundFont === null) {
-        newPlayer = new mm.Player(false, callbackObject);
+        newPlayer = new Player(false, callbackObject);
       } else {
         if (soundFont === '') {
           soundFont = DEFAULT_SOUNDFONT;
         }
-        newPlayer = new mm.SoundFontPlayer(soundFont as string, undefined, undefined, undefined, callbackObject);
-        await (newPlayer as mm.SoundFontPlayer).loadSamples(ns);
+        newPlayer = new SoundFontPlayer(soundFont as string, undefined, undefined, undefined, callbackObject);
+        await (newPlayer as SoundFontPlayer).loadSamples(ns);
       }
       setPlayer(newPlayer);
       setLoadedState();
@@ -226,7 +227,7 @@ const PlayerElement: React.FC<PlayerProps> = ({
   };
 
   return (
-    <div className='flex flex-col bg-surface rounded-lg p-4 overflow-x-hidden w-full'>
+    <div className={`flex flex-col rounded-lg p-4 overflow-x-hidden w-full ${background ? 'bg-surface' : ''}`}>
       {!nSequence ?
         <div className='w-full justify-center flex'>
           <Waveform height={40} width={75} />
@@ -244,7 +245,7 @@ const PlayerElement: React.FC<PlayerProps> = ({
                   (<span className="play-icon text-surface"><PlayIcon height={'1rem'} width={'1rem'} /></span>)
               }
             </button>
-            <div>
+            <div className='text-surface'>
               <span className="current-time" ref={currentTimeLabelRef}>
                 {FormatTimePlayer(currentTime)}
               </span>{' '}

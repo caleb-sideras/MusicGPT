@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
-import * as mm from '@magenta/music';
-import { NoteSequence, INoteSequence } from '@magenta/music';
+// import * as mm from '@magenta/music';
+import { NoteSequence, INoteSequence, PianoRollSVGVisualizer, WaterfallSVGVisualizer, StaffSVGVisualizer, VisualizerConfig, urlToNoteSequence } from '@magenta/music';
 import useDeepCompareEffect from 'use-deep-compare-effect';
 
 const VISUALIZER_TYPES = ['piano-roll', 'waterfall', 'staff'] as const;
 type VisualizerType = typeof VISUALIZER_TYPES[number];
-type Visualizer = mm.PianoRollSVGVisualizer | mm.WaterfallSVGVisualizer | mm.StaffSVGVisualizer;
+type Visualizer = PianoRollSVGVisualizer | WaterfallSVGVisualizer | StaffSVGVisualizer;
 
 interface VisualizerProps {
     src?: string;
     type?: VisualizerType;
     noteSequence?: INoteSequence;
-    config?: mm.VisualizerConfig;
+    config?: VisualizerConfig;
 }
 
 export interface VisualizerHandle {
@@ -33,7 +33,7 @@ const Visualizer = forwardRef<VisualizerHandle, VisualizerProps>(
         useEffect(() => {
             if (src) {
                 setNs(null);
-                mm.urlToNoteSequence(src).then((sequence) => setNs(sequence));
+                urlToNoteSequence(src).then((sequence) => setNs(sequence));
             }
         }, [src]);
 
@@ -53,15 +53,15 @@ const Visualizer = forwardRef<VisualizerHandle, VisualizerProps>(
                 wrapper.classList.add('piano-roll-visualizer', 'w-full', 'overflow-x-auto');
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 wrapper.appendChild(svg);
-                setVisualizer(new mm.PianoRollSVGVisualizer(ns, svg, config));
+                setVisualizer(new PianoRollSVGVisualizer(ns, svg, config));
             } else if (type === 'waterfall') {
                 wrapper.classList.add('waterfall-visualizer');
-                setVisualizer(new mm.WaterfallSVGVisualizer(ns, wrapper, config));
+                setVisualizer(new WaterfallSVGVisualizer(ns, wrapper, config));
             } else if (type === 'staff') {
                 wrapper.classList.add('staff-visualizer');
                 const div = document.createElement('div');
                 wrapper.appendChild(div);
-                setVisualizer(new mm.StaffSVGVisualizer(ns, div, config));
+                setVisualizer(new StaffSVGVisualizer(ns, div, config));
             }
         };
 
