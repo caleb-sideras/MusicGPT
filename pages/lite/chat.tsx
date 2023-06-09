@@ -210,13 +210,14 @@ export default function Chat() {
   }
 
   const handleSend = async (message: Message) => {
+    console.log(message)
 
     if (isFirstMessage) {
       let dataMessage: Message = { 'role': 'data', 'content': `Data: ${JSON.stringify(modelData).replace(/\//g, '')}` }
       // console.log(dataMessage);
       var updatedMessages = [...messages, dataMessage, message]
       setIsFirstMessage(false);
-      // console.log(updatedMessages)
+      console.log(updatedMessages)
     }
     else {
       var updatedMessages = [...messages, message];

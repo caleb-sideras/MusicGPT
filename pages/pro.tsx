@@ -4,6 +4,7 @@ import Instructions from '@/components/AudioUpload/Instructions'
 import Link from 'next/link'
 import Head from 'next/head';
 
+
 function ProHome() {
   const inlineStyles = {
     backgroundSize: 'cover',

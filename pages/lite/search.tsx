@@ -10,6 +10,7 @@ import SmallLoader from '@/components/Loaders/SmallLoader';
 import { LoadingState } from '@/types';
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { Style } from '@/types';
+import Head from 'next/head'
 
 
 const SearchComponent = () => {
@@ -26,7 +27,7 @@ const SearchComponent = () => {
 
   const handleSearch = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     if (artist.trim().length === 0 || song.trim().length === 0) {
       setError(true);
       return;
@@ -53,7 +54,7 @@ const SearchComponent = () => {
     };
   };
 
-  const handleArtistClick = async (songData: any, artist: string, song:string) => {
+  const handleArtistClick = async (songData: any, artist: string, song: string) => {
     setSelectedArtist(songData.id);
     setSelectedArtistState(LoadingState.loading);
 
@@ -114,80 +115,90 @@ const SearchComponent = () => {
   };
 
   return (
-    <div className="container mx-auto max-w-screen-sm flex flex-col justify-center sm:px-10 px-2">
-      <form onSubmit={handleSearch} className="space-y-4 mb-4">
-        <div className='flex flex-row rounded-l-full rounded-r-full border-outline bg-secondary-container text-on-secondary-container items-center px-4 py-1'>
-          <div className='flex items-center justify-center h-[50%]'>
-            {loading === LoadingState.loading ? (
-              <button type="submit" disabled className="bg-transparent focus:outline-none focus:ring-transparent">
-                <MagnifyingGlassIcon className="w-5 h-5 text-on-tertiary-container" />
-              </button>
-            ) : (
-              <button type="submit" className="bg-transparent focus:outline-none focus:ring-transparent">
-                <MagnifyingGlassIcon className="w-5 h-5 text-on-secondary-container" />
-              </button>
-            )}
-          </div>
-          <input
-            type="text"
-            id="artist"
-            value={artist}
-            placeholder="Artist"
-            onChange={(event) => setArtist(event.target.value)}
-            className="h-[60%] block -ml-1 w-full bg-transparent text-on-secondary-container py-2 px-4 focus:outline-none focus:ring-2 focus:ring-transparent"
-          />
-          <input
-            type="text"
-            id="song"
-            value={song}
-            placeholder="Song"
-            onChange={(event) => setSong(event.target.value)}
-            className="h-[60%] block w-full bg-transparent text-on-secondary-container py-2 px-3  focus:outline-none focus:ring-2 focus:ring-transparent"
-          />
-        </div>
-      </form>
-
-      {error && <div className=" bg-error text-on-error rounded-lg p-4 text-center">Please enter both an artist and a song</div>}
-
-      {
-        loading === LoadingState.loading && <div className='mt-4'><SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
-          contents={[{ text: 'Searching the inter-webs for this banger', loadingState: LoadingState.loading, loaderType: LoaderType.waveform  }]} /></div>}
-      {
-        data &&
-        data.response.hits.map((hit) => {
-          const songData = extractSongData(hit);
-          const isCurrentArtistSelected = selectedArtist === songData.id;
-          const isAnotherArtistSelected = selectedArtist !== null && !isCurrentArtistSelected;
-          const shouldDisableClick = isAnotherArtistSelected && selectedArtistState !== LoadingState.failed;
-          return (
-            <>
-              <Artist
-                key={songData.id}
-                artist={songData.artist}
-                title={songData.title}
-                duration={songData.duration}
-                imageUrl={songData.imageUrl}
-                year={songData.year}
-                onClick={
-                  !shouldDisableClick
-                    ? () => handleArtistClick(songData, songData.artist, songData.title)
-                    : () => { }
-                }
-                style={Style.default}
-                className={shouldDisableClick ? 'pointer-events-none' : 'cursor-pointer'}
-              />
-              {selectedArtist === songData.id && (
-                <div className="mt-4">
-                  <SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
-                    contents={[{ text: 'Finding that data source...', loadingState: selectedArtistState, loaderType: LoaderType.waveform }]} />
-                </div>
+    <>
+      <Head>
+        <title>MusicGPT Lite</title>
+        <meta name="description" content="Musical, Lyrical & Cultural analysis." />
+        <meta name="keywords" content="musicgpt, gpt, ai, music, songs, lite" />
+        <meta property="og:title" content="MusicGPT Lite" />
+        <meta property="og:description" content="Musical, Lyrical & Cultural analysis." />
+        <meta property="og:image" content="https://www.music-gpt.vercel.app/musicgptlite.png" />
+      </Head>
+      <div className="container mx-auto max-w-screen-sm flex flex-col justify-center sm:px-10 px-2">
+        <form onSubmit={handleSearch} className="space-y-4 mb-4">
+          <div className='flex flex-row rounded-l-full rounded-r-full border-outline bg-secondary-container text-on-secondary-container items-center px-4 py-1'>
+            <div className='flex items-center justify-center h-[50%]'>
+              {loading === LoadingState.loading ? (
+                <button type="submit" disabled className="bg-transparent focus:outline-none focus:ring-transparent">
+                  <MagnifyingGlassIcon className="w-5 h-5 text-on-tertiary-container" />
+                </button>
+              ) : (
+                <button type="submit" className="bg-transparent focus:outline-none focus:ring-transparent">
+                  <MagnifyingGlassIcon className="w-5 h-5 text-on-secondary-container" />
+                </button>
               )}
-              <div className="border-t border-secondary w-full my-4"></div>
-            </>
-          );
-        })
-      }
-    </div>
+            </div>
+            <input
+              type="text"
+              id="artist"
+              value={artist}
+              placeholder="Artist"
+              onChange={(event) => setArtist(event.target.value)}
+              className="h-[60%] block -ml-1 w-full bg-transparent text-on-secondary-container py-2 px-4 focus:outline-none focus:ring-2 focus:ring-transparent"
+            />
+            <input
+              type="text"
+              id="song"
+              value={song}
+              placeholder="Song"
+              onChange={(event) => setSong(event.target.value)}
+              className="h-[60%] block w-full bg-transparent text-on-secondary-container py-2 px-3  focus:outline-none focus:ring-2 focus:ring-transparent"
+            />
+          </div>
+        </form>
+
+        {error && <div className=" bg-error text-on-error rounded-lg p-4 text-center">Please enter both an artist and a song</div>}
+
+        {
+          loading === LoadingState.loading && <div className='mt-4'><SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
+            contents={[{ text: 'Searching the inter-webs for this banger', loadingState: LoadingState.loading, loaderType: LoaderType.waveform }]} /></div>}
+        {
+          data &&
+          data.response.hits.map((hit) => {
+            const songData = extractSongData(hit);
+            const isCurrentArtistSelected = selectedArtist === songData.id;
+            const isAnotherArtistSelected = selectedArtist !== null && !isCurrentArtistSelected;
+            const shouldDisableClick = isAnotherArtistSelected && selectedArtistState !== LoadingState.failed;
+            return (
+              <>
+                <Artist
+                  key={songData.id}
+                  artist={songData.artist}
+                  title={songData.title}
+                  duration={songData.duration}
+                  imageUrl={songData.imageUrl}
+                  year={songData.year}
+                  onClick={
+                    !shouldDisableClick
+                      ? () => handleArtistClick(songData, songData.artist, songData.title)
+                      : () => { }
+                  }
+                  style={Style.default}
+                  className={shouldDisableClick ? 'pointer-events-none' : 'cursor-pointer'}
+                />
+                {selectedArtist === songData.id && (
+                  <div className="mt-4">
+                    <SmallLoader height={25} width={50} waveformColor={'--md-sys-color-on-secondary'} textColor={'on-secondary'} bgColor={'secondary'}
+                      contents={[{ text: 'Finding that data source...', loadingState: selectedArtistState, loaderType: LoaderType.waveform }]} />
+                  </div>
+                )}
+                <div className="border-t border-secondary w-full my-4"></div>
+              </>
+            );
+          })
+        }
+      </div>
+    </>
   );
 };
 

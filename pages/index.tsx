@@ -29,7 +29,7 @@ export default function Chat() {
                 <meta name="keywords" content="musicgpt, gpt, ai, music, songs" />
                 <meta property="og:title" content="MusicGPT" />
                 <meta property="og:description" content="Explore, understand, and discuss music like never before with our mutimodal AI." />
-                <meta property="og:image" content="https://www.music-gpt.vercel.app/musicgpt.png" />
+                <meta property="og:image" content="http://music-gpt.xyz/musicgpt.png" />
             </Head>
             <div className="container mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 grid- lg:gap-4 gap-y-4">
