@@ -84,7 +84,7 @@ export const ChatMessagePro: FC<Props> = ({ message }: { message: MessagePro }) 
                             </div>
                     }
                 </div>
-                <div className="gap-4 pt-1 flex flex-col overflow-x-auto">
+                <div className="gap-4 pt-1 flex flex-col overflow-x-hidden">
                     {message.parts.map((part, index) => (
                         <React.Fragment key={index}>{renderMessagePart(part)}</React.Fragment>
                     ))}

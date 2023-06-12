@@ -326,7 +326,7 @@ export default function Chat() {
             ) : dataState === LoadingState.failed ? (
               <div className="text-error bg-error-container p-4 text-center rounded-lg">Error</div>
             ) : (
-              <div className="flex flex-col sm:px-10 pb-4 sm:pb-10 max-w-[1200px] mx-auto sm:mt-4">
+              <div className="flex flex-col sm:px-10 pb-4 sm:pb-10 max-w-[1200px] mx-auto mt-4">
                 <div className="w-full flex relative justify-center items-center flex-row gap-4 text-center text-on-surface font-bold text-4xl mb-4 px-4">
                   <div>{geniusUserData?.full_title}</div>
                   <div className="absolute top-0 right-0 mr-2 sm:mr-0">

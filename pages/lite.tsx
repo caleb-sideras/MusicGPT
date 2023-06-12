@@ -489,7 +489,7 @@ function LiteHome() {
                 <meta property="og:description" content="Musical, Lyrical & Cultural analysis." />
                 <meta property="og:image" content="https://www.music-gpt.vercel.app/musicgptlite.png" />
             </Head>
-            <div className="flex flex-col gap-4 sm:px-10 pb-4 sm:pb-10 max-w-[800px] mx-auto sm:mt-4">
+            <div className="flex flex-col gap-4 sm:px-10 pb-4 sm:pb-10 max-w-[800px] mx-auto mt-4">
                 <div style={liteStyles} className="col-span-1 md:col-span-2 lg:col-span-6 rounded-lg p-4 w-full h-fill">
                     <Lite />
                 </div>
