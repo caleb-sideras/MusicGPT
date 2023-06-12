@@ -7,7 +7,7 @@ interface Props {
   onSendPro?: (message: MessagePro) => void;
 }
 
-export const ChatInput: FC<Props> = ({ onSend, onSendPro}) => {
+export const ChatInput: FC<Props> = ({ onSend, onSendPro }) => {
   const [content, setContent] = useState<string>();
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -29,8 +29,8 @@ export const ChatInput: FC<Props> = ({ onSend, onSendPro}) => {
     }
     if (onSend) {
       onSend({ role: "user", content });
-    } else if(onSendPro) {
-      onSendPro({ role: "user", parts: [{type:"text", content: content}] });
+    } else if (onSendPro) {
+      onSendPro({ role: "user", parts: [{ type: "text", content: content }] });
     }
     setContent("");
   };
@@ -50,10 +50,11 @@ export const ChatInput: FC<Props> = ({ onSend, onSendPro}) => {
   }, [content]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="relative">
+    <div className={`relative mt-auto pt-4 rounded-b-lg`} >
       <textarea
         ref={textareaRef}
-        className="min-h-[44px] rounded-lg sm:rounded-t-none sm:border-t-0 pl-4 pr-12 py-2 w-full bg-surface focus:outline-none border border-outline text-on-surface"
+        className={`min-h-[60px] rounded-full pl-4 pr-12 py-4 border-2 w-full focus:outline-none text-on-surface bg-surface 
+        ${onSendPro ? 'border-on-surface' : 'bg-secondary text-on-secondary'}`}
         style={{ resize: "none" }}
         placeholder="Type a message..."
         value={content}
@@ -61,10 +62,9 @@ export const ChatInput: FC<Props> = ({ onSend, onSendPro}) => {
         onChange={handleChange}
         onKeyDown={handleKeyDown}
       />
-
       <button onClick={() => handleSend()}>
-        <IconArrowUp className="absolute right-2 bottom-3 h-8 w-8 hover:cursor-pointer rounded-full p-1 bg-secondary text-on-secondary hover:opacity-80" />
+        <IconArrowUp className="absolute right-4 bottom-5 h-8 w-8 hover:cursor-pointer rounded-full p-1 bg-secondary text-on-secondary hover:opacity-80" />
       </button>
-    </div>
+    </div >
   );
 };

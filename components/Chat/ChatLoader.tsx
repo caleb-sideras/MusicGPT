@@ -7,12 +7,12 @@ interface ChatLoaderProps {
 
 export const ChatLoader: FC<ChatLoaderProps> = ({messageType}) => {
   return (
-    <div className="flex flex-col flex-start">
+    <div className="flex flex-col flex-start w-full">
       <div
-        className={`flex items-center rounded-2xl px-4 py-2 w-fit ${messageType ? "bg-on-surface text-surface" : "bg-secondary text-on-secondary"}`}
+        className={`flex items-center rounded-2xl p-3 ${messageType ? "bg-surface text-on-surface" : "bg-secondary-container text-on-secondary-container"}`}
         style={{ overflowWrap: "anywhere" }}
       >
-        <Waveform width={30} height={15} color="darkgrey" />
+        <Waveform width={54} height={14.4} color={`${ messageType ? '#93a8ac' : '#93a8ac'}`} />
       </div>
     </div>
   );

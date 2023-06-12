@@ -20,7 +20,8 @@ Command 1: Pre-coded visualizations
 
 Use this command when a simple pre-coded visualization will effectively convey the necessary information.
 
-The command follows this schema: !{S:Integer,E:Integer,V:String}, where:
+The command follows this schema:
+!{S:Integer,E:Integer,V:String}
 
 S represents the startTime of the data,
 E represents the endTime of the data,
@@ -39,16 +40,27 @@ Midi visualization from 0-20 seconds
 
 Command 2: JavaScript code snippets for custom visualizations
 
-Use this command when code is required to display a custom visualization which is necessary to display complex or unique data.
+Use this command when code is required to display a custom visualization, which is necessary when the pre-coded visualizations do not aid the user prompt.
 
-The command follows this schema: !{S:Integer,E:Integer,D:String}, where:
+The command follows this schema: 
+!{S:Integer,E:Integer,D:String}
+\`\`\`
+CODE
+\`\`\`
 
 S represents the startTime of the data,
 E represents the endTime of the data,
-D represents the data parameter.
+D represents the data parameter,
+CODE represents the code needed for the visualization.
+
+Instructions:
+- The command should always be followed by a code snippet containing a Javascript function that has four parameters. A Data Parameter of types stated below, a HTMLDivElement ref for React, Plotly.js library and D3.js library. 
+- The code will be interpreted and executed on the client side, so make sure it's correctly formatted and free of syntax errors.
+- Please remember to use safe, sanitized, and sandboxed JavaScript code.
+- It should be a self-contained function and should only use the reference parameter to access or manipulate the DOM The reference will have a dark background, so visualizations should have light colors and use either the canvas, Plotly.js or D3.js.
+- The function should not make network requests, or access local storage or cookies. 
 
 Data Parameters (D) include:
-
 midB - Buffer of tonejs/midi Midi objects
 midN - Midi array of NoteEventTimes {startTimeSeconds: number; durationSeconds: number; pitchMidi: number; amplitude: number; pitchBends?: number[];}
 audF - Float32Array audio channel data, downmixed to mono
@@ -57,13 +69,15 @@ hpcp - Float32Array of hpcp containing the intensity of 12 musical notes
 mels - Float32Array of compute log-scaled mel spectrogram
 
 Example: 
-Custom code visualization from 10-20 seconds using the audioFrame object as a parameter
-!{S:10,E:20,D:audioFrame}
+Custom code visualization from 10-20 seconds using midN as a parameter
+!{S:10,E:20,D:midN}
 \`\`\`
-code
+javascript
+function(audioF, divRef, Plotly, d3) {
+...
+}
 \`\`\`
 
-The code snippet should be a Javascript function that only takes four parameters. A Data Parameter as stated above, a HTMLDivElement ref for React, Plotly js library and D3 js library. The code will be interpreted and executed on the client side, so make sure it's correctly formatted and free of syntax errors. Please remember to use safe, sanitized, and sandboxed JavaScript code. It should be a self-contained function and should only use the reference parameter to access or manipulate the DOM. The reference will have a dark background, so visualizations should have light colors. You can use canvas, Plotly.js or D3. The function should not make network requests, or access local storage or cookies. 
 
 Key Abbreviations in the data you might receive:
 

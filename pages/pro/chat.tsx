@@ -53,6 +53,7 @@ const ProChat: React.FC = () => {
 
   const [messages, setMessages] = useState<MessagePro[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isFirstMessage, setIsFirstMessage] = useState<Boolean>(true)
 
   const [chatData, setChatData] = useState<ChatData>()
 
@@ -68,6 +69,13 @@ const ProChat: React.FC = () => {
     }
   }, [currentState, chatData])
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleSend = async (updatedMessages: MessagePro[], dataForVisualizations: Record<string, any>, parse: boolean) => {
     const response = await fetch("/api/chat", {
@@ -175,8 +183,16 @@ const ProChat: React.FC = () => {
   };
 
   const handleQuery = async (message: MessagePro) => {
+
+    if (isFirstMessage) {
+      var updatedMessages: MessagePro[] = [message]
+      setIsFirstMessage(false);
+    }
+    else {
+      var updatedMessages: MessagePro[] = [...messages, message]
+    }
+
     setLoading(true);
-    const updatedMessages: MessagePro[] = [...messages, message]
     setMessages(updatedMessages);
 
     let response = await fetch('/api/chat-query', {
@@ -357,75 +373,69 @@ const ProChat: React.FC = () => {
 
   return (
     <>
-      <div className={`flex flex-col sm:px-10 pb-4 sm:pb-10 mx-auto sm:mt-4 ${currentState === ProState.chat ? 'max-w-[1600px]' : 'max-w-[800px]'}`}>
-
-        <div className="justify-center bg-on-surface p-4 flex flex-row items-center gap-4 rounded-t-lg mb-2">
-
-          {currentState != ProState.chat ?
-            <Waveform width={70} height={40} color="#191c1d" />
-            :
-            <></>
-          }
-          <div className="text-lg font-bold text-surface">
-            {
-              currentState == ProState.menu ?
-                <>Please enter your OpenAI API key</>
-                : currentState == ProState.upload ?
-                  <>Please upload your audio file...</>
-                  : currentState == ProState.convert ?
-                    <>What would you like to talk about?</>
-                    : currentState == ProState.loading ?
-                      <>Listening to the Song...</>
-                      : currentState == ProState.instructions ?
-                        <>How to interact with me</>
-                        : currentState == ProState.chat ?
-                          <div className="text-3xl mb-2"> {removeFileExtension(chatData?.file?.name as string)}</div>
-                          : <></>
-            }
-          </div>
-        </div>
+      <div className={`h-full mx-auto pt-4 mb-4 ${currentState === ProState.chat ? 'max-w-[1200px]' : 'max-w-[800px]'}`}>
         {
           currentState != ProState.chat ?
-            <div className='-mt-4 bg-surface flex flex-col justify-center mb-4 items-center w-full min-h-[200px] border-outline sm:border-x sm:border-b rounded-lg text-on-surface cursor-pointer transition-all duration-200'>
-              {
-                currentState == ProState.menu ?
-                  <ApiKey setCurrentState={setCurrentState} setAPIKey={setAPIKey} />
-                  : currentState == ProState.upload ?
-                    <Upload
-                      setChatData={setChatData as Dispatch<SetStateAction<ChatData>>}
-                      chatData={chatData as ChatData}
-                      setParentState={setCurrentState as Dispatch<SetStateAction<ProState>>}
-                    />
-                    : currentState == ProState.convert || currentState == ProState.loading ?
-                      <AudioSelection
+
+            <div className="bg-on-surface rounded-lg p-4 mt-4">
+              <div className="justify-center bg-surface p-6 flex flex-row items-center gap-4 rounded-lg">
+                <Waveform width={70} height={30} color="#e1e3e3" />
+                <div className="text-lg font-bold text-on-surface">
+                  {
+                    currentState == ProState.menu ?
+                      <>Please enter your OpenAI API key</>
+                      : currentState == ProState.upload ?
+                        <>Please upload your audio file...</>
+                        : currentState == ProState.convert ?
+                          <>What would you like to talk about?</>
+                          : currentState == ProState.loading ?
+                            <>Listening to the Song...</>
+                            : currentState == ProState.instructions ?
+                              <>How to interact with me</>
+                              : <></>
+                  }
+                </div>
+              </div>
+              <div className='flex flex-col -mt-6 bg-surface justify-center p-4 items-center w-full min-h-[200px] rounded-b-lg text-on-surface cursor-pointer transition-all duration-200'>
+                {
+                  currentState == ProState.menu ?
+                    <ApiKey setCurrentState={setCurrentState} setAPIKey={setAPIKey} />
+                    : currentState == ProState.upload ?
+                      <Upload
                         setChatData={setChatData as Dispatch<SetStateAction<ChatData>>}
                         chatData={chatData as ChatData}
                         setParentState={setCurrentState as Dispatch<SetStateAction<ProState>>}
                       />
-                      : currentState == ProState.instructions ?
-                        <div className="sm:p-4 flex w-full flex-col">
-                          <Instructions />
-                          <div onClick={() => { setCurrentState(ProState.chat) }} className="w-full mt-2 text-tertiary-container text-center bg-tertiary rounded-lg p-4">
-                            Continue
+                      : currentState == ProState.convert || currentState == ProState.loading ?
+                        <AudioSelection
+                          setChatData={setChatData as Dispatch<SetStateAction<ChatData>>}
+                          chatData={chatData as ChatData}
+                          setParentState={setCurrentState as Dispatch<SetStateAction<ProState>>}
+                        />
+                        : currentState == ProState.instructions ?
+                          <div className="sm:p-4 flex w-full flex-col">
+                            <Instructions />
+                            <div onClick={() => { setCurrentState(ProState.chat) }} className="w-full mt-2 text-tertiary-container text-center bg-tertiary rounded-lg p-4">
+                              Continue
+                            </div>
                           </div>
-                        </div>
-                        : <></>
-              }
-            </div> : <></>
-        }
-        <div className="-mt-4">
-          {
-            currentState == ProState.chat ?
+                          : <></>
+                }
+              </div>
+            </div>
+            :
+            <>
               <ChatBox
                 messagesPro={messages}
                 loading={loading}
                 onSendPro={handleQuery}
                 onReset={() => { }}
                 messagesEndRef={messagesEndRef}
+                filename={chatData?.file?.name as string}
               />
-              : <></>
-          }
-        </div>
+            </>
+        }
+
       </div>
 
     </>

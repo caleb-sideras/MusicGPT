@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }: AppProps<{}>) {
   return (
     <ClerkProvider {...pageProps}>
       <HiddenDataProvider>
-        <div className={`background flex flex-col gap-4 min-h-screen ${inter.className}`}>
+        <div className={`flex flex-col min-h-screen  ${inter.className}`}>
 
           <header>
             <Navbar />

@@ -5,6 +5,7 @@ import { ChatLoader } from "./ChatLoader";
 import { ChatMessage } from "./ChatMessage";
 import { ResetChat } from "./ResetChat";
 import { ChatMessagePro } from "./ChatMessagePro";
+import { removeFileExtension } from "@/utils/utils";
 
 interface Props {
   messages?: Message[];
@@ -14,10 +15,11 @@ interface Props {
   onSendPro?: (message: MessagePro) => void;
   onReset: () => void;
   messagesEndRef: RefObject<HTMLDivElement>;
+  filename?: string
 }
 
 
-export const ChatBox: FC<Props> = ({ messages, messagesPro, loading, onSend, onSendPro, onReset, messagesEndRef }) => {
+export const ChatBox: FC<Props> = ({ messages, messagesPro, loading, onSend, onSendPro, onReset, messagesEndRef, filename }) => {
 
   return (
     <>
@@ -25,39 +27,51 @@ export const ChatBox: FC<Props> = ({ messages, messagesPro, loading, onSend, onS
         <ResetChat onReset={onReset} />
       </div> */}
 
-      <div className="flex flex-col bg-surface rounded-lg px-2 sm:p-4 sm:border rounded-b-none border-outline max-h-full overflow-auto">
+      <div className={`flex flex-initial flex-col ${messagesPro ? "calc-p-m sm:calc-p" : "sm:calc-l calc-l-m" }`}>
+
         {
-          messages ? messages.map((message, index) => (
-            <div
-              key={index}
-              className="my-1 sm:my-1.5"
-            >
-              <ChatMessage message={message} />
-            </div>
-          )) :
-            messagesPro ? messagesPro.map((message, index) => (
+          filename && <div className="text-3xl font-bold text-on-surface text-center p-2"> {removeFileExtension(filename)}</div>
+        }
+        <div className={`rounded-2xl flex-grow p-2 sm:p-4 overflow-y-auto relative overflow-hidden 
+        ${messagesPro ? 'bg-on-surface' : 'bg-secondary'}`}>
+
+          {
+            messages ? messages.map((message, index) => (
               <div
                 key={index}
                 className="my-1 sm:my-1.5"
               >
-                <ChatMessagePro message={message} />
+                <ChatMessage message={message} />
               </div>
             )) :
-              <></>
+              messagesPro ? messagesPro.map((message, index) => (
+                <div
+                  key={index}
+                  className="my-1 sm:my-1.5"
+                >
+                  <ChatMessagePro message={message} />
+                </div>
+              )) :
+                <></>
+          }
+
+          {loading && (
+            <div className="my-1 sm:my-1.5">
+              <ChatLoader messageType={messagesPro ? true : false} />
+            </div>
+          )}
+          <div ref={messagesEndRef}></div>
+        </div>
+
+        {messagesPro ?
+          <ChatInput onSendPro={onSendPro} />
+          :
+          <ChatInput onSend={onSend} />
         }
 
-        {loading && (
-          <div className="my-1 sm:my-1.5">
-            <ChatLoader messageType={messagesPro ? true : false} />
-          </div>
-        )}
-        <div ref={messagesEndRef}></div>
       </div>
-      {messagesPro ?
-        <ChatInput onSendPro={onSendPro} />
-        :
-        <ChatInput onSend={onSend} />
-      }
+
+
     </>
   );
 };

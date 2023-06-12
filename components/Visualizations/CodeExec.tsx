@@ -26,7 +26,7 @@ const CodeExec = (props: codeExecProps) => {
             } catch (error) {
                 let element = document.createElement('div');
                 element.innerText = 'An error occured while trying to run this code...';
-                element.style.cssText = 'color: white; font-size: 16px; text-align: center; height: 100%; align-items: center; justify-content: center; display: flex;';
+                element.style.cssText = 'color: var(--md-sys-color-on-error); font-size: 16px; text-align: center; height: 100%; align-items: center; justify-content: center; display: flex; padding:16px; background:var(--md-sys-color-error)';
                 containerRef.current.appendChild(element)
             }
 
@@ -37,13 +37,12 @@ const CodeExec = (props: codeExecProps) => {
 
     return (
         <div className='w-full rounded-lg bg-surface'>
-            <div className="flex justify-between items-center px-4 py-2 bg-surface rounded-t-lg">
+            {/* <div className="flex justify-between items-center px-4 py-2 bg-surface rounded-t-lg">
                 <h2 className="text-sm text-on-surface">Custom Visualization</h2>
-            </div>
-            <div ref={containerRef} className='w-full h-96 overflow-y-auto'></div>
+            </div> */}
+            <div ref={containerRef} className='w-full h-96 overflow-y-hidden rounded-lg'></div>
         </div>
     )
 }
 
 export default CodeExec
-// export default React.memo(CodeFormatter);

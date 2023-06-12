@@ -36,6 +36,7 @@ const Instructions: React.FC = () => {
             console.error('Fetch error: ', error);
         }
     }
+    // edf2fa - hint of blue
     return (
         <Accordion.Root
             className="bg-[#e3e3e3] rounded-lg w-full "
@@ -47,9 +48,9 @@ const Instructions: React.FC = () => {
             <AccordionItem value="item-1">
                 <AccordionTrigger>Dedicated Analysis</AccordionTrigger>
                 <AccordionContent>
-                    <div>
+                    <div className='sm:px-0 px-5'>
                         Query a specific section to get a dedicated analysis. If timestamps are not provided, I cannot perform a dedicated analysis, resulting in vague answers. I currently support up to a total of 20 seconds of dedicated analysis per message.                    </div>
-                    <div className='flex flex-col gap-4 mt-4 p-6 bg-[#edf2fa] rounded-lg'>
+                    <div className='flex flex-col gap-4 mt-4 p-6 bg-on-surface rounded-lg'>
                         <ChatMessagePro message={
                             {
                                 role: 'user',
@@ -80,10 +81,10 @@ const Instructions: React.FC = () => {
             <AccordionItem value="item-2">
                 <AccordionTrigger>Playback</AccordionTrigger>
                 <AccordionContent>
-                    <div>
+                    <div className='sm:px-0 px-5'>
                         I currently support Audio/MIDI playback with dedicated analysis. Specify a section with timestamps and ask for these features.
                     </div>
-                    <div className='flex flex-col gap-4 mt-4 p-6 bg-[#edf2fa] rounded-lg'>
+                    <div className='flex flex-col gap-4 mt-4 p-6 bg-on-surface rounded-lg'>
                         {audioFile && midiData ?
                             <>
                                 <ChatMessagePro message={
@@ -133,10 +134,10 @@ const Instructions: React.FC = () => {
             <AccordionItem value="item-3">
                 <AccordionTrigger>Visualizations</AccordionTrigger>
                 <AccordionContent>
-                    <div>
+                    <div className='sm:px-0 px-5'>
                         I support custom visualizations. Describe what you would like to see and I will create the code and run it for you.
                     </div>
-                    <div className='flex flex-col gap-4 mt-4 p-6 bg-[#edf2fa] rounded-lg'>
+                    <div className='flex flex-col gap-4 mt-4 sm:p-6 rounded-lg bg-on-surface'>
                         <ChatMessagePro message={
                             {
                                 role: 'user',
@@ -188,10 +189,10 @@ const Instructions: React.FC = () => {
             <AccordionItem value="item-4">
                 <AccordionTrigger>Data Persistence</AccordionTrigger>
                 <AccordionContent>
-                    <div>
+                    <div className='sm:px-0 px-5'>
                         Due to the nature and size of the data used for dedicated analysis, I do not retain this information during our conversation. Once I&apos;ve provided a response to your query, any accumulated data is discarded. For follow-up questions you&apos;ll need to restate the relevant section/s.
                     </div>
-                    <div className='flex flex-col gap-4 mt-4 p-6 bg-[#edf2fa] rounded-lg'>
+                    <div className='flex flex-col gap-4 mt-4 p-6 bg-on-surface rounded-lg'>
                         <ChatMessagePro message={
                             {
                                 role: 'user',
@@ -303,7 +304,7 @@ const AccordionContent = React.forwardRef<HTMLElement, AccordionContentProps>(({
             //@ts-ignore
             ref={forwardedRef}
         >
-            <div className="py-[15px] px-5">{children}</div>
+            <div className="py-[15px] sm:px-5">{children}</div>
         </Accordion.Content>
     );
 });

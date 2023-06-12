@@ -30,7 +30,7 @@ export const Navbar: FC = () => {
 
     <NavigationMenu.Root className="relative z-[1] flex w-full justify-center mt-4">
       <NavigationMenu.List className={`center m-0 h-[63px] flex list-none rounded-full
-      ${liteHighlighted ? 'bg-secondary text-on-secondary' : proHighlighted ? 'bg-inverse-surface text-inverse-on-surface' : 'bg-tertiary text-on-tertiary'}`} style={{ boxShadow: "0px 1px 2px 0px rgba(0,0,0,.3),0px 1px 3px 1px rgba(0,0,0,.15)" }}>
+      ${liteHighlighted ? 'bg-secondary text-on-secondary' : proHighlighted ? 'bg-inverse-surface text-inverse-on-surface' : 'bg-tertiary text-on-tertiary'}`}>
 
         {/* Home */}
         <NavigationMenu.Item className="justify-center flex">
@@ -61,7 +61,7 @@ export const Navbar: FC = () => {
                 <NavigationMenu.Link asChild>
                   <Link
                     className="from-surface to-on-surface flex 
-                    h-full w-full select-none flex-col justify-end rounded-[6px] bg-secondary-container p-[25px] no-underline outline-none focus:shadow-[0_0_0_2px]"
+                    h-full w-full select-none flex-col justify-end rounded-[6px] bg-secondary-container p-[25px] no-underline outline-none"
                     href="/lite"
                   >
                     <Waveform />
@@ -181,18 +181,18 @@ const ListItem = React.forwardRef<HTMLAnchorElement, ListItemProps>(({ className
     <NavigationMenu.Link asChild>
       <div
         className={
-          `focus:shadow-[0_0_0_2px] focus:shadow-violet7 hover:bg-mauve3 block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline outline-none transition-colors ${className}`
+          `hover:bg-mauve3 block select-none rounded-[6px] p-3 text-[15px] leading-none no-underline outline-none transition-colors ${className}`
         }
       >
 
         {section === 'lite' ?
           <>
-            <div className="text-violet12 mb-[5px] font-medium leading-[1.2] text-on-secondary">{title}</div>
+            <div className="mb-[5px] font-medium leading-[1.2] text-on-secondary">{title}</div>
             <p className="text-mauve11 leading-[1.4] text-secondary-container">{children}</p>
           </>
           :
           <>
-            <div className="text-violet12 mb-[5px] font-medium leading-[1.2] text-inverse-on-surface">{title}</div>
+            <div className="mb-[5px] font-medium leading-[1.2] text-inverse-on-surface">{title}</div>
             <p className="text-mauve11 leading-[1.4] text-inverse-on-surface">{children}</p>
           </>}
 

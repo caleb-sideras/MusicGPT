@@ -31,8 +31,8 @@ export default function Chat() {
                 <meta property="og:description" content="Explore, understand, and discuss music like never before with our mutimodal AI." />
                 <meta property="og:image" content="http://music-gpt.xyz/musicgpt.png" />
             </Head>
-            <div className="container mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 grid- lg:gap-4 gap-y-4">
+            <div className="container mx-auto mt-4 pb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-10 lg:gap-4 gap-y-4">
                     <div style={introStyles} className="flex md:flex-row flex-col col-span-1 md:col-span-2 lg:col-span-10 rounded-lg justify-space-between gap-4 p-4 lg:p-16 text-on-surface w-full h-fill">
                         <General />
                     </div>

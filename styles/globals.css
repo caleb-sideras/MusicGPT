@@ -11,6 +11,25 @@
 
 @import './web-kit.css';
 
+@layer utilities {
+    .calc-p {
+        height: calc(100vh - 95px);
+    }
+
+    .calc-p-m {
+        height: calc(100vh - 95px);
+    }
+
+    .calc-l {
+        height: calc(100vh - 160px);
+    }
+
+    .calc-l-m {
+        height: calc(100vh - 176px);
+    }
+
+}
+
 @keyframes floatWave {
     0% {
         transform: translateY(25%);

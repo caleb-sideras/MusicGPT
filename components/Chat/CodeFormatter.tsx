@@ -27,8 +27,8 @@ const CodeFormatter: React.FC<CodeFormatterProps> = ({ text, language }) => {
 
 
     return (
-        <div className='w-full mx-2 md:mx-4 lg:mx-8'>
-            <div className="flex justify-between items-center px-4 py-2 bg-surface rounded-t-lg">
+        <div className='w-full'>
+            <div className="flex justify-between items-center px-4 py-2 bg-[#2a2a2a] rounded-t-lg">
                 <h2 className="text-sm text-on-surface">{language}</h2>
                 <button onClick={copyToClipboard} className="px-2 py-2 text-on-surface rounded-full hover:bg-tertiary hover:text-on-tertiary">
                     <CopyIcon className='w-4 h-4' />

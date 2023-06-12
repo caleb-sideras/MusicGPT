@@ -42,10 +42,6 @@ type ModelData = {
 export default function Chat() {
   const router = useRouter();
 
-  const [bookmarksChecked, setBookmarksChecked] = useState(true);
-  const [urlsChecked, setUrlsChecked] = useState(false);
-  const [person, setPerson] = useState('pedro');
-
   // ids
   const [musicBrainzId, setMusicBrainzId] = useState<string>("")
   const [geniusId, setGeniusId] = useState<string>("")
@@ -61,7 +57,7 @@ export default function Chat() {
   // global 
   const [pageInit, setPageInit] = useState<Boolean>(false)
   const [dataState, setDataState] = useState<LoadingState>(LoadingState.loading)
-  const [isFirstMessage, setIsFirstMessage] = useState<Boolean>(true) // true -> is first message, false -> is not first message
+  const [isFirstMessage, setIsFirstMessage] = useState<Boolean>(true)
   // local
   const [lowLevelState, setLowLevelState] = useState<LoadingState>(LoadingState.loading);
   const [highLevelState, setHighLevelState] = useState<LoadingState>(LoadingState.loading);
@@ -74,7 +70,6 @@ export default function Chat() {
 
   // hidden data
   const { hiddenData, setHiddenData } = useHiddenData();
-
 
   const defaultMessage: Message = {
     role: "assistant",
@@ -90,11 +85,9 @@ export default function Chat() {
     try {
       const response = await axios.get(`/api/lld?mbid=${encodeURIComponent(music_brainz_id)}`);
       music_brainz_low = response.data as LowLevelData
-      console.log(music_brainz_low)
       setLowLevelState(LoadingState.finished)
     } catch (error) {
       setLowLevelState(LoadingState.failed)
-      console.log(error)
     }
     return music_brainz_low
   }
@@ -104,93 +97,9 @@ export default function Chat() {
     try {
       const response = await axios.get(`/api/hld?mbid=${encodeURIComponent(music_brainz_id)}`);
       music_brainz_high = response.data as HighLevelData
-      // music_brainz_high = {
-      //   "high_level": [
-      //     {
-      //       "probability": 0.949734270573,
-      //       "value": "danceable"
-      //     },
-      //     {
-      //       "probability": 0.994705021381,
-      //       "value": "male"
-      //     },
-      //     {
-      //       "probability": 0.986267387867,
-      //       "value": "electronic"
-      //     },
-      //     {
-      //       "probability": 0.5339884758,
-      //       "value": "ambient"
-      //     },
-      //     {
-      //       "probability": 0.38053175807,
-      //       "value": "hip"
-      //     },
-      //     {
-      //       "probability": 0.313974827528,
-      //       "value": "jaz"
-      //     },
-      //     {
-      //       "probability": 0.416245400906,
-      //       "value": "Tango"
-      //     },
-      //     {
-      //       "probability": 0.633097112179,
-      //       "value": "not_acoustic"
-      //     },
-      //     {
-      //       "probability": 0.781112909317,
-      //       "value": "not_aggressive"
-      //     },
-      //     {
-      //       "probability": 0.838694810867,
-      //       "value": "electronic"
-      //     },
-      //     {
-      //       "probability": 0.611337602139,
-      //       "value": "not_happy"
-      //     },
-      //     {
-      //       "probability": 0.671940028667,
-      //       "value": "not_party"
-      //     },
-      //     {
-      //       "probability": 0.576854407787,
-      //       "value": "relaxed"
-      //     },
-      //     {
-      //       "probability": 0.694295108318,
-      //       "value": "not_sad"
-      //     },
-      //     {
-      //       "probability": 0.270947486162,
-      //       "value": "Cluster3"
-      //     },
-      //     {
-      //       "probability": 0.96565002203,
-      //       "value": "dark"
-      //     },
-      //     {
-      //       "probability": 0.775041699409,
-      //       "value": "atonal"
-      //     },
-      //     {
-      //       "probability": 0.712734818459,
-      //       "value": "voice"
-      //     }
-      //   ],
-      //   "audio_properties": {
-      //     "bit_rate": 320043,
-      //     "length": 196.048980713,
-      //     "replay_gain": -14.2629241943,
-      //     "sample_rate": 44100
-      //   }
-      // }
-      console.log(music_brainz_high)
       setHighLevelState(LoadingState.finished)
     } catch (error) {
       setHighLevelState(LoadingState.failed)
-      console.log(error);
     }
     return music_brainz_high
   }
@@ -200,7 +109,6 @@ export default function Chat() {
     try {
       const response = await axios.get(`/api/genius-song?id=${encodeURIComponent(genius_id)}`);
       genius_data = response.data as GeniusFormattedData
-      console.log(genius_data)
       setGeniusState(LoadingState.finished)
     } catch (error) {
       setGeniusState(LoadingState.failed)
@@ -210,14 +118,11 @@ export default function Chat() {
   }
 
   const handleSend = async (message: Message) => {
-    console.log(message)
 
     if (isFirstMessage) {
       let dataMessage: Message = { 'role': 'data', 'content': `Data: ${JSON.stringify(modelData).replace(/\//g, '')}` }
-      // console.log(dataMessage);
-      var updatedMessages = [...messages, dataMessage, message]
+      var updatedMessages = [dataMessage, message]
       setIsFirstMessage(false);
-      console.log(updatedMessages)
     }
     else {
       var updatedMessages = [...messages, message];
@@ -286,7 +191,6 @@ export default function Chat() {
   };
 
   const setData = () => {
-    console.log("Set data called")
     if (geniusData) {
       setGeniusUserData({
         full_title: geniusData.full_title,
@@ -329,14 +233,10 @@ export default function Chat() {
       setMusicBrainzId(music_brainz)
 
       if (hiddenData && hiddenData.id == music_brainz && hiddenData.genius) {
-        console.log("-----------------------------HIDDEN DATA TRUE-----------------------------")
-        console.log(hiddenData)
         setGeniusData(hiddenData.genius)
         setGeniusState(LoadingState.finished)
-        console.log("Set genius from hidden")
       } else {
         setGeniusData(await getGeniusData(genius));
-        console.log("Set genius")
       }
     }
 
@@ -349,11 +249,9 @@ export default function Chat() {
       if (hiddenData && hiddenData.id == musicBrainzId && hiddenData.low_level) {
         setLowLevelData(hiddenData.low_level)
         setLowLevelState(LoadingState.finished)
-        console.log("Set low-level from hidden")
       }
       else {
         setLowLevelData(await getLowLevelData(musicBrainzId))
-        console.log("Set low-level")
       }
     }
 
@@ -375,10 +273,8 @@ export default function Chat() {
       if (hiddenData && hiddenData.id == musicBrainzId && hiddenData.high_level) {
         setHighLevelData(hiddenData.high_level)
         setHighLevelState(LoadingState.finished)
-        console.log("Set high-level from hidden")
       } else {
         setHighLevelData(await getHighLevelData(musicBrainzId))
-        console.log("Set high-level")
       }
     }
 
@@ -402,12 +298,7 @@ export default function Chat() {
   }, [messages]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setMessages([defaultMessage,
-      // {
-      //   role: "user",
-      //   content: `My name is Caleb Sideras and today I want to ask you some questions!`
-      // }
-    ]);
+    setMessages([defaultMessage]);
   }, [geniusUserData]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleReset = () => {
@@ -435,7 +326,7 @@ export default function Chat() {
             ) : dataState === LoadingState.failed ? (
               <div className="text-error bg-error-container p-4 text-center rounded-lg">Error</div>
             ) : (
-              <div className="flex flex-col sm:px-10 pb-4 sm:pb-10 max-w-[800px] mx-auto sm:mt-4">
+              <div className="flex flex-col sm:px-10 pb-4 sm:pb-10 max-w-[1200px] mx-auto sm:mt-4">
                 <div className="w-full flex relative justify-center items-center flex-row gap-4 text-center text-on-surface font-bold text-4xl mb-4 px-4">
                   <div>{geniusUserData?.full_title}</div>
                   <div className="absolute top-0 right-0 mr-2 sm:mr-0">
@@ -468,7 +359,6 @@ export default function Chat() {
                       </DropdownMenu.Portal>
                     </DropdownMenu.Root>
                   </div>
-
                 </div>
                 <ChatBox
                   messages={messages}
@@ -477,7 +367,6 @@ export default function Chat() {
                   onReset={handleReset}
                   messagesEndRef={messagesEndRef}
                 />
-                {/* <div ref={messagesEndRef} /> */}
               </div>
             )
           }

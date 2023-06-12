@@ -5,6 +5,7 @@ import Showcase from './Showcase';
 import AudioPlayer from '../MusicPlayer/AudioPlayer';
 import dynamic from 'next/dynamic';
 import Image from 'next/image'
+import { ChatMessagePro } from '../Chat/ChatMessagePro';
 
 const PlayerElement = dynamic(() => import('../MusicPlayer/ReactPlayer'), { ssr: false });
 
@@ -119,24 +120,32 @@ const General = () => {
                         }
                     </div>
                 </Showcase>
-                <Showcase title='Dedicated Analaysis' description='Query any section of a song for dedicated analysis'>
-                    <div className='flex flex-col gap-4 p-4 pb-6'>
+                <Showcase title='Dedicated Analysis' description='Query any section of a song for dedicated analysis'>
+                    <div className='flex flex-col h-full gap-4 p-2 pb-4'>
 
-                        <div className={`flex flex-col items-end`}>
-                            <div
-                                className={`flex flex-col items-center gap-4 bg-on-surface text-surface rounded-2xl px-3 py-2 max-w-[90%] whitespace-pre-wrap`}
-                                style={{ overflowWrap: "anywhere" }}
-                            >
-                                From 20-40 seconds, how do harmonies play a role in shaping the mood and enhancing the overall sonic texture of the composition?
-                            </div>
-                        </div>
-                        <div className={`flex flex-col items-start`}>
-                            <div
-                                className={`flex flex-col items-center gap-4 bg-tertiary text-on-tertiary rounded-2xl px-3 py-2 max-w-[90%] whitespace-pre-wrap`}
-                                style={{ overflowWrap: "anywhere" }}
-                            >
-                                During this specific segment, the harmony evolves through a chord progression from C to G to Am to F. This change, popular in many songs, moves from major to minor tones, influencing the emotional mood of the piece. The shift to the F chord can provide a sense of resolution or comfort. These harmonic changes, paired with corresponding melodic variations, create a dynamic, nuanced sonic landscape.                        </div>
-                        </div>
+                        <ChatMessagePro message={
+                            {
+                                role: 'user',
+                                parts: [
+                                    {
+                                        type: 'text',
+                                        content: "From 20-40 seconds, how do harmonies play a role in shaping the mood?"
+                                    }
+
+                                ]
+                            }
+                        } />
+                        <ChatMessagePro message={
+                            {
+                                role: 'assistant',
+                                parts: [
+                                    {
+                                        type: 'text',
+                                        content: "During this specific segment, the harmony evolves through a chord progression from C to G to Am to F. This change, popular in many songs, moves from major to minor tones, influencing the emotional mood of the piece. The shift to the F chord can provide a sense of resolution or comfort. These harmonic changes, paired with corresponding melodic variations, create a dynamic, nuanced sonic landscape."
+                                    },
+                                ]
+                            }
+                        } />
                     </div>
                 </Showcase>
             </ul >
