@@ -182,8 +182,13 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
             }
 
             // const model = await tf.loadGraphModel('/model.json')
-            const basicPitch = new BasicPitch('/model.json');
-            
+            const response = await fetch('/model.json');
+            const json = await response.json();
+            console.log("JSON: ", json)
+            const basicPitch = new BasicPitch(json);
+            console.log("basicPitch: ", basicPitch)
+
+
             let frames: number[][] = []
             let onsets: number[][] = []
             let contours: number[][] = []
