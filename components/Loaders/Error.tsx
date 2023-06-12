@@ -2,14 +2,16 @@ import React, { useEffect, useState } from 'react';
 
 interface ErrorComponentProps {
     message: string;
+    setParentState: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ErrorComponent: React.FC<ErrorComponentProps> = ({ message }) => {
+const ErrorComponent: React.FC<ErrorComponentProps> = ({ message, setParentState }) => {
     const [visible, setVisible] = useState(true);
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setVisible(false);
+            setParentState(false);
         }, 5000);
 
         return () => clearTimeout(timer);

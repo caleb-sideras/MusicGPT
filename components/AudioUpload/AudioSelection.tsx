@@ -1,21 +1,22 @@
 import React, { useState } from 'react'
 import { FileIcon } from '@radix-ui/react-icons'
 import {
-    BasicPitch, addPitchBendsToNoteEvents,
+    BasicPitch,
+    addPitchBendsToNoteEvents,
     noteFramesToTime,
     outputToNotesPoly,
     generateFileData,
 } from "@/utils/basic-pitch-ts/src";
-import * as tf from '@tensorflow/tfjs';
 import { LoadingState, LoaderType, ProState, ChatData, ProdProps } from "@/types";
 import SmallLoader from '../Loaders/SmallLoader';
 import FeatureSelection, { FeatureSelectionProps } from '../Features/FeatureSelection'
+import * as tf from '@tensorflow/tfjs';
+
 
 import Essentia from '@/utils/essentia/core_api'
 import EssentiaWASM from '@/utils/essentia/dist/essentia-wasm.web'
 import { roundTo } from '@/utils/utils';
 import ErrorComponent from '../Loaders/Error';
-import EssentiaExtractor from '@/utils/essentia/extractor/extractor';
 
 type AudioSelectionProps = {
     setParentState: React.Dispatch<React.SetStateAction<ProState>>;
@@ -111,8 +112,9 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
                 chatDataUpdates = { ...chatDataUpdates, midi: midiData };
             }
             else {
-                setParentState(ProState.convert);
                 setIsError(true)
+                setLoadingState(AudioExtractionLoadingStates.IDLE);
+                return
             }
         }
         if (prod) {
@@ -121,8 +123,9 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
                 chatDataUpdates = { ...chatDataUpdates, prod: { panningScore, dynamicComplexity, dynamicComplexityLoudness, loudness } };
             }
             else {
-                setParentState(ProState.convert);
                 setIsError(true)
+                setLoadingState(AudioExtractionLoadingStates.IDLE);
+                return
             }
         }
         if (graph) {
@@ -139,12 +142,12 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
                 };
             }
             else {
-                setParentState(ProState.convert);
                 setIsError(true)
+                setLoadingState(AudioExtractionLoadingStates.IDLE);
+                return
             }
         }
 
-        // console.log(chatDataUpdates)
         setChatData({ ...chatData, ...chatDataUpdates });
         setParentState(ProState.instructions)
     }
@@ -181,13 +184,10 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
                 originalBuffer = await offlineCtx.startRendering();
             }
 
-            // const model = await tf.loadGraphModel('/model.json')
-            const response = await fetch('/model.json');
-            const json = await response.json();
-            console.log("JSON: ", json)
-            const basicPitch = new BasicPitch(json);
-            console.log("basicPitch: ", basicPitch)
-
+            // const response = await fetch('/model.json');
+            // const json = await response.json();
+            // const model = tf.loadGraphModel('/model.json')
+            const basicPitch = new BasicPitch('/model.json');
 
             let frames: number[][] = []
             let onsets: number[][] = []
@@ -285,7 +285,7 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
 
     return (
         <div className='flex flex-col gap-4 w-full px-4 py-8'>
-            {isError && <ErrorComponent message={'An error occured...'} />}
+            {isError && <ErrorComponent message={'An error occured... please try again'} setParentState={setIsError} />}
             {loadingState === AudioExtractionLoadingStates.IDLE ?
                 <div className='grid sm:grid-cols-2 grid-cols-1 '>
                     <div className='grid col-span-1 gap-4'>
