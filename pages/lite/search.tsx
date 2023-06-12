@@ -124,7 +124,7 @@ const SearchComponent = () => {
         <meta property="og:description" content="Musical, Lyrical & Cultural analysis." />
         <meta property="og:image" content="https://www.music-gpt.vercel.app/musicgptlite.png" />
       </Head>
-      <div className="container mx-auto max-w-screen-sm flex flex-col justify-center sm:px-10 px-2">
+      <div className="container mx-auto max-w-screen-sm flex flex-col justify-center sm:px-10 px-2 mt-4">
         <form onSubmit={handleSearch} className="space-y-4 mb-4">
           <div className='flex flex-row rounded-l-full rounded-r-full border-outline bg-secondary-container text-on-secondary-container items-center px-4 py-1'>
             <div className='flex items-center justify-center h-[50%]'>
