@@ -437,7 +437,6 @@ const ProChat: React.FC = () => {
         }
 
       </div>
-
     </>
   );
 };

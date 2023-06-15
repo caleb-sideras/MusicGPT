@@ -107,7 +107,7 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
 
         if (midi) {
             const evals = await handleConvertToMidi(originalBuffer)
-            if (evals?.status == 'success') {
+            if (evals.status == 'success') {
                 const { midiData, fileData } = callModel(evals.frames as number[][], evals.onsets as number[][], evals.contours as number[][])
                 chatDataUpdates = { ...chatDataUpdates, midi: midiData };
             }
@@ -154,7 +154,7 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
 
     const handleConvertToMidi = async (originalBuffer: AudioBuffer, resamplingRate = 22050) => {
 
-        if (!chatData.file) return;
+        if (!chatData.file) { status: 'error' };
         setLoadingState(AudioExtractionLoadingStates.PRE_MODEL)
 
         // double computation with stereo to mono - needs fix
@@ -285,7 +285,7 @@ function AudioSelection({ setParentState, setChatData, chatData }: AudioSelectio
 
     return (
         <div className='flex flex-col gap-4 w-full px-4 py-8'>
-            {isError && <ErrorComponent message={'An error occured... please try again'} setParentState={setIsError} />}
+            {isError && <ErrorComponent message={'An error occured... Please REFRESH the browser'} setParentState={setIsError} />}
             {loadingState === AudioExtractionLoadingStates.IDLE ?
                 <div className='grid sm:grid-cols-2 grid-cols-1 '>
                     <div className='grid col-span-1 gap-4'>

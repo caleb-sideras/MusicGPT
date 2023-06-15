@@ -73,7 +73,7 @@ Custom code visualization from 10-20 seconds using midN as a parameter
 !{S:10,E:20,D:midN}
 \`\`\`
 javascript
-function(audioF, divRef, Plotly, d3) {
+function(midN, divRef, Plotly, d3) {
 ...
 }
 \`\`\`
