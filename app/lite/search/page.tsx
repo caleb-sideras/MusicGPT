@@ -1,31 +1,35 @@
-"use client";
+import { Metadata } from 'next';
+import Search from './_components/Search';
 
-import { useState } from 'react';
-import Head from 'next/head'
-import { GeniusSearchApiResponse } from '@/types';
-import SearchBar from './_components/SearchBar';
-import SongResults from './_components/SongResults';
+export const metadata: Metadata = {
+    title: 'Lite Search',
+    description: 'Search for a song to discuss with MusicGPT Lite.',
+    openGraph: {
+        title: 'MusicGPT Lite Search',
+        description: 'Search for a song to discuss with MusicGPT Lite.',
+        url: 'https://music-gpt.xyz/lite/search',
+        images: [
+            {
+                url: 'http://music-gpt.xyz/musicgptlite.png',
+                width: 794,
+                height: 442,
+                alt: 'MusicGPT Pro Info',
+            },
+        ],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: 'MusicGPT Lite Search',
+        description: 'Search for a song to discuss with MusicGPT Lite.',
+        images: ['http://music-gpt.xyz/musicgptlite.png'],
+    },
 
-const SearchComponent = () => {
-    const [data, setData] = useState<GeniusSearchApiResponse | null>(null);
+};
+export default function SearchComponent() {
 
     return (
-        <>
-            <Head>
-                <title>MusicGPT Lite</title>
-                <meta name="description" content="Musical, Lyrical & Cultural analysis." />
-                <meta name="keywords" content="musicgpt, gpt, ai, music, songs, lite" />
-                <meta property="og:title" content="MusicGPT Lite" />
-                <meta property="og:description" content="Musical, Lyrical & Cultural analysis." />
-                <meta property="og:image" content="https://www.music-gpt.vercel.app/musicgptlite.png" />
-            </Head>
-            <div className="container mx-auto max-w-screen-sm flex flex-col justify-center sm:px-10 px-2 mt-4">
-                <SearchBar data={data} setData={setData} />
-                <SongResults data={data} />
-            </div>
-
-        </>
+        <div className="container mx-auto max-w-screen-sm flex flex-col justify-center sm:px-10 px-2 mt-4">
+            <Search />
+        </div>
     );
 };
-
-export default SearchComponent;

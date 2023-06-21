@@ -40,7 +40,7 @@ export default function SearchBar({ data, setData }: SearchBarProps) {
     return (
         <>
             <form onSubmit={handleSearch} className="space-y-4 mb-4">
-                <div className='flex flex-row rounded-l-full rounded-r-full border-outline bg-secondary-container text-on-secondary-container items-center px-4 py-1'>
+                <div className='flex flex-row h-[63px] rounded-l-full rounded-r-full border-outline bg-secondary-container text-on-secondary-container items-center px-4 py-1'>
                     <div className='flex items-center justify-center h-[50%]'>
                         {loading === LoadingState.loading ? (
                             <button type="submit" disabled className="bg-transparent focus:outline-none focus:ring-transparent">

@@ -96,9 +96,8 @@ export default function SongResults({ data }: SongResultsProps) {
                     const isAnotherArtistSelected = selectedArtist !== null && !isCurrentArtistSelected;
                     const shouldDisableClick = isAnotherArtistSelected && selectedArtistState !== LoadingState.failed;
                     return (
-                        <>
+                        <div key={songData.id}>
                             <Artist
-                                key={songData.id}
                                 artist={songData.artist}
                                 title={songData.title}
                                 duration={songData.duration}
@@ -119,7 +118,7 @@ export default function SongResults({ data }: SongResultsProps) {
                                 </div>
                             )}
                             <div className="border-t border-secondary w-full my-4"></div>
-                        </>
+                        </div>
                     );
                 })
             }

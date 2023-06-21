@@ -59,35 +59,36 @@ export const Navbar: FC = () => {
           </NavigationMenu.Trigger>
 
           <NavigationMenu.Content className="bg-secondary z-10 data-[motion=from-start]:animate-enterFromLeft data-[motion=from-end]:animate-enterFromRight data-[motion=to-start]:animate-exitToLeft data-[motion=to-end]:animate-exitToRight absolute top-0 left-0 w-full sm:w-auto">
-            <ul className="one m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[500px] sm:grid-cols-[0.75fr_1fr]">
-              <li className="row-span-3 grid">
-                <NavigationMenu.Link asChild>
-                  <Link
-                    className="from-surface to-on-surface flex 
+            <Link href="/lite">
+              <ul className="one m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[500px] sm:grid-cols-[0.75fr_1fr]">
+                <li className="row-span-3 grid">
+                  <NavigationMenu.Link asChild>
+                    <div
+                      className="from-surface to-on-surface flex 
                     h-full w-full select-none flex-col justify-end rounded-[6px] bg-secondary-container p-[25px] no-underline outline-none"
-                    href="/lite"
-                  >
-                    <Waveform />
-                    <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-on-secondary-container">
-                      MusicGPT Lite
+                    >
+                      <Waveform />
+                      <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-on-secondary-container">
+                        MusicGPT Lite
+                      </div>
+                      <p className="text-mauve4 text-[14px] leading-[1.3] text-on-secondary-container">
+                        Musical, Lyrical & Cultural analysis.
+                      </p>
                     </div>
-                    <p className="text-mauve4 text-[14px] leading-[1.3] text-on-secondary-container">
-                      Musical, Lyrical & Cultural analysis.
-                    </p>
-                  </Link>
-                </NavigationMenu.Link>
-              </li>
+                  </NavigationMenu.Link>
+                </li>
 
-              <ListItem href="/lite" title="Musical" section="lite">
-                Discuss high & low level features capturing the general structure of the music.
-              </ListItem>
-              <ListItem href="/lite" title="Lyrics" section="lite">
-                Understand the meaning behind lyrics.
-              </ListItem>
-              <ListItem href="/lite" title="Cultural" section="lite">
-                Be informed about the context surrounding the music and its relevance to various topics.
-              </ListItem>
-            </ul>
+                <ListItem href="/lite" title="Musical" section="lite">
+                  Discuss high & low level features capturing the general structure of the music.
+                </ListItem>
+                <ListItem href="/lite" title="Lyrics" section="lite">
+                  Understand the meaning behind lyrics.
+                </ListItem>
+                <ListItem href="/lite" title="Cultural" section="lite">
+                  Be informed about the context surrounding the music and its relevance to various topics.
+                </ListItem>
+              </ul>
+            </Link>
           </NavigationMenu.Content>
         </NavigationMenu.Item>
 
@@ -104,36 +105,37 @@ export const Navbar: FC = () => {
           </NavigationMenu.Trigger>
 
           <NavigationMenu.Content className="absolute z-10 top-0 left-0 w-full sm:w-auto">
-            <ul className="one bg-inverse-surface m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[600px] sm:grid-cols-[0.75fr_1fr]">
-              <li className="row-span-4 grid">
-                <NavigationMenu.Link asChild>
-                  <Link
-                    className=" flex h-full w-full select-none flex-col justify-end rounded-[6px] bg-inverse-on-surface p-[25px] no-underline outline-none"
-                    href="/pro"
-                  >
-                    <Waveform />
-                    <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-inverse-surface">
-                      MusicGPT Pro
+            <Link href="/pro">
+              <ul className="one bg-inverse-surface m-0 grid list-none gap-x-[10px] p-[22px] sm:w-[600px] sm:grid-cols-[0.75fr_1fr]">
+                <li className="row-span-4 grid">
+                  <NavigationMenu.Link asChild>
+                    <div
+                      className=" flex h-full w-full select-none flex-col justify-end rounded-[6px] bg-inverse-on-surface p-[25px] no-underline outline-none"
+                    >
+                      <Waveform />
+                      <div className="mt-4 mb-[7px] text-[18px] font-medium leading-[1.2] text-inverse-surface">
+                        MusicGPT Pro
+                      </div>
+                      <p className="text-mauve4 text-[14px] leading-[1.3] text-inverse-surface">
+                        Real-time, dedicated, technical analysis.
+                      </p>
                     </div>
-                    <p className="text-mauve4 text-[14px] leading-[1.3] text-inverse-surface">
-                      Real-time, dedicated, technical analysis.
-                    </p>
-                  </Link>
-                </NavigationMenu.Link>
-              </li>
-              <ListItem href="/pro" title="Production and Engineering">
-                Discuss technical aspects of songs such as stero image, compression and more.
-              </ListItem>
-              <ListItem href="/pro" title="MIDI">
-                Discuss a songs MIDI with MusicGPT&apos;s Polyphonic MIDI extraction.
-              </ListItem>
-              <ListItem href="/pro" title="Visualizations">
-                Describe a visualization and MusicGPT will create it.
-              </ListItem>
-              <ListItem href="/pro" title="Upload">
-                Upload your own music for analysis.
-              </ListItem>
-            </ul>
+                  </NavigationMenu.Link>
+                </li>
+                <ListItem href="/pro" title="Production and Engineering">
+                  Discuss technical aspects of songs such as stero image, compression and more.
+                </ListItem>
+                <ListItem href="/pro" title="MIDI">
+                  Discuss a songs MIDI with MusicGPT&apos;s Polyphonic MIDI extraction.
+                </ListItem>
+                <ListItem href="/pro" title="Visualizations">
+                  Describe a visualization and MusicGPT will create it.
+                </ListItem>
+                <ListItem href="/pro" title="Upload">
+                  Upload your own music for analysis.
+                </ListItem>
+              </ul>
+            </Link>
           </NavigationMenu.Content>
         </NavigationMenu.Item>
 
