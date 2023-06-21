@@ -94,7 +94,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ file, startTime, finishTime, 
                 clearInterval(timerID);
             }
         }
-    }, [isPlaying, finishTime]); // or other dependencies
+    }, [isPlaying, finishTime]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (!isPlaying && timerID) {

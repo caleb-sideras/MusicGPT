@@ -1,4 +1,6 @@
+import LoadingWaveform from '@/components/Loaders/FillLoader';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import Search from './_components/Search';
 
 export const metadata: Metadata = {
@@ -7,10 +9,10 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'MusicGPT Lite Search',
         description: 'Search for a song to discuss with MusicGPT Lite.',
-        url: 'https://music-gpt.xyz/lite/search',
+        url: '/lite/search',
         images: [
             {
-                url: 'http://music-gpt.xyz/musicgptlite.png',
+                url: '/musicgptlite.png',
                 width: 794,
                 height: 442,
                 alt: 'MusicGPT Pro Info',
@@ -21,7 +23,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'MusicGPT Lite Search',
         description: 'Search for a song to discuss with MusicGPT Lite.',
-        images: ['http://music-gpt.xyz/musicgptlite.png'],
+        images: ['/musicgptlite.png'],
     },
 
 };
@@ -29,7 +31,10 @@ export default function SearchComponent() {
 
     return (
         <div className="container mx-auto max-w-screen-sm flex flex-col justify-center sm:px-10 px-2 mt-4">
-            <Search />
+            <Suspense fallback={<LoadingWaveform />}>
+                <Search />
+            </Suspense>
+
         </div>
     );
 };

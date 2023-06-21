@@ -1,11 +1,12 @@
 import { Suspense } from 'react';
 
-import Showcase from './Showcase';
 import { inlineStyles } from '@/types';
 
+import Showcase from './Showcase';
 import PlaybackExample from '@/components/Features/Examples/PlaybackExample';
 import MessageExample from '@/components/Features/Examples/MessageExample';
 import ImageExample from '@/components/Features/Examples/ImageExample';
+import LoadingWaveform from "@/components/Loaders/FillLoader";
 
 export default function HomeBanner() {
 
@@ -35,13 +36,17 @@ export default function HomeBanner() {
 
                     <Showcase title='Playback' description='Listen to a song in various formats'>
                         <div className='flex flex-col justify-center h-full p-2'>
-                            <PlaybackExample />
+                            <Suspense fallback={<LoadingWaveform />}>
+                                <PlaybackExample />
+                            </Suspense>
                         </div>
                     </Showcase>
 
                     <Showcase title='Dedicated Analysis' description='Query any section of a song for dedicated analysis'>
                         <div className='flex flex-col h-full gap-4 p-2 pb-4'>
-                            <MessageExample />
+                            <Suspense fallback={<LoadingWaveform />}>
+                                <MessageExample />
+                            </Suspense>
                         </div>
                     </Showcase>
                 </ul >

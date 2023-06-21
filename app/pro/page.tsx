@@ -10,10 +10,10 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'MusicGPT Pro',
         description: 'Real-time, dedicated, technical analysis.',
-        url: 'https://music-gpt.xyz/pro',
+        url: '/pro',
         images: [
             {
-                url: 'http://music-gpt.xyz/musicgptpro.png',
+                url: '/musicgptpro.png',
                 width: 800,
                 height: 540,
                 alt: 'MusicGPT Pro Info',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'MusicGPT Pro',
         description: 'Real-time, dedicated, technical analysis.',
-        images: ['http://music-gpt.xyz/musicgptpro.png'],
+        images: ['/musicgptpro.png'],
     },
 
 };

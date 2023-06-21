@@ -63,7 +63,7 @@ export default function ProChat() {
                 }
             ]);
         }
-    }, [currentState, chatData])
+    }, [currentState, chatData]) // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         scrollToBottom();

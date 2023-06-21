@@ -83,7 +83,7 @@ export default function SongResults({ data }: SongResultsProps) {
             }
         }
         setSelectedArtistState(LoadingState.failed);
-        router.push(`/litee/chat/${songData.id}/1111`);
+        router.push(`/lite/chat/${songData.id}/1111`);
     };
 
     return (

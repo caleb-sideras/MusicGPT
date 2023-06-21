@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import React, { FC } from "react";
 
 import { MessagePart, MessagePro } from "@/types";
+import LoadingWaveform from "../Loaders/FillLoader";
 
 const AudioPlayer = dynamic(() => import('../MusicPlayer/AudioPlayer'), {
     ssr: false,
@@ -123,9 +124,3 @@ export const ChatMessagePro: FC<Props> = ({ message }: { message: MessagePro }) 
         </div>
     );
 };
-
-const LoadingWaveform = () => {
-    return <div className='w-full justify-center flex'>
-        <Waveform height={30} width={75} />
-    </div>
-}

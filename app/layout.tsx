@@ -11,6 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://music-gpt.xyz'),
   title: {
     default: 'MusicGPT',
     template: '%s | MusicGPT',
@@ -26,11 +27,11 @@ export const metadata: Metadata = {
     title: 'MusicGPT',
     description: 'Explore, understand, and discuss music like never before with our mutimodal AI.',
     type: 'website',
-    url: 'https://music-gpt.xyz',
+    url: '/',
     siteName: 'MusicGPT',
     images: [
       {
-        url: 'http://music-gpt.xyz/musicgpt.png',
+        url: '/musicgpt.png',
         width: 768,
         height: 423,
         alt: 'MusicGPT Info',
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     title: 'MusicGPT',
     description: 'Explore, understand, and discuss music like never before with our mutimodal AI.',
     creator: '@sliderass',
-    images: ['http://music-gpt.xyz/musicgpt.png'],
+    images: ['/musicgpt.png'],
   },
 
 };

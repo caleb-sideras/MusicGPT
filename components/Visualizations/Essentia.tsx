@@ -40,7 +40,7 @@ const PlotMelodyContourComponent: React.FC<Props> = ({ featureArray, audioFrameS
         }
         plotMelody()
 
-    }, [featureArray, windowWidth]);
+    }, [featureArray, windowWidth]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div id={divId.current} className='w-full' />
@@ -72,7 +72,7 @@ const PlotHeatmapComponent: React.FC<Props> = ({ featureArray, audioFrameSize, a
             return () => plot.destroy();
         }
         plotHeatmap()
-    }, [featureArray, windowWidth]);
+    }, [featureArray, windowWidth]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <div id={divId.current} className='w-full' />
