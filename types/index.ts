@@ -272,3 +272,9 @@ export enum ParserState {
   CODE_START = 1,
   CODE_END = 2
 }
+
+
+export const inlineStyles = {
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+};

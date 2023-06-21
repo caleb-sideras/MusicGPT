@@ -1,6 +1,9 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Data, Layout } from 'plotly.js-basic-dist';
+// import { Data, Layout } from 'plotly.js-basic-dist';
+import {Data, Layout} from 'plotly.js';
 
 interface HPCPPlotProps {
     hpcpValues: Float32Array;

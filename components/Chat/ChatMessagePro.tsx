@@ -1,16 +1,46 @@
+"use client";
+
+import dynamic from "next/dynamic";
+import React, { FC } from "react";
+
 import { MessagePart, MessagePro } from "@/types";
-import React from "react";
-import { FC } from "react";
-import dynamic from 'next/dynamic';
-import AudioPlayer from "../MusicPlayer/AudioPlayer";
-import HPCPPlot from "../Visualizations/Radial";
+
+const AudioPlayer = dynamic(() => import('../MusicPlayer/AudioPlayer'), {
+    ssr: false,
+    loading: () =>
+        <LoadingWaveform />
+});
+const HPCPPlot = dynamic(() => import('../Visualizations/Radial'), {
+    ssr: false,
+    loading: () =>
+        <LoadingWaveform />
+});
+const CodeFormatter = dynamic(() => import('./CodeFormatter'), {
+    ssr: false,
+    loading: () =>
+        <LoadingWaveform />
+});
+const CodeExec = dynamic(() => import('../Visualizations/CodeExec'), {
+    ssr: false,
+    loading: () =>
+        <LoadingWaveform />
+});
+const MidiPlayer = dynamic(() => import('../MusicPlayer/MidiPlayer'), {
+    ssr: false,
+    loading: () =>
+        <LoadingWaveform />
+});
 import { PlotMelodyContourComponent } from "../Visualizations/Essentia";
-import CodeFormatter from "./CodeFormatter";
-import CodeExec from "../Visualizations/CodeExec";
+
+// import AudioPlayer from "../MusicPlayer/AudioPlayer";
+// import HPCPPlot from "../Visualizations/Radial";
+// import CodeFormatter from "./CodeFormatter";
+// import PlayerElement from "../MusicPlayer/ReactPlayer";
+// import CodeExec from "../Visualizations/CodeExec";
+
 import Waveform from "../Icons/waveform";
 import { useUser } from '@clerk/clerk-react';
 import Image from "next/image";
-const PlayerElement = dynamic(() => import('../MusicPlayer/ReactPlayer'), { ssr: false });
 
 interface Props {
     message: MessagePro;
@@ -22,8 +52,8 @@ export const ChatMessagePro: FC<Props> = ({ message }: { message: MessagePro }) 
         if (part.type === "text") {
             return part.content;
         } else if (part.type === "midi") {
-            return <PlayerElement
-                buffer={part.content as Buffer}
+            return <MidiPlayer
+                data={part.content}
                 soundFont=""
                 loop={true}
             />
@@ -93,3 +123,9 @@ export const ChatMessagePro: FC<Props> = ({ message }: { message: MessagePro }) 
         </div>
     );
 };
+
+const LoadingWaveform = () => {
+    return <div className='w-full justify-center flex'>
+        <Waveform height={30} width={75} />
+    </div>
+}

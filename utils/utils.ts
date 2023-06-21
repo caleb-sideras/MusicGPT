@@ -90,8 +90,24 @@ export const convertMessageProToMessage = (messagesPro: MessagePro[]): Message[]
   });
 }
 
-export  const removeFileExtension = (filename: string): string => {
+export const removeFileExtension = (filename: string): string => {
   if (typeof (filename) !== 'string') return ''
   const lastIndex = filename.lastIndexOf(".");
   return lastIndex !== -1 ? filename.slice(0, lastIndex) : filename;
+}
+
+export async function getAudio() {
+  const res = await fetch('/JoshuaSideras.wav');
+  if (!res.ok) {
+    throw new Error('Failed to fetch data')
+  }
+  return res.arrayBuffer()
+}
+
+export async function getMidi() {
+  const res = await fetch('/JoshuaSideras.json');
+  if (!res.ok) {
+    throw new Error('Failed to fetch data')
+  }
+  return res.json()
 }

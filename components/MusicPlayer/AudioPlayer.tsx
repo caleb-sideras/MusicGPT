@@ -1,3 +1,5 @@
+"use client";
+
 import { FormatTimePlayer } from '@/utils/utils';
 import { PauseIcon, PlayIcon } from '@radix-ui/react-icons';
 import { useState, useEffect, useRef } from 'react';

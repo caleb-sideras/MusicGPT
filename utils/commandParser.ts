@@ -67,7 +67,6 @@ export default class CommandParser {
             console.log(commandObject)            
 
             if ('V' in commandObject) {
-                console.log("V")
                 const visualization = commandObject.V
                 const startTime = commandObject.S
                 const endTime = commandObject.E

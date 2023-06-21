@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from 'react';
-import { PlotMelodyContour, PlotHeatmap, LayoutMelodyContourPlot, LayoutChromaPlot, LayoutSpectrogramPlot } from '@/utils/essentia/display/plot'; // import the classes
-import { v4 as uuidv4 } from 'uuid'; // install this library]
+import { PlotMelodyContour, PlotHeatmap, LayoutMelodyContourPlot, LayoutChromaPlot, LayoutSpectrogramPlot } from '@/utils/essentia/display/plot';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
     featureArray: Float32Array | any;

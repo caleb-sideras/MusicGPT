@@ -1,9 +1,11 @@
+"use client";
+
 import { AnchorHTMLAttributes, FC } from "react";
 import React from 'react';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import { CaretDownIcon } from '@radix-ui/react-icons';
 import Waveform from "../Icons/waveform";
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import Link from "next/link";
 import {
   SignedIn,
@@ -21,10 +23,11 @@ interface ListItemProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 }
 
 export const Navbar: FC = () => {
-  const router = useRouter();
-  const homeHighlighted = router.pathname === '/';
-  const liteHighlighted = router.pathname.startsWith('/lite');
-  const proHighlighted = router.pathname.startsWith('/pro');
+  const pathname = usePathname();
+
+  const liteHighlighted = pathname?.startsWith('/lite');
+  const proHighlighted = pathname?.startsWith('/pro');
+  const homeHighlighted = !proHighlighted && !liteHighlighted ? true : false;
 
   return (
 
@@ -150,17 +153,12 @@ export const Navbar: FC = () => {
           <NavigationMenu.Link
             className={`group flex select-none items-center justify-center gap-[2px] rounded-full -ml-1 px-3 py-2 text-[15px] sm:w-36 w-24 font-medium leading-none outline-none`}>
             <SignedIn>
-              {/* Mount the UserButton component */}
               <UserButton afterSignOutUrl="/" />
             </SignedIn>
             <SignedOut>
-              {/* Signed out users get sign in button */}
               <SignInButton />
             </SignedOut>
           </NavigationMenu.Link>
-
-
-          {/* </NavigationMenu.Link> */}
         </NavigationMenu.Item>
 
         <NavigationMenu.Indicator className="text-center data-[state=visible]:animate-fadeIn data-[state=hidden]:animate-fadeOut top-full z-[1] flex h-[10px] items-end justify-center overflow-hidden transition-[width,transform_250ms_ease]">
