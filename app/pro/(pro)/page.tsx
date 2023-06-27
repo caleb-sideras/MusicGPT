@@ -3,6 +3,7 @@ import Pro from '@/components/Features/Pro'
 import Instructions from '@/app/pro/(pro)/_components/Instructions'
 import Link from 'next/link'
 import { Metadata } from 'next';
+import { Footer } from '@/components/Layout/Footer';
 
 export const metadata: Metadata = {
     title: 'Pro',
@@ -31,14 +32,17 @@ export const metadata: Metadata = {
 
 export default function ProHome() {
     return (
-        <div className="flex flex-col gap-4 sm:px-10 pb-4 sm:pb-10 max-w-[800px] mx-auto mt-4">
-            <Pro />
-            <Instructions />
-            <Link href='/pro/chat'>
-                <div className='w-full p-4 text-center text-on-surface hover:text-surface rounded-full bg-surface hover:bg-on-surface border-on-surface hover:border-surface border-2 transition cursor-pointer'>
-                    Let&apos;s go
-                </div>
-            </Link>
-        </div>
+        <>
+            <div className="flex flex-col gap-4 sm:px-10 pb-4 sm:pb-10 max-w-[800px] mx-auto mt-4">
+                <Pro />
+                <Instructions />
+                <Link href='/pro/chat'>
+                    <div className='w-full p-4 text-center text-on-surface hover:text-surface rounded-full bg-surface hover:bg-on-surface border-on-surface hover:border-surface border-2 transition cursor-pointer'>
+                        Let&apos;s go
+                    </div>
+                </Link>
+            </div>
+            <Footer />
+        </>
     )
 }

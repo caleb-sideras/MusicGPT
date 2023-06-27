@@ -5,7 +5,7 @@ type SwitchDemoProps = {
     setIsChecked: React.Dispatch<React.SetStateAction<boolean>>;
     defaultChecked: boolean;
     disabled: boolean;
-    onClick?: ()=>any
+    onClick?: () => any
 };
 
 const SwitchDemo: React.FC<SwitchDemoProps> = ({ setIsChecked, defaultChecked, disabled, onClick }) => (
@@ -15,7 +15,7 @@ const SwitchDemo: React.FC<SwitchDemoProps> = ({ setIsChecked, defaultChecked, d
                 defaultChecked={defaultChecked}
                 disabled={disabled}
                 onCheckedChange={setIsChecked}
-                className="w-[42px] h-[25px] bg-idle rounded-full relative data-[state=checked]:bg-success data-[state=checked]:border-none outline-none border-on-idle border-2 cursor-default"
+                className={`w-[42px] h-[25px] bg-idle rounded-full relative data-[state=checked]:bg-success data-[state=checked]:border-none outline-none border-on-idle border-2 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 id="airplane-mode"
                 onClick={onClick}
             >

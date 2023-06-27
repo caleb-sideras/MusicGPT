@@ -1,24 +1,22 @@
-import { Message, MessagePro } from "@/types";
+import { MessagePro } from "@/types";
 import { IconArrowUp } from "@tabler/icons-react";
-import { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
+import { FC, KeyboardEvent, RefObject, useEffect, useRef, useState } from "react";
 
 interface Props {
-  onSend?: (message: Message) => void;
-  onSendPro?: (message: MessagePro) => void;
+  onSendPro: (message: MessagePro) => void;
+  autofill: string
 }
 
-export const ChatInput: FC<Props> = ({ onSend, onSendPro }) => {
-  const [content, setContent] = useState<string>();
-
+export function ChatInputPro({ onSendPro, autofill }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [content, setContent] = useState<string>();
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
-    if (value.length > 4000) {
-      alert("Message limit is 4000 characters");
+    if (value.length > 1000) {
+      alert("Message limit is 1000 characters");
       return;
     }
-
     setContent(value);
   };
 
@@ -27,11 +25,7 @@ export const ChatInput: FC<Props> = ({ onSend, onSendPro }) => {
       alert("Please enter a message");
       return;
     }
-    if (onSend) {
-      onSend({ role: "user", content });
-    } else if (onSendPro) {
-      onSendPro({ role: "user", parts: [{ type: "text", content: content }] });
-    }
+    onSendPro({ role: "user", parts: [{ type: "text", content: content }] });
     setContent("");
   };
 
@@ -49,12 +43,17 @@ export const ChatInput: FC<Props> = ({ onSend, onSendPro }) => {
     }
   }, [content]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (autofill) {
+      setContent(autofill)
+    }
+  }, [autofill])
+
   return (
     <div className={`relative mt-auto pt-4 rounded-b-lg`} >
       <textarea
         ref={textareaRef}
-        className={`min-h-[60px] rounded-full pl-4 pr-12 py-4 border-2 w-full focus:outline-none text-on-surface bg-surface 
-        ${onSendPro ? 'border-on-surface' : 'bg-secondary text-on-secondary'}`}
+        className="min-h-[60px] rounded-full pl-4 pr-12 py-4 border-2 w-full focus:outline-none text-on-surface bg-surface border-on-surface"
         style={{ resize: "none" }}
         placeholder="Type a message..."
         value={content}

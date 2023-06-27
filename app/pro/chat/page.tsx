@@ -16,7 +16,8 @@ import {
     MessagePro,
     ProState,
     ChatData,
-    ParserState
+    ParserState,
+    Role
 } from "@/types";
 import ChatBoxPro from "@/app/pro/chat/_components/ChatBoxPro";
 import CommandParser from "@/utils/commandParser";
@@ -29,8 +30,6 @@ import EssentiaWASM from '@/utils/essentia/dist/essentia-wasm.web'
 import Essentia from "@/utils/essentia/core_api";
 import { convertMessageProToMessage, filterAndAdjustNotesByTime, formatCategorizeStringifyNotesForModel, removeFileExtension } from "@/utils/utils";
 import ApiKey from "@/app/pro/chat/_components/ApiKey";
-import { Role } from "@/types";
-import { useChat } from "ai/react";
 import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 
 export interface VisualizerConfig {
@@ -45,16 +44,12 @@ export interface VisualizerConfig {
 
 export default function ProChat() {
 
-    const [currentState, setCurrentState] = useState<ProState>(ProState.menu)
-    const [apiKey, setApiKey] = useLocalStorage<string | null>(
-        'OpenAI-APIKey',
-        null
-    )
+    const [currentState, setCurrentState] = useState<ProState>(ProState.menu);
+    const [apiKey, setApiKey] = useLocalStorage<string | null>('OpenAI-APIKey', null);
     const [loading, setLoading] = useState<boolean>(false);
 
     const [messages, setMessages] = useState<MessagePro[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const [isFirstMessage, setIsFirstMessage] = useState<Boolean>(true)
 
     const [chatData, setChatData] = useState<ChatData>()
 
@@ -62,10 +57,6 @@ export default function ProChat() {
         if (currentState === ProState.instructions) {
             setMessages([
                 handleInitialData(),
-                {
-                    role: "assistant",
-                    parts: [{ type: 'text', content: `Hello! I'm MusicGPT Pro, your AI music assistant. I am currently in Beta, so I might produce inacurate information. Let's talk about ${removeFileExtension(chatData?.file?.name as string)}. What would you like to know?` }]
-                }
             ]);
         }
     }, [currentState, chatData]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -185,13 +176,7 @@ export default function ProChat() {
 
     const handleQuery = async (message: MessagePro) => {
 
-        if (isFirstMessage) {
-            var updatedMessages: MessagePro[] = [message]
-            setIsFirstMessage(false);
-        }
-        else {
-            var updatedMessages: MessagePro[] = [...messages, message]
-        }
+        var updatedMessages: MessagePro[] = [...messages, message]
 
         setLoading(true);
         setMessages(updatedMessages);
@@ -377,8 +362,8 @@ export default function ProChat() {
                 {
                     currentState != ProState.chat ?
 
-                        <div className="bg-on-surface rounded-lg p-4 mt-4">
-                            <div className="justify-center bg-surface p-6 flex flex-row items-center gap-4 rounded-lg">
+                        <div className="border-on-surface border-4 rounded-xl p-2 mt-4 bg-surface">
+                            <div className="justify-center gap-4 p-6 flex flex-row items-center ">
                                 <Waveform width={70} height={30} color="#e1e3e3" />
                                 <div className="text-lg font-bold text-on-surface">
                                     {
@@ -396,7 +381,7 @@ export default function ProChat() {
                                     }
                                 </div>
                             </div>
-                            <div className='flex flex-col -mt-6 bg-surface justify-center p-4 items-center w-full min-h-[200px] rounded-b-lg text-on-surface cursor-pointer transition-all duration-200'>
+                            <div className='flex flex-col justify-center px-4 pb-4 items-center w-full min-h-[200px] text-on-surface transition-all duration-200'>
                                 {
                                     currentState == ProState.menu ?
                                         <ApiKey setCurrentState={setCurrentState} setApiKey={setApiKey} apiKey={apiKey} />
@@ -415,7 +400,7 @@ export default function ProChat() {
                                                 : currentState == ProState.instructions ?
                                                     <div className="sm:p-4 flex w-full flex-col">
                                                         <Instructions />
-                                                        <div onClick={() => { setCurrentState(ProState.chat) }} className="w-full mt-2 text-tertiary-container text-center bg-tertiary rounded-lg p-4">
+                                                        <div onClick={() => { setCurrentState(ProState.chat) }} className="w-full mt-2 text-tertiary-container text-center bg-tertiary rounded-lg p-4 cursor-pointer">
                                                             Continue
                                                         </div>
                                                     </div>

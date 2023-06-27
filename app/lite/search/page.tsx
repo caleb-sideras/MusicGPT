@@ -34,7 +34,6 @@ export default function SearchComponent() {
             <Suspense fallback={<LoadingWaveform />}>
                 <Search />
             </Suspense>
-
         </div>
     );
 };

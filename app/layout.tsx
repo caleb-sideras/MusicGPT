@@ -1,7 +1,6 @@
 import '@/styles/globals.css';
 
 import { Metadata } from 'next';
-import { Footer } from '@/components/Layout/Footer';
 import { Navbar } from '@/components/Layout/Navbar';
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -65,14 +64,12 @@ export default function RootLayout({
         <body className={`bg-background flex flex-col min-h-screen  ${inter.className}`}>
           <Navbar />
           <HiddenDataProvider>
-            <Providers attribute="class" defaultTheme="system" enableSystem>
+            <Providers attribute="class" defaultTheme="light" enableSystem>
               <main className="flex-grow">
                 {children}
               </main>
-              {/* <Footer /> */}
             </Providers>
           </HiddenDataProvider>
-
         </body>
       </html >
     </ClerkProvider>

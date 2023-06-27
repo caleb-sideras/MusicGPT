@@ -8,7 +8,7 @@ declare module 'ai/react' {
         id: string;
         createdAt?: Date;
         content: string;
-        role: 'system' | 'user' | 'assistant' | "text" | "data" | "midi" | "audi" | "wave" | "hpcp" | "mels" | "code" | "exec";
+        role: 'system' | 'user' | 'assistant' | "data";
     }
     declare type CreateMessage = {
         id?: string;

@@ -14,9 +14,9 @@ function ApiKey({ setCurrentState, apiKey, setApiKey }: ApiKeyProps) {
 
     useEffect(() => {
         if (apiKey && inputRef.current) {
-            inputRef.current.value = previewTokenInput
+            setPreviewTokenInput(apiKey)
         }
-    }, []);// eslint-disable-line react-hooks/exhaustive-deps
+    }, [apiKey]);// eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <Form.Root className="w-[500px]"

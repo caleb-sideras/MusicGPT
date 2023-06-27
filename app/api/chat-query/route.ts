@@ -17,11 +17,11 @@ export async function POST(req: Request) {
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer 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`
+                Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
             },
             method: "POST",
             body: JSON.stringify({
-                model: OpenAIModel.DAVINCI_TURBO,
+                model: OpenAIModel.GPT_4,
                 messages: [
                     {
                         role: "system",

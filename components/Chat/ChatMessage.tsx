@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { useUser } from '@clerk/clerk-react';
 import Waveform from "@/components/Icons/waveform";
 import Image from "next/image";
@@ -7,7 +6,8 @@ import { cn } from "@/lib/utils";
 
 
 export interface ChatLiteProps {
-  role: VariantProps<typeof outerDivVariants>["role"];
+  role: VariantProps<typeof innerDivVariants>["role"];
+  chat: VariantProps<typeof innerDivVariants>["chat"];
   children: React.ReactNode;
 }
 
@@ -27,23 +27,64 @@ const outerDivVariants = cva(
   }
 )
 
-const innerDivVariants = cva(
+export const innerDivVariants = cva(
   'flex flex-row overflow-hidden flex-1 rounded-2xl p-3 whitespace-pre-wrap',
   {
     variants: {
+      chat: {
+        lite: '',
+        pro: '',
+        home: '',
+      },
       role: {
         assistant: 'bg-secondary-container text-on-secondary-container',
         user: 'bg-secondary text-on-secondary',
-        data: ''
-      },
+        data: '',
+      }
     },
+    compoundVariants: [
+      {
+        chat: "pro",
+        role: "assistant",
+        className: "bg-surface text-on-surface",
+      },
+      {
+        chat: "pro",
+        role: "user",
+        className: "bg-on-surface text-surface",
+      },
+      {
+        chat: "home",
+        role: "assistant",
+        className: "bg-tertiary-container text-on-tertiary-container",
+      },
+      {
+        chat: "home",
+        role: "user",
+        className: "bg-transparent text-on-tertiary",
+      }
+    ],
     defaultVariants: {
-      role: 'data',
+      chat: 'lite',
+      role: 'data'
     },
   }
 )
 
-export const ChatMessage: FC<ChatLiteProps> = ({ role, children }: ChatLiteProps) => {
+const defaultIconVariants = cva(
+  'w-9 h-9 flex justify-center rounded-full',
+  {
+    variants: {
+      chat: {
+        lite: 'bg-[#334b4f]',
+        pro: 'bg-[#191c1d]',
+        home: 'bg-[#3a4664]',
+      },
+    },
+  }
+)
+
+export function ChatMessage({ role, chat, children }: ChatLiteProps) {
   const { user } = useUser();
 
   return (
@@ -51,7 +92,7 @@ export const ChatMessage: FC<ChatLiteProps> = ({ role, children }: ChatLiteProps
       className={cn(outerDivVariants({ role: role }))}
     >
       <div
-        className={cn(innerDivVariants({ role: role }))}
+        className={cn(innerDivVariants({ chat: chat, role: role }))}
         style={{ overflowWrap: "anywhere" }}
       >
         <div className="items-start mr-4">
@@ -65,13 +106,13 @@ export const ChatMessage: FC<ChatLiteProps> = ({ role, children }: ChatLiteProps
                     ?
                     <Image width={35} height={35} src={user?.imageUrl as string} alt="UI" className="rounded-full" />
                     :
-                    <div className="bg-[#cd9c54] w-9 h-9 flex justify-center rounded-full"></div>
+                    <div className={cn(defaultIconVariants({ chat: chat }))}></div>
                 }
               </div>
           }
         </div>
         {children}
       </div>
-    </div>
+    </div >
   );
 };

@@ -58,7 +58,7 @@ function Upload({ setChatData, chatData, setParentState}: UploadProps) {
     return (
         <>
             <div
-                className={`w-full h-[200px] flex flex-col justify-center items-center rounded-b-lg ${isDragging && "bg-on-surface"}`}
+                className={`w-full h-[200px] flex flex-col justify-center cursor-pointer items-center rounded-lg ${isDragging && "bg-on-surface"}`}
                 onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 onDragOver={handleDragOver}

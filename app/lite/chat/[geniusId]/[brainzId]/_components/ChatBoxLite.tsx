@@ -1,4 +1,4 @@
-import { ChatMessage } from "./ChatMessage";
+import { ChatMessage, innerDivVariants } from "@/components/Chat/ChatMessage";
 import { PromptForm } from "./prompt-form";
 import { Button } from "@/components/button";
 import { IconRefresh, IconStop } from '@/components/icons'
@@ -8,6 +8,7 @@ import { ChatScrollAnchor } from "@/components/chat-scroll-anchor";
 import { EmptyScreen } from "@/components/empty-screen";
 import ChatMessageContent from "./ChatMessageContent";
 import { ChatFooter } from "@/components/Chat/ChatFooter";
+import { VariantProps } from "class-variance-authority";
 
 export interface ChatPanelProps
   extends Pick<
@@ -40,16 +41,31 @@ export default function ChatBoxLite({ messages, filename, fullTitle, id, isLoadi
                 key={index}
                 className="my-1 sm:my-1.5"
               >
-                <ChatMessage role={message.role} >
+                <ChatMessage role={message.role as VariantProps<typeof innerDivVariants>["role"]} chat="lite">
                   <ChatMessageContent message={message.content} />
                 </ChatMessage>
                 <ChatScrollAnchor trackVisibility={isLoading} />
               </div>
             )) : (
-              <ChatMessage role={"assistant"} >
-                <EmptyScreen setInput={setInput} fullTitle={fullTitle} />
+              <ChatMessage role="assistant" chat="lite" >
+                <EmptyScreen
+                  setInput={setInput}
+                  introMessage={`Hello! I'm MusicGPT, your AI music assistant. I can help you explore the musical structure, lyrics, and cultural relevance of songs. Let's talk about ${fullTitle}. What would you like to know?`}
+                  exampleMessages={[
+                    {
+                      heading: 'Explain the lyrics',
+                      message: `What is the meaning behind the lyrics?`
+                    },
+                    {
+                      heading: 'Summarize the song',
+                      message: 'How do the musical features work in tandem with the lyrics to enchance the overall experience?'
+                    },
+                    {
+                      heading: 'Discover the Artist',
+                      message: `Tell me about the history of Artist and the album`
+                    }
+                  ]} variant={'lite'} />
               </ChatMessage>
-
             )
           }
         </div>
