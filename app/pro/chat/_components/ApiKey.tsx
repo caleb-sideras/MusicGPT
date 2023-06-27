@@ -4,44 +4,57 @@ import { ProState } from '@/types';
 
 type ApiKeyProps = {
     setCurrentState: React.Dispatch<React.SetStateAction<ProState>>;
-    setAPIKey: React.Dispatch<React.SetStateAction<string>>;
+    apiKey: string | null;
+    setApiKey: (value: string | null) => void;
 }
 
-function ApiKey({ setCurrentState, setAPIKey }: ApiKeyProps) {
+function ApiKey({ setCurrentState, apiKey, setApiKey }: ApiKeyProps) {
     const inputRef = useRef<HTMLInputElement>(null)
+    const [previewTokenInput, setPreviewTokenInput] = useState(apiKey ?? '')
 
     useEffect(() => {
-        const storedKey = localStorage.getItem('OpenAI-APIKey');
-        if (storedKey && inputRef.current) {
-            inputRef.current.value = storedKey
+        if (apiKey && inputRef.current) {
+            inputRef.current.value = previewTokenInput
         }
     }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
-    const saveToLocalStorage = (key: string) => {
-        localStorage.setItem('OpenAI-APIKey', key);
-    };
-
     return (
-        <Form.Root className="w-[260px]"
+        <Form.Root className="w-[500px]"
             onSubmit={(event) => {
-                const data = Object.fromEntries(new FormData(event.currentTarget));
-                if (data) {
-                    saveToLocalStorage(data.key as string)
+                event.preventDefault();
 
-                    setAPIKey(data.key as string)
+                if (previewTokenInput) {
+                    setApiKey(previewTokenInput)
                     setCurrentState(ProState.upload)
                 }
-                event.preventDefault();
+            }}
+
+            onChange={(event) => {
+                const data = Object.fromEntries(new FormData(event.currentTarget));
+                setPreviewTokenInput(data.key as string)
             }}>
             <Form.Field className="grid mb-[10px]" name="key">
                 <div className="flex items-baseline justify-between">
-                    <Form.Label className="text-[15px] font-medium leading-[35px] text-on-surface">Key</Form.Label>
+                    <Form.FormLabel className="text-sm font-light text-grey pb-4">
+                        If you have not obtained your OpenAI API key, you can do so by{' '}
+                        <a
+                            href="https://platform.openai.com/signup/"
+                            className="underline"
+                        >
+                            signing up
+                        </a>{' '}
+                        on the OpenAI website. This is only necessary as Pro is in Beta, allowing the open source community to test the app.
+                        The token will be saved to your browser&apos;s local storage under
+                        the name <code className="font-mono">OpenAI-APIKey</code>.
+                    </Form.FormLabel>
+                    {/* <Form.Label className="text-[15px] font-medium leading-[35px] text-on-surface">Key</Form.Label> */}
                     <Form.Message className="text-[13px] text-on-surface opacity-[0.8]" match="valueMissing">
                         Please enter your OpenAI API key
                     </Form.Message>
                     <Form.Message className="text-[13px] text-on-surface opacity-[0.8]" match="typeMismatch">
                         Please enter your OpenAI API key
                     </Form.Message>
+
                 </div>
                 <Form.Control asChild>
                     <input
@@ -49,6 +62,8 @@ function ApiKey({ setCurrentState, setAPIKey }: ApiKeyProps) {
                         type="password"
                         required
                         ref={inputRef}
+                        value={previewTokenInput}
+                        placeholder="OpenAI API Key"
                     />
                 </Form.Control>
             </Form.Field>

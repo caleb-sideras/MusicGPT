@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { FileProps, LoadingState, LoaderType, ChatData, ProState } from '@/types';
-import SmallLoader from '../Loaders/SmallLoader';
+import SmallLoader from '@/components/Loaders/SmallLoader';
 
 type UploadProps = {
     setChatData: React.Dispatch<React.SetStateAction<ChatData>>;

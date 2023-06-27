@@ -105,7 +105,7 @@ export const OpenAIStream = async (messages: Message[], chatConf: ChatConf) => {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${chatConf.apiKey ? chatConf.apiKey : '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'}`
+      Authorization: `Bearer ${chatConf.apiKey}`
     },
     method: "POST",
     body: JSON.stringify({

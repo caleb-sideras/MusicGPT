@@ -1,4 +1,4 @@
-import { ChatMessagePro } from "../../Chat/ChatMessagePro";
+import { ChatMessagePro } from "@/app/pro/chat/_components/ChatMessagePro";
 
 
 export default function MessageExample() {

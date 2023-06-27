@@ -1,11 +1,13 @@
+import '@/styles/globals.css';
+
 import { Metadata } from 'next';
 import { Footer } from '@/components/Layout/Footer';
 import { Navbar } from '@/components/Layout/Navbar';
 import { Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-
-import '../styles/globals.css';
 import { HiddenDataProvider } from '@/utils/context/song_data_context';
+import { Providers } from '@/components/Providers/providers';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -56,21 +58,23 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <HiddenDataProvider>
-        <html lang="en">
-          <head>
-            <link rel="icon" href="/favicon.ico" sizes="any" />
-          </head>
-          <body className={`background flex flex-col min-h-screen  ${inter.className}`}>
-            <Navbar />
-            <div className="flex-grow">
-              {children}
-            </div>
-            <Footer />
-          </body>
-        </html >
-      </HiddenDataProvider>
-    </ClerkProvider>
+      <html lang="en">
+        <head>
+          <link rel="icon" href="/favicon.ico" sizes="any" />
+        </head>
+        <body className={`bg-background flex flex-col min-h-screen  ${inter.className}`}>
+          <Navbar />
+          <HiddenDataProvider>
+            <Providers attribute="class" defaultTheme="system" enableSystem>
+              <main className="flex-grow">
+                {children}
+              </main>
+              {/* <Footer /> */}
+            </Providers>
+          </HiddenDataProvider>
 
+        </body>
+      </html >
+    </ClerkProvider>
   )
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChatMessagePro } from "@/components/Chat/ChatMessagePro"
+import { ChatMessagePro } from "../../chat/_components/ChatMessagePro"
 import { getAudio, getMidi } from "@/utils/utils"
 import { useEffect, useState } from "react"
 

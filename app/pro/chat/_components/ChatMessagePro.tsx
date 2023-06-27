@@ -4,14 +4,14 @@ import dynamic from "next/dynamic";
 import React, { FC } from "react";
 
 import { MessagePart, MessagePro } from "@/types";
-import LoadingWaveform from "../Loaders/FillLoader";
+import LoadingWaveform from "@/components/Loaders/FillLoader";
 
-const AudioPlayer = dynamic(() => import('../MusicPlayer/AudioPlayer'), {
+const AudioPlayer = dynamic(() => import('@/components/MusicPlayer/AudioPlayer'), {
     ssr: false,
     loading: () =>
         <LoadingWaveform />
 });
-const HPCPPlot = dynamic(() => import('../Visualizations/Radial'), {
+const HPCPPlot = dynamic(() => import('@/components/Visualizations/Radial'), {
     ssr: false,
     loading: () =>
         <LoadingWaveform />
@@ -21,27 +21,22 @@ const CodeFormatter = dynamic(() => import('./CodeFormatter'), {
     loading: () =>
         <LoadingWaveform />
 });
-const CodeExec = dynamic(() => import('../Visualizations/CodeExec'), {
+const CodeExec = dynamic(() => import('@/components/Visualizations/CodeExec'), {
     ssr: false,
     loading: () =>
         <LoadingWaveform />
 });
-const MidiPlayer = dynamic(() => import('../MusicPlayer/MidiPlayer'), {
+const MidiPlayer = dynamic(() => import('@/components/MusicPlayer/MidiPlayer'), {
     ssr: false,
     loading: () =>
         <LoadingWaveform />
 });
-import { PlotMelodyContourComponent } from "../Visualizations/Essentia";
+import { PlotMelodyContourComponent } from "@/components/Visualizations/Essentia";
 
-// import AudioPlayer from "../MusicPlayer/AudioPlayer";
-// import HPCPPlot from "../Visualizations/Radial";
-// import CodeFormatter from "./CodeFormatter";
-// import PlayerElement from "../MusicPlayer/ReactPlayer";
-// import CodeExec from "../Visualizations/CodeExec";
 
-import Waveform from "../Icons/waveform";
-import { useUser } from '@clerk/clerk-react';
+import Waveform from "@/components/Icons/waveform";
 import Image from "next/image";
+import { useUser } from "@clerk/nextjs";
 
 interface Props {
     message: MessagePro;

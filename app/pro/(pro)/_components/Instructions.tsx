@@ -4,7 +4,7 @@
 import React, { ReactNode } from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
-import { ChatMessagePro } from '../../../components/Chat/ChatMessagePro';
+import { ChatMessagePro } from '../../chat/_components/ChatMessagePro';
 import Playback from './Playback';
 
 interface AccordionItemProps {

@@ -1,13 +1,15 @@
 "use client";
-
-import { ChatBox } from "@/components/Chat/ChatBox";
-import { Message, HighLevelData, LowLevelData, GeniusFormattedData, LoadingState, LoaderType } from "@/types";
-import { useEffect, useRef, useState } from "react";
+import { useChat, Message } from 'ai/react'
+import ChatBoxLite from "@/app/lite/chat/[geniusId]/[brainzId]/_components/ChatBoxLite";
+import { HighLevelData, LowLevelData, GeniusFormattedData, LoadingState, LoaderType } from "@/types";
+import { useEffect, useState } from "react";
 import { useHiddenData } from "@/utils/context/song_data_context";
 import axios from 'axios';
 import SmallLoader from "@/components/Loaders/SmallLoader";
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { CaretDownIcon } from '@radix-ui/react-icons';
+import { useLocalStorage } from '@/lib/hooks/use-local-storage';
+import { toast } from 'react-hot-toast'
 
 interface MusicBrainz {
     lowLevel: LowLevelData | null,
@@ -40,29 +42,24 @@ export default function Page({ params }: { params: { geniusId: string, brainzId:
     const [geniusUserData, setGeniusUserData] = useState<GeniusUserData | null>(null);
 
     const [dataState, setDataState] = useState<LoadingState>(LoadingState.loading)
-    const [isFirstMessage, setIsFirstMessage] = useState<Boolean>(true)
 
     const [lowLevelState, setLowLevelState] = useState<LoadingState>(LoadingState.loading);
     const [highLevelState, setHighLevelState] = useState<LoadingState>(LoadingState.loading);
     const [geniusState, setGeniusState] = useState<LoadingState>(LoadingState.loading);
 
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-
-
-    const defaultMessage: Message = {
-        role: "assistant",
-        content: `Hello! I'm MusicGPT, your AI music assistant. I can help you explore the musical structure, lyrics, and cultural relevance of songs. Let's talk about ${geniusUserData?.full_title}! What would you like to know?`
-    }
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    const handleReset = () => {
-        setMessages([defaultMessage]);
-    };
+    const { messages, setMessages, append, reload, stop, isLoading, input, setInput } =
+        useChat({
+            body: {
+                chatConf: {
+                    chatMode: "lite",
+                },
+            },
+            onResponse(response) {
+                if (response.status === 401) {
+                    toast.error(response.statusText)
+                }
+            }
+        })
 
     const getLowLevelData = async (music_brainz_id: string) => {
         let music_brainz_low = null
@@ -101,91 +98,25 @@ export default function Page({ params }: { params: { geniusId: string, brainzId:
         return genius_data
     }
 
-    const handleSend = async (message: Message) => {
+    const setData = (genius: GeniusFormattedData | null, low: LowLevelData | null, high: HighLevelData | null) => {
 
-        if (isFirstMessage) {
-            let dataMessage: Message = { 'role': 'data', 'content': `Data: ${JSON.stringify(modelData).replace(/\//g, '')}` }
-            var updatedMessages = [dataMessage, message]
-            setIsFirstMessage(false);
-        }
-        else {
-            var updatedMessages = [...messages, message];
-        }
-
-        setMessages(updatedMessages);
-        setLoading(true);
-
-        const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                messages: updatedMessages,
-                chatConf: {
-                    chatMode: "lite",
-                    apiKey: ""
-                },
-            })
-        });
-
-        if (!response.ok) {
-            setLoading(false);
-            throw new Error(response.statusText);
-        }
-
-        const data = response.body;
-
-        if (!data) {
+        if (!genius) {
+            setDataState(LoadingState.finished);
             return;
         }
 
-        setLoading(false);
+        // Visuals
+        setGeniusUserData({
+            full_title: genius.full_title,
+            embed_content: genius.embed_content,
+            apple_music_player_url: genius.apple_music_player_url,
+            header_image_thumbnail_url: genius.header_image_thumbnail_url,
+        } as GeniusUserData);
 
-        const reader = data.getReader();
-        const decoder = new TextDecoder();
-        let done = false;
-        let isFirst = true;
-
-        while (!done) {
-            const { value, done: doneReading } = await reader.read();
-            done = doneReading;
-            const chunkValue = decoder.decode(value);
-
-            if (isFirst) {
-                isFirst = false;
-                setMessages((messages) => [
-                    ...messages,
-                    {
-                        role: "assistant",
-                        content: chunkValue
-                    }
-                ]);
-            } else {
-                setMessages((messages) => {
-                    const lastMessage = messages[messages.length - 1];
-                    const updatedMessage = {
-                        ...lastMessage,
-                        content: lastMessage.content + chunkValue
-                    };
-                    return [...messages.slice(0, -1), updatedMessage];
-                });
-            }
-        }
-    };
-
-    const setData = (genius: GeniusFormattedData | null, low: LowLevelData | null, high: HighLevelData | null) => {
-
-        setMessages([defaultMessage]);
-        if (genius) {
-            setGeniusUserData({
-                full_title: genius.full_title,
-                embed_content: genius.embed_content,
-                apple_music_player_url: genius.apple_music_player_url,
-                header_image_thumbnail_url: genius.header_image_thumbnail_url,
-            } as GeniusUserData);
-
-            setModelData({
+        // Model
+        setMessages([{
+            role: "data",
+            content: `Data: ${JSON.stringify({
                 genius: {
                     full_title: genius.full_title,
                     lyrics: genius.lyrics,
@@ -196,13 +127,10 @@ export default function Page({ params }: { params: { geniusId: string, brainzId:
                     lowLevel: low,
                     highLevel: high
                 }
-            } as ModelData);
+            }).replace(/\//g, '')}`
+        } as Message])
 
-            setDataState(LoadingState.finished)
-        }
-        else {
-            setDataState(LoadingState.finished)
-        }
+        setDataState(LoadingState.finished)
 
     }
 
@@ -233,10 +161,6 @@ export default function Page({ params }: { params: { geniusId: string, brainzId:
 
         initPage()
     }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <>
@@ -289,12 +213,15 @@ export default function Page({ params }: { params: { geniusId: string, brainzId:
                                 </DropdownMenu.Root>
                             </div>
                         </div>
-                        <ChatBox
+                        <ChatBoxLite
                             messages={messages}
-                            loading={loading}
-                            onSend={handleSend}
-                            onReset={handleReset}
-                            messagesEndRef={messagesEndRef}
+                            fullTitle={geniusUserData?.full_title}
+                            isLoading={isLoading}
+                            stop={stop}
+                            append={append}
+                            reload={reload}
+                            input={input}
+                            setInput={setInput}
                         />
                     </div>
                 )

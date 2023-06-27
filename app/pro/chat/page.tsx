@@ -18,18 +18,20 @@ import {
     ChatData,
     ParserState
 } from "@/types";
-import { ChatBox } from "@/components/Chat/ChatBox";
+import ChatBoxPro from "@/app/pro/chat/_components/ChatBoxPro";
 import CommandParser from "@/utils/commandParser";
-import Upload from "@/components/AudioUpload/Upload";
-import AudioSelection from "@/components/AudioUpload/AudioSelection";
+import Upload from "./_components/Upload";
+import AudioSelection from "./_components/AudioSelection";
 import Waveform from "@/components/Icons/waveform";
-import Instructions from "@/app/pro/_components/Instructions";
+import Instructions from "@/app/pro/(pro)/_components/Instructions";
 import EssentiaExtractor from "@/utils/essentia/extractor/extractor";
 import EssentiaWASM from '@/utils/essentia/dist/essentia-wasm.web'
 import Essentia from "@/utils/essentia/core_api";
 import { convertMessageProToMessage, filterAndAdjustNotesByTime, formatCategorizeStringifyNotesForModel, removeFileExtension } from "@/utils/utils";
-import ApiKey from "@/components/AudioUpload/ApiKey";
+import ApiKey from "@/app/pro/chat/_components/ApiKey";
 import { Role } from "@/types";
+import { useChat } from "ai/react";
+import { useLocalStorage } from "@/lib/hooks/use-local-storage";
 
 export interface VisualizerConfig {
     noteHeight?: number;
@@ -44,7 +46,10 @@ export interface VisualizerConfig {
 export default function ProChat() {
 
     const [currentState, setCurrentState] = useState<ProState>(ProState.menu)
-    const [apiKey, setAPIKey] = useState<string>("")
+    const [apiKey, setApiKey] = useLocalStorage<string | null>(
+        'OpenAI-APIKey',
+        null
+    )
     const [loading, setLoading] = useState<boolean>(false);
 
     const [messages, setMessages] = useState<MessagePro[]>([]);
@@ -74,7 +79,7 @@ export default function ProChat() {
     };
 
     const handleSend = async (updatedMessages: MessagePro[], dataForVisualizations: Record<string, any>, parse: boolean) => {
-        const response = await fetch("/api/chat", {
+        const response = await fetch("/api/chat-pro", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -378,7 +383,7 @@ export default function ProChat() {
                                 <div className="text-lg font-bold text-on-surface">
                                     {
                                         currentState == ProState.menu ?
-                                            <>Please enter your OpenAI API key</>
+                                            <>Enter your OpenAI Key</>
                                             : currentState == ProState.upload ?
                                                 <>Please upload your audio file...</>
                                                 : currentState == ProState.convert ?
@@ -394,7 +399,7 @@ export default function ProChat() {
                             <div className='flex flex-col -mt-6 bg-surface justify-center p-4 items-center w-full min-h-[200px] rounded-b-lg text-on-surface cursor-pointer transition-all duration-200'>
                                 {
                                     currentState == ProState.menu ?
-                                        <ApiKey setCurrentState={setCurrentState} setAPIKey={setAPIKey} />
+                                        <ApiKey setCurrentState={setCurrentState} setApiKey={setApiKey} apiKey={apiKey} />
                                         : currentState == ProState.upload ?
                                             <Upload
                                                 setChatData={setChatData as Dispatch<SetStateAction<ChatData>>}
@@ -420,11 +425,10 @@ export default function ProChat() {
                         </div>
                         :
                         <>
-                            <ChatBox
+                            <ChatBoxPro
                                 messagesPro={messages}
                                 loading={loading}
                                 onSendPro={handleQuery}
-                                onReset={() => { }}
                                 messagesEndRef={messagesEndRef}
                                 filename={chatData?.file?.name as string}
                             />

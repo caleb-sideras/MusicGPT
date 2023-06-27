@@ -8,15 +8,13 @@ import {
     generateFileData,
 } from "@/utils/basic-pitch-ts/src";
 import { LoadingState, LoaderType, ProState, ChatData, ProdProps } from "@/types";
-import SmallLoader from '../Loaders/SmallLoader';
-import FeatureSelection, { FeatureSelectionProps } from '../Features/FeatureSelection'
-import * as tf from '@tensorflow/tfjs';
-
-
+import SmallLoader from '@/components/Loaders/SmallLoader';
+import FeatureSelection, { FeatureSelectionProps } from '@/components/Features/FeatureSelection'
 import Essentia from '@/utils/essentia/core_api'
 import EssentiaWASM from '@/utils/essentia/dist/essentia-wasm.web'
+import ErrorComponent from '@/components/Loaders/Error';
 import { roundTo } from '@/utils/utils';
-import ErrorComponent from '../Loaders/Error';
+
 
 type AudioSelectionProps = {
     setParentState: React.Dispatch<React.SetStateAction<ProState>>;

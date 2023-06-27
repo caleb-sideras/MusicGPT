@@ -1,6 +1,6 @@
 import React from 'react'
 import Pro from '@/components/Features/Pro'
-import Instructions from '@/app/pro/_components/Instructions'
+import Instructions from '@/app/pro/(pro)/_components/Instructions'
 import Link from 'next/link'
 import { Metadata } from 'next';
 

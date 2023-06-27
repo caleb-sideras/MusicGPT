@@ -21,11 +21,11 @@
     }
 
     .calc-l {
-        height: calc(100vh - 160px);
+        height: calc(100vh - 280px);
     }
 
     .calc-l-m {
-        height: calc(100vh - 176px);
+        height: calc(100vh - 270px);
     }
 
 }
