@@ -77,7 +77,7 @@ export default function ChatBoxLite({ messages, filename, fullTitle, id, isLoadi
                 <Button
                   variant="outline"
                   onClick={() => stop()}
-                  className="bg-background"
+                  className="bg-surface text-on-surface"
                 >
                   <IconStop className="mr-2" />
                   Stop generating
@@ -87,7 +87,7 @@ export default function ChatBoxLite({ messages, filename, fullTitle, id, isLoadi
                   <Button
                     variant="outline"
                     onClick={() => reload()}
-                    className="bg-background"
+                    className="bg-surface text-on-surface"
                   >
                     <IconRefresh className="mr-2" />
                     Regenerate response

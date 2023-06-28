@@ -18,8 +18,6 @@ export async function POST(req: Request) {
         // if (!userId) {
         //     return new Response("Unauthorized", { status: 401 });
         // }
-        console.log("API:", process.env.OPENAI_API_KEY)
-        console.log("API CONFIG:", configuration.apiKey)
 
         const json = await req.json()
         const { messages, chatConf } = json as {
