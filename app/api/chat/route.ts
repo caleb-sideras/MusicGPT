@@ -2,7 +2,7 @@ import { ChatConf } from "@/types";
 import { Message, OpenAIStream, StreamingTextResponse } from 'ai'
 import { Message as M } from 'ai/react'
 import { Configuration, OpenAIApi } from 'openai-edge'
-import { auth } from '@clerk/nextjs';
+// import { auth } from '@clerk/nextjs';
 
 export const runtime = 'edge'
 
@@ -14,10 +14,12 @@ const openai = new OpenAIApi(configuration)
 
 export async function POST(req: Request) {
     try {
-        const { userId, getToken } = auth();
-        if (!userId) {
-            return new Response("Unauthorized", { status: 401 });
-        }
+        // const { userId, getToken } = auth();
+        // if (!userId) {
+        //     return new Response("Unauthorized", { status: 401 });
+        // }
+        console.log("API:", process.env.OPENAI_API_KEY)
+        console.log("API CONFIG:", configuration.apiKey)
 
         const json = await req.json()
         const { messages, chatConf } = json as {

@@ -1,15 +1,15 @@
 import { ChatConf, Message } from "@/types";
 import { OpenAIStream } from "./utils";
-import { auth } from '@clerk/nextjs';
+// import { auth } from '@clerk/nextjs';
 
 export const runtime = 'edge'
 
 export async function POST(req: Request) {
     try {
-        const { userId, getToken } = auth();
-        if (!userId) {
-            return new Response("Unauthorized", { status: 401 });
-        }
+        // const { userId, getToken } = auth();
+        // if (!userId) {
+        //     return new Response("Unauthorized", { status: 401 });
+        // }
 
         const { messages, chatConf } = (await req.json()) as {
             messages: Message[];
