@@ -24,12 +24,11 @@ Explore, understand, and discuss music like never before with mutimodal AI
 
 General musical, lyrical & cultural analysis
 
-<p align="center">
+<p align="left">
   <a href="https://music-gpt.xyz/lite">
     <picture>
-      <img src="public/musicgptlite.png" height="128">
+      <img src="public/musicgptlite.png" height="256">
     </picture>
-    <h1 align="center">MusicGPT</h1>
   </a>
 </p>
 
@@ -37,12 +36,11 @@ General musical, lyrical & cultural analysis
 
 Real-time, dedicated, technical analysis
 
-<p align="center">
+<p align="left">
   <a href="https://music-gpt.xyz/pro">
     <picture>
-      <img src="public/musicgptpro.png" height="128">
+      <img src="public/musicgptpro.png" height="256">
     </picture>
-    <h1 align="center">MusicGPT</h1>
   </a>
 </p>
 
